@@ -108,6 +108,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
 
   // Load Admin Data on mount or tab change
   useEffect(() => {
+    if (currentUser?.role !== 'admin') return;
     fetchDashboardStats();
     if (activeTab === 'products' || activeTab === 'dashboard') fetchProducts();
     if (activeTab === 'users' || activeTab === 'dashboard') fetchUsers();
@@ -116,7 +117,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
     if (activeTab === 'services' || activeTab === 'dashboard') fetchServices();
     if (activeTab === 'appointments' || activeTab === 'dashboard') fetchAppointments();
     if (activeTab === 'settings' || activeTab === 'dashboard') fetchPaymentSettings();
-  }, [activeTab, refreshKey]);
+  }, [activeTab, refreshKey, currentUser]);
 
   const triggerRefresh = () => setRefreshKey((prev) => prev + 1);
 
@@ -543,9 +544,31 @@ export default function AdminDashboard({ showToast, currentUser }) {
     if (type === 'order') handleDeleteOrder(id);
     if (type === 'carousel') handleDeleteCarousel(id);
     if (type === 'service') handleDeleteService(id);
-    if (type === 'appointment') handleDeleteAppointment(id);
     setDeleteConfirmModal({ isOpen: false, type: null, id: null, title: '' });
   };
+
+  if (!currentUser || currentUser.role !== 'admin') {
+    return (
+      <div className="min-h-[70vh] bg-slate-50 flex items-center justify-center p-6 text-center">
+        <div className="bg-white max-w-md w-full rounded-3xl p-8 shadow-xl border border-gray-200 space-y-6">
+          <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto">
+            <AlertCircle className="w-10 h-10" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="font-poppins font-bold text-2xl text-gray-900">Admin Access Restricted</h2>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              You must be logged in with an administrator account to view the control panel.
+            </p>
+          </div>
+          <div className="bg-slate-50 p-4 rounded-2xl border border-gray-100 text-left text-xs space-y-1">
+            <span className="font-bold text-gray-700 block">Default Admin Credentials:</span>
+            <p className="font-mono text-[#005550]">Email: admin@synergy.com</p>
+            <p className="font-mono text-[#005550]">Password: Admin@123456</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 font-inter text-[#444444] pb-24">

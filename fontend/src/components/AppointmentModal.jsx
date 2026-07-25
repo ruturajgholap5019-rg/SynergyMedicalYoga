@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Calendar, Clock, MapPin, CheckCircle2 } from 'lucide-react';
 import { api } from '../lib/api';
 
@@ -11,16 +11,14 @@ const TIME_SLOTS = [
 ];
 
 export default function AppointmentModal({ isOpen, onClose, selectedService, currentUser, onAppointmentBooked }) {
-  if (!isOpen) return null;
-
   const [step, setStep] = useState('form'); // 'form' | 'success'
   const [formData, setFormData] = useState({
-    patientName: currentUser?.name || '',
-    patientPhone: currentUser?.phone || '',
-    patientEmail: currentUser?.email || '',
-    serviceTitle: selectedService?.title || 'Cervical & Lumbar Traction Therapy',
-    serviceId: selectedService?._id || '',
-    fee: selectedService?.price || 1499,
+    patientName: '',
+    patientPhone: '',
+    patientEmail: '',
+    serviceTitle: 'Cervical & Lumbar Traction Therapy',
+    serviceId: '',
+    fee: 1499,
     appointmentDate: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow
     timeSlot: '10:00 AM - 11:00 AM',
     center: 'Greens Center, Chinchwad, Pune',
@@ -29,6 +27,26 @@ export default function AppointmentModal({ isOpen, onClose, selectedService, cur
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookedAppointment, setBookedAppointment] = useState(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setStep('form');
+      setFormData({
+        patientName: currentUser?.name || '',
+        patientPhone: currentUser?.phone || '',
+        patientEmail: currentUser?.email || '',
+        serviceTitle: selectedService?.title || 'Cervical & Lumbar Traction Therapy',
+        serviceId: selectedService?._id || '',
+        fee: selectedService?.price || 1499,
+        appointmentDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+        timeSlot: '10:00 AM - 11:00 AM',
+        center: 'Greens Center, Chinchwad, Pune',
+        notes: '',
+      });
+    }
+  }, [isOpen, selectedService, currentUser]);
+
+  if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();

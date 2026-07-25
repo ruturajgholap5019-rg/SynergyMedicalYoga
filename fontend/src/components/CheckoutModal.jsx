@@ -3,13 +3,11 @@ import { X, CheckCircle2, ShieldCheck, CreditCard, Truck, QrCode, Copy, Check } 
 import { api } from '../lib/api';
 
 export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOrderComplete }) {
-  if (!isOpen) return null;
-
   const [step, setStep] = useState('form'); // 'form' | 'success' | 'redirect'
   const [formData, setFormData] = useState({
-    name: currentUser?.name || '',
-    email: currentUser?.email || '',
-    phone: currentUser?.phone || '',
+    name: '',
+    email: '',
+    phone: '',
     address: '',
     city: 'Pune',
     pincode: '411033',
@@ -29,6 +27,19 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
   });
 
   useEffect(() => {
+    if (isOpen) {
+      setStep('form');
+      setFormData((prev) => ({
+        ...prev,
+        name: currentUser?.name || prev.name || '',
+        email: currentUser?.email || prev.email || '',
+        phone: currentUser?.phone || prev.phone || '',
+      }));
+    }
+  }, [isOpen, currentUser]);
+
+  useEffect(() => {
+    if (!isOpen) return;
     const fetchSettings = async () => {
       try {
         const res = await api.getPublicSettings();
@@ -44,6 +55,8 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
     };
     fetchSettings();
   }, [isOpen]);
+
+  if (!isOpen) return null;
 
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const merchantUpi = paymentConfig.upiId || 'synergymedical@upi';

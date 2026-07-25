@@ -55,12 +55,12 @@ export default function ProductCard({ product, onAddToCart, onQuickView, onViewD
         </div>
 
         {/* Rating Stars (if available) */}
-        {product.rating >= 4.0 && (
+        {Boolean(product.rating && product.rating >= 4.0) && (
           <div className="flex justify-center items-center gap-1 mb-2">
             {[...Array(5)].map((_, i) => (
               <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
             ))}
-            <span className="text-[11px] text-gray-500 font-semibold ml-1">({product.rating.toFixed(1)})</span>
+            <span className="text-[11px] text-gray-500 font-semibold ml-1">({Number(product.rating || 0).toFixed(1)})</span>
           </div>
         )}
 

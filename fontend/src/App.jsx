@@ -266,6 +266,12 @@ export default function App() {
     loadSession();
   }, []);
 
+  useEffect(() => {
+    if (activePage === 'product-detail' && !selectedProductId) {
+      setActivePage('shop');
+    }
+  }, [activePage, selectedProductId]);
+
   return (
     <div className="min-h-screen flex flex-col bg-white font-sans selection:bg-[#065750] selection:text-white">
       
