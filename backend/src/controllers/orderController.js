@@ -167,8 +167,8 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
         quantity: item.quantity,
       })),
       mode: 'payment',
-      success_url: `${req.headers.origin || 'http://localhost:5173'}/order-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.origin || 'http://localhost:5173'}/checkout`,
+      success_url: `${process.env.CLIENT_URL || req.headers.origin || 'http://localhost:5173'}/order-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.CLIENT_URL || req.headers.origin || 'http://localhost:5173'}/checkout`,
       metadata: {
         orderId: order._id.toString(),
       },

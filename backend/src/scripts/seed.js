@@ -105,7 +105,7 @@ const services = [
 
 const seedDB = async () => {
   try {
-    const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/synergy_yoga';
+    const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/synergy_yoga';
     await mongoose.connect(mongoUri);
     console.log('✅ Connected to MongoDB for seeding');
 
