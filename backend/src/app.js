@@ -1,0 +1,68 @@
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const hpp = require('hpp');
+const xss = require('xss-clean');
+const mongoSanitize = require('express-mongo-sanitize');
+const cookieParser = require('cookie-parser');
+const rateLimit = require('express-rate-limit');
+const { errorHandler } = require('./middleware/errorHandler');
+const AppError = require('./utils/AppError');
+
+const authRoutes = require('./routes/authRoutes');
+const productRoutes = require('./routes/productRoutes');
+const cartRoutes = require('./routes/cartRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const { stripeWebhook } = require('./controllers/orderController');
+
+const app = express();
+
+app.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
+
+app.use(helmet());
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  credentials: true,
+}));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests from this IP, please try again later.',
+});
+app.use('/api', limiter);
+
+app.use(express.json({ limit: '10kb' }));
+app.use(cookieParser());
+app.use(mongoSanitize());
+app.use(xss());
+app.use(hpp());
+
+app.get('/', (req, res) => {
+  res.json({
+    status: 'success',
+    message: 'SynergyMedical API is running',
+    endpoints: {
+      auth: '/api/auth',
+      products: '/api/products',
+      cart: '/api/cart',
+      orders: '/api/orders',
+      admin: '/api/admin',
+    },
+  });
+});
+
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/admin', adminRoutes);
+
+app.all('*', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+app.use(errorHandler);
+
+module.exports = app;
