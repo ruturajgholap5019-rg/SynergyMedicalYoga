@@ -14,6 +14,8 @@ const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const publicRoutes = require('./routes/publicRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
 const { stripeWebhook } = require('./controllers/orderController');
 
 const app = express();
@@ -28,12 +30,12 @@ app.use(cors({
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 200,
   message: 'Too many requests from this IP, please try again later.',
 });
 app.use('/api', limiter);
 
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 app.use(mongoSanitize());
 app.use(xss());
@@ -49,6 +51,7 @@ app.get('/', (req, res) => {
       cart: '/api/cart',
       orders: '/api/orders',
       admin: '/api/admin',
+      public: '/api/public',
     },
   });
 });
@@ -58,6 +61,8 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/public', publicRoutes);
+app.use('/api/appointments', appointmentRoutes);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

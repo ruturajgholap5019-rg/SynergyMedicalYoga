@@ -1,11 +1,16 @@
 const User = require('../models/User');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
+const Carousel = require('../models/Carousel');
+const Service = require('../models/Service');
+const Setting = require('../models/Setting');
+const Appointment = require('../models/Appointment');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 
+// --- USER CRUD ---
 exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find().select('-password');
+  const users = await User.find().select('-password').sort({ createdAt: -1 });
   res.status(200).json({
     status: 'success',
     results: users.length,
@@ -22,9 +27,74 @@ exports.getUser = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.createUser = catchAsync(async (req, res, next) => {
+  const { name, email, phone, password, role } = req.body;
+
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return next(new AppError('Email is already registered.', 400));
+  }
+
+  const user = await User.create({
+    name,
+    email,
+    phone,
+    password,
+    role: role || 'customer',
+  });
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      createdAt: user.createdAt,
+    },
+  });
+});
+
+exports.updateUser = catchAsync(async (req, res, next) => {
+  const { name, email, phone, role } = req.body;
+
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    { name, email, phone, role },
+    { new: true, runValidators: true }
+  ).select('-password');
+
+  if (!user) return next(new AppError('User not found.', 404));
+
+  res.status(200).json({
+    status: 'success',
+    data: user,
+  });
+});
+
+exports.deleteUser = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndDelete(req.params.id);
+  if (!user) return next(new AppError('User not found.', 404));
+
+  res.status(200).json({
+    status: 'success',
+    message: 'User deleted successfully',
+  });
+});
+
+// --- PRODUCT CRUD ---
+exports.getAllProducts = catchAsync(async (req, res, next) => {
+  const products = await Product.find().sort({ createdAt: -1 });
+  res.status(200).json({
+    status: 'success',
+    results: products.length,
+    data: products,
+  });
+});
+
 exports.createProduct = catchAsync(async (req, res, next) => {
-  const productData = { ...req.body, createdBy: req.user._id };
-  const product = await Product.create(productData);
+  const product = await Product.create(req.body);
   res.status(201).json({
     status: 'success',
     data: product,
@@ -37,6 +107,7 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     runValidators: true,
   });
   if (!product) return next(new AppError('Product not found.', 404));
+
   res.status(200).json({
     status: 'success',
     data: product,
@@ -46,14 +117,19 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
 exports.deleteProduct = catchAsync(async (req, res, next) => {
   const product = await Product.findByIdAndDelete(req.params.id);
   if (!product) return next(new AppError('Product not found.', 404));
-  res.status(204).json({
+
+  res.status(200).json({
     status: 'success',
-    data: null,
+    message: 'Product deleted successfully',
   });
 });
 
+// --- ORDER MANAGEMENT ---
 exports.getAllOrders = catchAsync(async (req, res, next) => {
-  const orders = await Order.find().populate('user', 'name email').sort({ createdAt: -1 });
+  const orders = await Order.find()
+    .populate('user', 'name email phone')
+    .sort({ createdAt: -1 });
+
   res.status(200).json({
     status: 'success',
     results: orders.length,
@@ -62,13 +138,16 @@ exports.getAllOrders = catchAsync(async (req, res, next) => {
 });
 
 exports.updateOrderStatus = catchAsync(async (req, res, next) => {
-  const { orderStatus } = req.body;
-  if (!orderStatus) return next(new AppError('Order status is required.', 400));
+  const { orderStatus, paymentStatus } = req.body;
+  const updateData = {};
+  if (orderStatus) updateData.orderStatus = orderStatus;
+  if (paymentStatus) updateData.paymentStatus = paymentStatus;
 
-  const order = await Order.findByIdAndUpdate(req.params.id, { orderStatus }, {
+  const order = await Order.findByIdAndUpdate(req.params.id, updateData, {
     new: true,
     runValidators: true,
   });
+
   if (!order) return next(new AppError('Order not found.', 404));
 
   res.status(200).json({
@@ -77,14 +156,182 @@ exports.updateOrderStatus = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.deleteOrder = catchAsync(async (req, res, next) => {
+  const order = await Order.findByIdAndDelete(req.params.id);
+  if (!order) return next(new AppError('Order not found.', 404));
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Order deleted successfully',
+  });
+});
+
+// --- CAROUSEL CRUD ---
+exports.getAllCarousels = catchAsync(async (req, res, next) => {
+  const carousels = await Carousel.find().sort({ order: 1, createdAt: -1 });
+  res.status(200).json({
+    status: 'success',
+    results: carousels.length,
+    data: carousels,
+  });
+});
+
+exports.createCarousel = catchAsync(async (req, res, next) => {
+  const carousel = await Carousel.create(req.body);
+  res.status(201).json({
+    status: 'success',
+    data: carousel,
+  });
+});
+
+exports.updateCarousel = catchAsync(async (req, res, next) => {
+  const carousel = await Carousel.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!carousel) return next(new AppError('Carousel slide not found.', 404));
+
+  res.status(200).json({
+    status: 'success',
+    data: carousel,
+  });
+});
+
+exports.deleteCarousel = catchAsync(async (req, res, next) => {
+  const carousel = await Carousel.findByIdAndDelete(req.params.id);
+  if (!carousel) return next(new AppError('Carousel slide not found.', 404));
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Carousel slide deleted successfully',
+  });
+});
+
+// --- SERVICES CRUD ---
+exports.getAllServices = catchAsync(async (req, res, next) => {
+  const services = await Service.find().sort({ createdAt: -1 });
+  res.status(200).json({
+    status: 'success',
+    results: services.length,
+    data: services,
+  });
+});
+
+exports.createService = catchAsync(async (req, res, next) => {
+  const service = await Service.create(req.body);
+  res.status(201).json({
+    status: 'success',
+    data: service,
+  });
+});
+
+exports.updateService = catchAsync(async (req, res, next) => {
+  const service = await Service.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!service) return next(new AppError('Service not found.', 404));
+
+  res.status(200).json({
+    status: 'success',
+    data: service,
+  });
+});
+
+exports.deleteService = catchAsync(async (req, res, next) => {
+  const service = await Service.findByIdAndDelete(req.params.id);
+  if (!service) return next(new AppError('Service not found.', 404));
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Service deleted successfully',
+  });
+});
+
+// --- PAYMENT SETTINGS (UPI ID & SCANNER) ---
+exports.getPaymentSettings = catchAsync(async (req, res, next) => {
+  let settings = await Setting.findOne();
+  if (!settings) {
+    settings = await Setting.create({});
+  }
+  res.status(200).json({
+    status: 'success',
+    data: settings,
+  });
+});
+
+exports.updatePaymentSettings = catchAsync(async (req, res, next) => {
+  let settings = await Setting.findOne();
+  if (!settings) {
+    settings = await Setting.create(req.body);
+  } else {
+    settings = await Setting.findByIdAndUpdate(
+      settings._id,
+      { ...req.body, updatedAt: Date.now() },
+      { new: true, runValidators: true }
+    );
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: settings,
+  });
+});
+
+// --- APPOINTMENTS MANAGEMENT ---
+exports.getAllAppointments = catchAsync(async (req, res, next) => {
+  const appointments = await Appointment.find()
+    .populate('service', 'title category duration price')
+    .sort({ appointmentDate: -1, createdAt: -1 });
+
+  res.status(200).json({
+    status: 'success',
+    results: appointments.length,
+    data: appointments,
+  });
+});
+
+exports.updateAppointmentStatus = catchAsync(async (req, res, next) => {
+  const { status, paymentStatus, notes } = req.body;
+  const updateData = {};
+  if (status) updateData.status = status;
+  if (paymentStatus) updateData.paymentStatus = paymentStatus;
+  if (notes) updateData.notes = notes;
+
+  const appointment = await Appointment.findByIdAndUpdate(req.params.id, updateData, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!appointment) return next(new AppError('Appointment not found.', 404));
+
+  res.status(200).json({
+    status: 'success',
+    data: appointment,
+  });
+});
+
+exports.deleteAppointment = catchAsync(async (req, res, next) => {
+  const appointment = await Appointment.findByIdAndDelete(req.params.id);
+  if (!appointment) return next(new AppError('Appointment not found.', 404));
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Appointment deleted successfully',
+  });
+});
+
+// --- DASHBOARD METRICS ---
 exports.getDashboardStats = catchAsync(async (req, res, next) => {
   const totalUsers = await User.countDocuments();
   const totalProducts = await Product.countDocuments();
   const totalOrders = await Order.countDocuments();
-  const totalRevenue = await Order.aggregate([
-    { $match: { paymentStatus: 'paid' } },
-    { $group: { _id: null, total: { $sum: '$totalAmount' } } },
-  ]);
+  const totalCarousels = await Carousel.countDocuments();
+  const totalServices = await Service.countDocuments();
+  const totalAppointments = await Appointment.countDocuments();
+
+  const paidOrders = await Order.find({ paymentStatus: 'paid' });
+  const totalRevenue = paidOrders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
 
   res.status(200).json({
     status: 'success',
@@ -92,7 +339,10 @@ exports.getDashboardStats = catchAsync(async (req, res, next) => {
       totalUsers,
       totalProducts,
       totalOrders,
-      totalRevenue: totalRevenue.length > 0 ? totalRevenue[0].total : 0,
+      totalCarousels,
+      totalServices,
+      totalAppointments,
+      totalRevenue,
     },
   });
 });

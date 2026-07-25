@@ -5,8 +5,11 @@ const { protect } = require('../middleware/auth');
 const router = express.Router();
 
 router.use(protect);
+
 router.post('/', createOrder);
 router.post('/checkout', createCheckoutSession);
+router.post('/create-checkout-session', createCheckoutSession);
+router.get('/my-orders', getUserOrders);
 router.get('/', getUserOrders);
 router.get('/:id', getOrder);
 

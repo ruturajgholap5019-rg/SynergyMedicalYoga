@@ -3,10 +3,19 @@ const Product = require('../models/Product');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 
+const sanitizeCart = (cart) => {
+  if (cart && Array.isArray(cart.items)) {
+    cart.items = cart.items.filter((item) => item && item.productId);
+  }
+  return cart;
+};
+
 exports.getCart = catchAsync(async (req, res, next) => {
   let cart = await Cart.findOne({ user: req.user._id }).populate('items.productId');
   if (!cart) {
     cart = await Cart.create({ user: req.user._id, items: [] });
+  } else {
+    cart = sanitizeCart(cart);
   }
   res.status(200).json({
     status: 'success',
@@ -16,6 +25,10 @@ exports.getCart = catchAsync(async (req, res, next) => {
 
 exports.addToCart = catchAsync(async (req, res, next) => {
   const { productId, selectedSize, quantity = 1 } = req.body;
+  if (!productId) {
+    return next(new AppError('Product ID is required.', 400));
+  }
+
   const product = await Product.findById(productId);
   if (!product) {
     return next(new AppError('Product not found.', 404));
@@ -26,18 +39,21 @@ exports.addToCart = catchAsync(async (req, res, next) => {
     cart = await Cart.create({ user: req.user._id, items: [] });
   }
 
+  cart = sanitizeCart(cart);
+
   const existingItemIndex = cart.items.findIndex(
-    (item) => item.productId.toString() === productId && item.selectedSize === selectedSize
+    (item) => item.productId && item.productId.toString() === productId.toString() && item.selectedSize === selectedSize
   );
 
   if (existingItemIndex > -1) {
     cart.items[existingItemIndex].quantity += quantity;
   } else {
-    cart.items.push({ productId, selectedSize, quantity });
+    cart.items.push({ productId: product._id, selectedSize, quantity });
   }
 
   await cart.save();
   await cart.populate('items.productId');
+  cart = sanitizeCart(cart);
 
   res.status(200).json({
     status: 'success',
@@ -47,18 +63,23 @@ exports.addToCart = catchAsync(async (req, res, next) => {
 
 exports.updateCartItem = catchAsync(async (req, res, next) => {
   const { productId, selectedSize, quantity } = req.body;
+  if (!productId) {
+    return next(new AppError('Product ID is required.', 400));
+  }
 
   if (quantity < 0) {
     return next(new AppError('Quantity cannot be negative.', 400));
   }
 
-  const cart = await Cart.findOne({ user: req.user._id });
+  let cart = await Cart.findOne({ user: req.user._id });
   if (!cart) {
     return next(new AppError('Cart not found.', 404));
   }
 
+  cart = sanitizeCart(cart);
+
   const itemIndex = cart.items.findIndex(
-    (item) => item.productId.toString() === productId && item.selectedSize === selectedSize
+    (item) => item.productId && item.productId.toString() === productId.toString() && item.selectedSize === selectedSize
   );
 
   if (itemIndex === -1) {
@@ -73,6 +94,7 @@ exports.updateCartItem = catchAsync(async (req, res, next) => {
 
   await cart.save();
   await cart.populate('items.productId');
+  cart = sanitizeCart(cart);
 
   res.status(200).json({
     status: 'success',
@@ -82,13 +104,19 @@ exports.updateCartItem = catchAsync(async (req, res, next) => {
 
 exports.removeFromCart = catchAsync(async (req, res, next) => {
   const { productId, selectedSize } = req.body;
-  const cart = await Cart.findOne({ user: req.user._id });
+  if (!productId) {
+    return next(new AppError('Product ID is required.', 400));
+  }
+
+  let cart = await Cart.findOne({ user: req.user._id });
   if (!cart) {
     return next(new AppError('Cart not found.', 404));
   }
 
+  cart = sanitizeCart(cart);
+
   const itemIndex = cart.items.findIndex(
-    (item) => item.productId.toString() === productId && item.selectedSize === selectedSize
+    (item) => item.productId && item.productId.toString() === productId.toString() && item.selectedSize === selectedSize
   );
 
   if (itemIndex === -1) {
@@ -98,6 +126,7 @@ exports.removeFromCart = catchAsync(async (req, res, next) => {
   cart.items.splice(itemIndex, 1);
   await cart.save();
   await cart.populate('items.productId');
+  cart = sanitizeCart(cart);
 
   res.status(200).json({
     status: 'success',
@@ -117,19 +146,33 @@ exports.mergeCart = catchAsync(async (req, res, next) => {
     cart = await Cart.create({ user: req.user._id, items: [] });
   }
 
+  cart = sanitizeCart(cart);
+
   for (const gItem of guestItems) {
+    const pId = gItem.productId || gItem.id;
+    if (!pId) continue;
+
+    // Verify product exists in database before merging
+    const productExists = await Product.findById(pId);
+    if (!productExists) continue;
+
     const existingItemIndex = cart.items.findIndex(
-      (item) => item.productId.toString() === gItem.productId && item.selectedSize === gItem.selectedSize
+      (item) => item.productId && item.productId.toString() === pId.toString() && item.selectedSize === gItem.selectedSize
     );
     if (existingItemIndex > -1) {
-      cart.items[existingItemIndex].quantity += gItem.quantity;
+      cart.items[existingItemIndex].quantity += (gItem.quantity || 1);
     } else {
-      cart.items.push(gItem);
+      cart.items.push({
+        productId: productExists._id,
+        selectedSize: gItem.selectedSize || 'Standard',
+        quantity: gItem.quantity || 1,
+      });
     }
   }
 
   await cart.save();
   await cart.populate('items.productId');
+  cart = sanitizeCart(cart);
 
   res.status(200).json({
     status: 'success',

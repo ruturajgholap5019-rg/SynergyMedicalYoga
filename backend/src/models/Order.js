@@ -4,12 +4,24 @@ const orderItemSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
+  },
+  name: {
+    type: String,
     required: true,
   },
-  name: String,
-  price: Number,
-  selectedSize: String,
-  quantity: Number,
+  price: {
+    type: Number,
+    required: true,
+  },
+  selectedSize: {
+    type: String,
+    default: 'Standard',
+  },
+  quantity: {
+    type: Number,
+    required: true,
+    default: 1,
+  },
 });
 
 const orderSchema = new mongoose.Schema({
@@ -33,8 +45,12 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['stripe', 'cod'],
-    default: 'stripe',
+    enum: ['stripe', 'cod', 'upi', 'card', 'qr_code'],
+    default: 'upi',
+  },
+  upiId: {
+    type: String,
+    trim: true,
   },
   paymentStatus: {
     type: String,

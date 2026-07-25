@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, CheckCircle2, ShieldCheck, CreditCard, Truck, ArrowLeft } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { X, CheckCircle2, ShieldCheck, CreditCard, Truck, QrCode, Copy, Check } from 'lucide-react';
 import { api } from '../lib/api';
 
 export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOrderComplete }) {
@@ -8,18 +8,55 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
   const [step, setStep] = useState('form'); // 'form' | 'success' | 'redirect'
   const [formData, setFormData] = useState({
     name: currentUser?.name || '',
-    email: '',
-    phone: '',
+    email: currentUser?.email || '',
+    phone: currentUser?.phone || '',
     address: '',
     city: 'Pune',
     pincode: '411033',
-    paymentMethod: 'card'
+    paymentMethod: 'upi',
+    upiId: '',
   });
   const [orderId, setOrderId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [checkoutUrl, setCheckoutUrl] = useState('');
+  const [copiedUpi, setCopiedUpi] = useState(false);
+  const [paymentConfig, setPaymentConfig] = useState({
+    upiId: 'synergymedical@upi',
+    merchantName: 'Synergy Medical Yoga',
+    customQrUrl: '',
+    enableUpi: true,
+    enableCod: true,
+    enableStripe: true,
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.getPublicSettings();
+        if (res.data) {
+          setPaymentConfig(res.data);
+          if (!res.data.enableUpi && res.data.enableCod) {
+            setFormData((prev) => ({ ...prev, paymentMethod: 'cod' }));
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load payment config:', err);
+      }
+    };
+    fetchSettings();
+  }, [isOpen]);
 
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const merchantUpi = paymentConfig.upiId || 'synergymedical@upi';
+  const qrCodeUrl = paymentConfig.customQrUrl ||
+    `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+      `upi://pay?pa=${merchantUpi}&pn=${encodeURIComponent(paymentConfig.merchantName || 'Synergy Medical Yoga')}&am=${subtotal}&cu=INR`
+    )}`;
+
+  const handleCopyUpi = () => {
+    navigator.clipboard.writeText(merchantUpi);
+    setCopiedUpi(true);
+    setTimeout(() => setCopiedUpi(false), 2000);
+  };
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
@@ -31,54 +68,66 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
           address: formData.address,
           city: formData.city,
           pincode: formData.pincode,
-          state: 'Maharashtra',
-          country: 'India',
+        },
+        paymentMethod: formData.paymentMethod,
+        upiId: formData.upiId || undefined,
+        items: cart.map((item) => ({
+          productId: item.id || item.productId,
+          selectedSize: item.selectedSize || 'Standard',
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        customerInfo: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
         },
       });
 
-      setCheckoutUrl(response.data.url);
-      setOrderId(response.data.orderId);
-      setStep('redirect');
-      window.location.href = response.data.url;
-    } catch (error) {
-      console.error(error);
-      setStep('form');
-      alert(error.message || 'Unable to start checkout.');
+      if (formData.paymentMethod === 'stripe' && response.sessionUrl) {
+        setStep('redirect');
+        window.location.href = response.sessionUrl;
+      } else {
+        const createdId = response.order?._id || response.data?.orderId || response.data?.order?._id || 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+        setOrderId(createdId);
+        setStep('success');
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to process order. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleFinish = () => {
-    onOrderComplete();
-    setStep('form');
+    onOrderComplete?.();
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200 my-8">
+    <div className="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-hidden">
+      <div className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden relative flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200">
         
-        {/* Header */}
-        <div className="bg-linear-to-r from-[#065750] to-[#043f3a] p-6 text-white flex items-center justify-between">
+        {/* Header (Sticky top) */}
+        <div className="bg-gradient-to-r from-[#065750] to-[#043f3a] px-6 py-4 text-white flex items-center justify-between shrink-0 shadow-xs">
           <div className="flex items-center gap-3">
-            <ShieldCheck className="w-6 h-6 text-amber-300" />
+            <ShieldCheck className="w-6 h-6 text-amber-300 shrink-0" />
             <div>
-              <h2 className="font-extrabold text-xl">Synergy Express Checkout</h2>
-              <p className="text-xs text-teal-200">Secure 256-bit encrypted checkout</p>
+              <h2 className="font-extrabold text-lg sm:text-xl leading-tight">Synergy Express Checkout</h2>
+              <p className="text-[11px] text-teal-200">Secure 256-bit encrypted checkout</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 text-teal-200 hover:text-white">
+          <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 text-teal-200 hover:text-white cursor-pointer">
             <X className="w-6 h-6" />
           </button>
         </div>
 
         {step === 'form' ? (
-          <form onSubmit={handleSubmitOrder} className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-8">
+          <form onSubmit={handleSubmitOrder} className="flex-1 overflow-y-auto p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-8">
             {/* Left Inputs */}
             <div className="md:col-span-7 space-y-4">
-              <h3 className="font-bold text-slate-800 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
-                <Truck className="w-4 h-4 text-[#065750]" /> Shipping & Delivery Address
+              <h3 className="font-bold text-slate-800 text-xs uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Truck className="w-4 h-4 text-[#065750]" /> Shipping &amp; Delivery Address
               </h3>
 
               <div>
@@ -89,11 +138,11 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
                   placeholder="e.g. Rahul Sharma"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#065750]"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#065750]"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Phone Number *</label>
                   <input
@@ -102,7 +151,7 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
                     placeholder="+91 98765 43210"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#065750]"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#065750]"
                   />
                 </div>
                 <div>
@@ -113,7 +162,7 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
                     placeholder="name@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#065750]"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#065750]"
                   />
                 </div>
               </div>
@@ -126,7 +175,7 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
                   placeholder="Flat No, Building Name, Landmark..."
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#065750]"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#065750]"
                 />
               </div>
 
@@ -136,9 +185,10 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
                   <input
                     type="text"
                     required
+                    placeholder="Pune"
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#065750]"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#065750]"
                   />
                 </div>
                 <div>
@@ -146,69 +196,136 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
                   <input
                     type="text"
                     required
+                    placeholder="411033"
                     value={formData.pincode}
                     onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#065750]"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#065750]"
                   />
                 </div>
               </div>
 
-              {/* Payment Method */}
-              <div className="pt-2">
-                <label className="flex text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 items-center gap-2">
+              {/* Payment Selection */}
+              <div className="space-y-3 pt-4 border-t border-slate-200">
+                <h3 className="font-bold text-slate-800 text-xs uppercase tracking-wider flex items-center gap-2">
                   <CreditCard className="w-4 h-4 text-[#065750]" /> Payment Method
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: 'upi', label: 'UPI / GPay / PhonePe' },
-                    { id: 'card', label: 'Credit / Debit Card' },
-                    { id: 'cod', label: 'Cash on Delivery' }
-                  ].map((pm) => (
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {paymentConfig.enableUpi && (
                     <button
-                      key={pm.id}
                       type="button"
-                      onClick={() => setFormData({ ...formData, paymentMethod: pm.id })}
-                      className={`p-2.5 rounded-xl border text-xs font-bold transition-all text-center ${
-                        formData.paymentMethod === pm.id
-                          ? 'border-[#065750] bg-teal-50 text-[#065750]'
+                      onClick={() => setFormData({ ...formData, paymentMethod: 'upi' })}
+                      className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                        formData.paymentMethod === 'upi'
+                          ? 'border-[#065750] bg-teal-50/70 text-[#065750] font-bold shadow-xs'
                           : 'border-slate-200 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
-                      {pm.label}
+                      <QrCode className="w-5 h-5 mx-auto mb-1 text-[#065750]" />
+                      <p className="text-[11px] leading-tight">UPI / GPay / PhonePe</p>
                     </button>
-                  ))}
+                  )}
+
+                  {paymentConfig.enableStripe && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, paymentMethod: 'stripe' })}
+                      className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                        formData.paymentMethod === 'stripe'
+                          ? 'border-[#065750] bg-teal-50/70 text-[#065750] font-bold shadow-xs'
+                          : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <CreditCard className="w-5 h-5 mx-auto mb-1 text-[#065750]" />
+                      <p className="text-[11px] leading-tight">Credit / Debit Card</p>
+                    </button>
+                  )}
+
+                  {paymentConfig.enableCod && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, paymentMethod: 'cod' })}
+                      className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                        formData.paymentMethod === 'cod'
+                          ? 'border-[#065750] bg-teal-50/70 text-[#065750] font-bold shadow-xs'
+                          : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <Truck className="w-5 h-5 mx-auto mb-1 text-[#065750]" />
+                      <p className="text-[11px] leading-tight">Cash on Delivery</p>
+                    </button>
+                  )}
                 </div>
+
+                {formData.paymentMethod === 'upi' && (
+                  <div className="bg-teal-50/60 border border-teal-200 rounded-2xl p-4 space-y-3">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#065750]">
+                      <QrCode className="w-4 h-4" /> Scan &amp; Pay using any UPI App (GPay / PhonePe / Paytm)
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-center gap-4 bg-white p-3 rounded-xl border border-teal-100">
+                      <img src={qrCodeUrl} alt="UPI QR Code" className="w-32 h-32 object-contain border border-slate-200 rounded-lg p-1" />
+                      <div className="space-y-2 text-center sm:text-left">
+                        <p className="text-xs font-semibold text-slate-700">{paymentConfig.merchantName || 'Synergy Medical Yoga'}:</p>
+                        <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg text-xs font-mono text-[#065750]">
+                          <span>{merchantUpi}</span>
+                          <button
+                            type="button"
+                            onClick={handleCopyUpi}
+                            className="text-slate-400 hover:text-[#065750] cursor-pointer"
+                            title="Copy UPI ID"
+                          >
+                            {copiedUpi ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                          </button>
+                        </div>
+                        <p className="text-[11px] text-slate-500">Scan QR Code or copy UPI ID in GPay/PhonePe to pay ₹{subtotal.toFixed(2)}</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Your UPI ID (Optional reference)</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 9876543210@paytm or username@okaxis"
+                        value={formData.upiId}
+                        onChange={(e) => setFormData({ ...formData, upiId: e.target.value })}
+                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#065750]"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Right Summary */}
-            <div className="md:col-span-5 bg-slate-50 p-6 rounded-2xl border border-slate-200 flex flex-col justify-between">
+            <div className="md:col-span-5 bg-slate-50 p-6 rounded-2xl border border-slate-200 flex flex-col justify-between h-fit">
               <div>
-                <h3 className="font-bold text-slate-900 text-sm mb-4 pb-2 border-b border-slate-200">
-                  Order Summary ({cart.length} items)
-                </h3>
-                <div className="space-y-3 max-h-48 overflow-y-auto pr-1 mb-4">
-                  {cart.map((item, i) => (
-                    <div key={i} className="flex justify-between items-center text-xs">
+                <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider mb-4">
+                  Order Summary ({cart.reduce((a, b) => a + b.quantity, 0)} items)
+                </h4>
+
+                <div className="space-y-3 max-h-44 overflow-y-auto pr-1 text-xs">
+                  {cart.map((item) => (
+                    <div key={item.id} className="flex justify-between items-center py-1 border-b border-slate-200/60">
                       <div>
-                        <p className="font-bold text-slate-800 truncate max-w-35">{item.name}</p>
-                        <p className="text-slate-500">Qty: {item.quantity} {item.selectedSize ? `(${item.selectedSize})` : ''}</p>
+                        <p className="font-bold text-slate-800 truncate max-w-[140px]">{item.name}</p>
+                        <p className="text-[10px] text-slate-500">Qty: {item.quantity} ({item.selectedSize || 'Universal'})</p>
                       </div>
                       <span className="font-bold text-slate-900">₹{(item.price * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
 
-                <div className="space-y-2 text-xs border-t border-slate-200 pt-3 text-slate-600">
-                  <div className="flex justify-between">
+                <div className="border-t border-slate-200 pt-3 mt-4 space-y-1.5 text-xs">
+                  <div className="flex justify-between text-slate-600">
                     <span>Subtotal</span>
-                    <span className="font-semibold text-slate-900">₹{subtotal.toFixed(2)}</span>
+                    <span>₹{subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-slate-600">
                     <span>Express Delivery</span>
-                    <span className="font-semibold text-emerald-600">FREE</span>
+                    <span className="text-emerald-600 font-semibold">FREE</span>
                   </div>
-                  <div className="flex justify-between text-sm font-extrabold text-[#065750] pt-2 border-t border-slate-200">
+                  <div className="flex justify-between font-extrabold text-sm text-[#065750] pt-2 border-t border-slate-200">
                     <span>Total Amount</span>
                     <span>₹{subtotal.toFixed(2)}</span>
                   </div>
@@ -217,38 +334,28 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
 
               <button
                 type="submit"
-                className="w-full mt-6 bg-[#065750] hover:bg-[#043f3a] text-white font-bold py-3.5 rounded-xl shadow-lg transition-all text-sm"
+                disabled={isSubmitting}
+                className="mt-6 w-full bg-[#065750] hover:bg-[#043f3a] text-white font-bold py-3.5 rounded-xl shadow-md transition-all text-xs flex items-center justify-center gap-2 cursor-pointer"
               >
-                Confirm & Place Order
+                {isSubmitting ? 'Processing Payment...' : 'Confirm & Place Order'}
               </button>
             </div>
           </form>
         ) : (
-          /* Confirmation State */
-          <div className="p-8 md:p-12 text-center space-y-6">
-            <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto animate-bounce">
-              <CheckCircle2 className="w-12 h-12" />
+          <div className="p-8 text-center space-y-4 overflow-y-auto flex-1">
+            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-10 h-10" />
             </div>
-            <div>
-              <h2 className="text-2xl font-extrabold text-slate-900 mb-1">Order Placed Successfully!</h2>
-              <p className="text-sm text-slate-600">
-                Thank you for choosing <span className="font-bold text-[#065750]">Synergy Medical Yoga</span>.
-              </p>
-              <div className="inline-block mt-3 bg-teal-50 border border-teal-200 rounded-xl px-4 py-2 text-xs font-mono text-[#065750]">
-                Order Reference Number: <span className="font-bold">{orderId}</span>
-              </div>
-            </div>
-
-            <p className="text-xs text-slate-500 max-w-md mx-auto">
-              We have dispatched order details to <span className="font-bold text-slate-700">{formData.email}</span>. A representative from our Pune therapy care hub will also SMS you tracking updates.
+            <h3 className="font-extrabold text-2xl text-slate-800">Order Placed Successfully!</h3>
+            <p className="text-slate-600 text-xs max-w-md mx-auto">
+              Thank you for ordering with Synergy Medical Yoga. Your order reference ID is{' '}
+              <span className="font-mono font-bold text-[#065750]">{orderId}</span>. We are processing your delivery!
             </p>
-
             <button
               onClick={handleFinish}
-              className="bg-[#065750] hover:bg-[#043f3a] text-white font-bold px-8 py-3.5 rounded-xl text-sm shadow-md transition-all inline-flex items-center gap-2"
+              className="mt-4 bg-[#065750] hover:bg-[#043f3a] text-white px-8 py-3 rounded-xl font-bold text-xs shadow-md cursor-pointer"
             >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Return to Homepage</span>
+              Continue Shopping
             </button>
           </div>
         )}

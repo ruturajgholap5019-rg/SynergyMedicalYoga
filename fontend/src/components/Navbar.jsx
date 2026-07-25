@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X, ShieldCheck } from 'lucide-react';
 
 const LOGO = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Synergy-Logo_png-02-scaled.png';
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { id: 'home', label: 'Home' },
   { id: 'about', label: 'About Us' },
   { id: 'services', label: 'Services' },
@@ -14,6 +14,11 @@ const NAV_ITEMS = [
 
 export default function Navbar({ activePage, setActivePage, cartCount, onOpenCart, currentUser, onAccountClick }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const isAdmin = currentUser?.role === 'admin';
+  const navItems = isAdmin
+    ? [...BASE_NAV_ITEMS, { id: 'admin', label: 'Admin Panel', isAdminItem: true }]
+    : BASE_NAV_ITEMS;
 
   const goTo = (id) => {
     setActivePage(id);
@@ -42,13 +47,30 @@ export default function Navbar({ activePage, setActivePage, cartCount, onOpenCar
 
           {/* Desktop Nav Items */}
           <nav className="hidden lg:flex items-center gap-1 font-poppins">
-            {NAV_ITEMS.map((item) => {
+            {navItems.map((item) => {
               const isActive = activePage === item.id;
+              if (item.isAdminItem) {
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => goTo(item.id)}
+                    className={`px-3.5 py-2 text-xs font-bold transition-all rounded-xl flex items-center gap-1.5 ${
+                      isActive
+                        ? 'bg-[#005550] text-white shadow'
+                        : 'bg-purple-100 text-purple-900 hover:bg-purple-200'
+                    }`}
+                  >
+                    <ShieldCheck className="w-4 h-4 text-purple-700" />
+                    <span>Admin Panel</span>
+                  </button>
+                );
+              }
+
               return (
                 <button
                   key={item.id}
                   onClick={() => goTo(item.id)}
-                  className={`px-3.5 py-2 text-sm font-semibold transition-colors rounded-md ${
+                  className={`px-3 py-2 text-sm font-semibold transition-colors rounded-md ${
                     isActive
                       ? 'text-[#005550] font-bold'
                       : 'text-[#2C2D33] hover:text-[#005550]'
@@ -64,7 +86,7 @@ export default function Navbar({ activePage, setActivePage, cartCount, onOpenCar
           <div className="hidden lg:flex items-center gap-4">
             <button
               onClick={onOpenCart}
-              className="relative p-2.5 text-[#2C2D33] hover:text-[#005550] transition-colors rounded-full hover:bg-gray-100"
+              className="relative p-2.5 text-[#2C2D33] hover:text-[#005550] transition-colors rounded-full hover:bg-gray-100 cursor-pointer"
               aria-label="Shopping Cart"
             >
               <ShoppingCart className="w-5 h-5" />
@@ -77,7 +99,7 @@ export default function Navbar({ activePage, setActivePage, cartCount, onOpenCar
 
             <button
               onClick={() => onAccountClick()}
-              className="bg-[#005550] hover:bg-[#003d39] text-white font-bold text-sm px-6 py-2.5 rounded-lg shadow-sm hover:shadow transition-all flex items-center gap-3"
+              className="bg-[#005550] hover:bg-[#003d39] text-white font-bold text-sm px-6 py-2.5 rounded-lg shadow-sm hover:shadow transition-all flex items-center gap-3 cursor-pointer"
             >
               <span className="inline-flex h-8 w-8 rounded-full bg-white/10 text-white items-center justify-center text-sm font-bold uppercase">
                 {currentUser?.name?.charAt(0) || 'U'}
@@ -117,17 +139,18 @@ export default function Navbar({ activePage, setActivePage, cartCount, onOpenCar
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-t border-gray-100 px-4 py-4 shadow-xl">
           <div className="flex flex-col space-y-1 font-poppins">
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => goTo(item.id)}
-                className={`text-left px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
+                className={`text-left px-4 py-3 text-sm font-semibold rounded-lg transition-colors flex items-center justify-between ${
                   activePage === item.id
                     ? 'text-[#005550] bg-teal-50/60 font-bold'
                     : 'text-[#2C2D33] hover:text-[#005550] hover:bg-gray-50'
                 }`}
               >
-                {item.label}
+                <span>{item.label}</span>
+                {item.isAdminItem && <ShieldCheck className="w-4 h-4 text-purple-700" />}
               </button>
             ))}
 

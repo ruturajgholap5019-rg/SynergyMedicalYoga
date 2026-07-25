@@ -3,7 +3,7 @@ import ProductCard from '../components/ProductCard';
 import { ShieldCheck, Truck, RotateCcw, Award, SlidersHorizontal } from 'lucide-react';
 import { api } from '../lib/api';
 
-export default function ShopPage({ onAddToCart, onQuickView, onViewDetails }) {
+export default function ShopPage({ onAddToCart, onQuickView, onViewDetails, onBuyNow }) {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('default');
@@ -104,6 +104,7 @@ export default function ShopPage({ onAddToCart, onQuickView, onViewDetails }) {
                 onAddToCart={onAddToCart}
                 onQuickView={onQuickView}
                 onViewDetails={onViewDetails}
+                onBuyNow={onBuyNow}
               />
             ))}
           </div>

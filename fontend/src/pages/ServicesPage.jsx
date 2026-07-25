@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, MapPin, CheckCircle2, QrCode } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ChevronDown, ChevronUp, MapPin, CheckCircle2, QrCode, Clock, ShieldCheck } from 'lucide-react';
+import { api } from '../lib/api';
+import AppointmentModal from '../components/AppointmentModal';
 
 const APP_MOCKUP = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-२-1-scaled.png';
 const PLAYSTORE  = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/PLaystore-Icon-e1747384325874.webp';
@@ -48,14 +50,33 @@ const THERAPY_ACCORDION = [
   },
 ];
 
-export default function ServicesPage({ setActivePage }) {
+export default function ServicesPage({ setActivePage, currentUser }) {
   const [openTab, setOpenTab] = useState('knee');
+  const [services, setServices] = useState([]);
+  const [loadingServices, setLoadingServices] = useState(false);
+  const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      setLoadingServices(true);
+      try {
+        const res = await api.getPublicServices();
+        if (res.data) setServices(res.data);
+      } catch (err) {
+        console.error('Failed to load public services:', err);
+      } finally {
+        setLoadingServices(false);
+      }
+    };
+    fetchServices();
+  }, []);
 
   return (
     <div className="font-inter text-[#555555]">
 
       {/* ──────────────────────────────────────────────
-          1. HERO SUB-BANNER HEADER (1:1 with Original)
+          1. HERO SUB-BANNER HEADER
           ────────────────────────────────────────────── */}
       <section className="bg-[#005550] py-20 px-4 text-center text-white">
         <div className="max-w-4xl mx-auto">
@@ -67,66 +88,70 @@ export default function ServicesPage({ setActivePage }) {
 
 
       {/* ──────────────────────────────────────────────
-          2. DOWNLOAD OUR APP SECTION (1:1 with Original)
+          2. DYNAMIC CLINICAL SERVICES GRID FROM DATABASE
           ────────────────────────────────────────────── */}
-      <section className="py-20 bg-[#eaf6f6]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-
-            {/* App Mockup */}
-            <div className="lg:col-span-5 flex justify-center">
-              <img
-                src={APP_MOCKUP}
-                alt="Synergy MYT App"
-                className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
-              />
-            </div>
-
-            {/* Text & Download Options */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="space-y-2">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#005550]">
-                  FIND THE NEAREST THERAPIST / CENTER
-                </p>
-                <div className="w-16 h-0.5 bg-[#005550]" />
-              </div>
-
-              <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
-                Download Our App
+      {services.length > 0 && (
+        <section className="py-16 bg-slate-50 border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+            <div className="text-center space-y-3 max-w-3xl mx-auto">
+              <span className="text-xs font-bold text-[#005550] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
+                Medical Yoga Programs
+              </span>
+              <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-gray-900">
+                Clinical Therapy Sessions &amp; Packages
               </h2>
-
-              <div className="space-y-4 text-base sm:text-lg leading-relaxed text-gray-700">
-                <p>
-                  Discover the transformative power of Medical Yoga Therapy with our all-in-one app! Whether you're seeking a qualified therapist nearby, who can come to your place or you want to find a nearest medical yoga center which is on synergy platform of integrated approach nearby who can take care of your pain management end to end, our app has you covered.
-                </p>
-                <p>
-                  Our app has certified medical yoga therapists from various institutes and who work closely with yoga physicians and nuitritionists to provide a holistic regimen for recovery from pain.
-                </p>
-              </div>
-
-              {/* QR Code & Store Badges */}
-              <div className="flex flex-wrap gap-6 pt-4 items-center">
-                <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100">
-                  <QrCode className="w-10 h-10 text-[#005550]" />
-                  <div>
-                    <img src={PLAYSTORE} alt="Google Play" className="h-8 object-contain" />
-                    <p className="text-[10px] text-gray-500 font-medium mt-0.5">Scan or tap to download</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100">
-                  <QrCode className="w-10 h-10 text-[#005550]" />
-                  <div>
-                    <img src={APPSTORE} alt="App Store" className="h-8 object-contain" />
-                    <p className="text-[10px] text-gray-500 font-medium mt-0.5">Scan or tap to download</p>
-                  </div>
-                </div>
-              </div>
+              <p className="text-sm text-gray-600">
+                Doctor-supervised non-surgical postural realignment and rope-assisted joint recovery
+              </p>
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {services.map((srv) => (
+                <div key={srv._id} className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col justify-between">
+                  <div>
+                    <div className="h-48 overflow-hidden relative">
+                      <img
+                        src={srv.imageUrl || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b'}
+                        alt={srv.title}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      />
+                      <span className="absolute top-4 right-4 bg-[#005550] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        {srv.category}
+                      </span>
+                    </div>
+
+                    <div className="p-6 space-y-3">
+                      <h3 className="font-bold text-lg text-gray-900 leading-tight">{srv.title}</h3>
+                      <p className="text-xs text-gray-600 line-clamp-3 leading-relaxed">{srv.description}</p>
+                      
+                      <div className="flex items-center gap-2 text-xs font-medium text-gray-500 pt-2 border-t border-gray-100">
+                        <Clock className="w-4 h-4 text-[#005550]" />
+                        <span>Session Duration: {srv.duration || '60 mins'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-6 pt-0 flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] text-gray-400 font-semibold block">Fee per session</span>
+                      <span className="font-extrabold text-xl text-[#005550]">₹{srv.price}</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setSelectedService(srv);
+                        setIsAppointmentModalOpen(true);
+                      }}
+                      className="bg-[#005550] hover:bg-[#003d39] text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all cursor-pointer"
+                    >
+                      Book Consultation
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
 
       {/* ──────────────────────────────────────────────
@@ -179,7 +204,7 @@ export default function ServicesPage({ setActivePage }) {
                           {tab.points.map((pt, i) => (
                             <li key={i} className="flex items-start gap-3">
                               <CheckCircle2 className="w-5 h-5 text-[#005550] shrink-0 mt-0.5" />
-                              <span className="text-sm text-gray-700 leading-relaxed font-medium">{pt}</span>
+                              <span className="text-sm text-gray-700 leading-relaxed">{pt}</span>
                             </li>
                           ))}
                         </ul>
@@ -241,7 +266,7 @@ export default function ServicesPage({ setActivePage }) {
 
               <button
                 onClick={() => { setActivePage && setActivePage('find-centres'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className="bg-[#005550] hover:bg-[#003d39] text-white font-bold text-sm px-6 py-3 rounded-xl transition-colors shadow-sm shrink-0"
+                className="bg-[#005550] hover:bg-[#003d39] text-white font-bold text-sm px-6 py-3 rounded-xl transition-colors shadow-sm shrink-0 cursor-pointer"
               >
                 Find All Centers
               </button>
@@ -251,6 +276,77 @@ export default function ServicesPage({ setActivePage }) {
         </div>
       </section>
 
+
+      {/* ──────────────────────────────────────────────
+          5. DOWNLOAD OUR APP SECTION (DIRECTLY ABOVE FOOTER)
+          ────────────────────────────────────────────── */}
+      <section className="py-20 bg-[#eaf6f6]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+            {/* App Mockup */}
+            <div className="lg:col-span-5 flex justify-center">
+              <img
+                src={APP_MOCKUP}
+                alt="Synergy MYT App"
+                className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+
+            {/* Text & Download Options */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className="space-y-2">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#005550]">
+                  FIND THE NEAREST THERAPIST / CENTER
+                </p>
+                <div className="w-16 h-0.5 bg-[#005550]" />
+              </div>
+
+              <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
+                Download Our App
+              </h2>
+
+              <div className="space-y-4 text-base sm:text-lg leading-relaxed text-gray-700">
+                <p>
+                  Discover the transformative power of Medical Yoga Therapy with our all-in-one app! Whether you're seeking a qualified therapist nearby, who can come to your place or you want to find a nearest medical yoga center which is on synergy platform of integrated approach nearby who can take care of your pain management end to end, our app has you covered.
+                </p>
+                <p>
+                  Our app has certified medical yoga therapists from various institutes and who work closely with yoga physicians and nuitritionists to provide a holistic regimen for recovery from pain.
+                </p>
+              </div>
+
+              {/* QR Code & Store Badges */}
+              <div className="flex flex-wrap gap-6 pt-4 items-center">
+                <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100">
+                  <QrCode className="w-10 h-10 text-[#005550]" />
+                  <div>
+                    <img src={PLAYSTORE} alt="Google Play" className="h-8 object-contain" />
+                    <p className="text-[10px] text-gray-500 font-medium mt-0.5">Scan or tap to download</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100">
+                  <QrCode className="w-10 h-10 text-[#005550]" />
+                  <div>
+                    <img src={APPSTORE} alt="App Store" className="h-8 object-contain" />
+                    <p className="text-[10px] text-gray-500 font-medium mt-0.5">Scan or tap to download</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      {/* APPOINTMENT MODAL */}
+      <AppointmentModal
+        isOpen={isAppointmentModalOpen}
+        onClose={() => setIsAppointmentModalOpen(false)}
+        selectedService={selectedService}
+        currentUser={currentUser}
+      />
     </div>
   );
 }

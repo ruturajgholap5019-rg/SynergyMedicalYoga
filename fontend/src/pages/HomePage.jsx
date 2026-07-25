@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight, Star, QrCode } from 'lucide-react';
 import { PRODUCTS } from '../data/mockData';
+import { api } from '../lib/api';
 
 /* ── Exact Image URLs from Original Site ── */
 const HERO_SLIDES = [
@@ -64,17 +65,41 @@ function Counter({ end, suffix = '' }) {
 
 export default function HomePage({ setActivePage, onAddToCart }) {
   const [slide, setSlide] = useState(0);
-  const aboutRef = useRef(null);
+  const [heroSlides, setHeroSlides] = useState(HERO_SLIDES);
   const [aboutVisible, setAboutVisible] = useState(false);
-
-  const orthRef = useRef(null);
   const [orthVisible, setOrthVisible] = useState(false);
-  const total = HERO_SLIDES.length;
+  const aboutRef = useRef(null);
+  const orthRef = useRef(null);
 
   useEffect(() => {
-    const timer = setInterval(() => setSlide(s => (s + 1) % total), 5500);
+    const fetchCarousels = async () => {
+      try {
+        const res = await api.getPublicCarousels();
+        if (res.data && res.data.length > 0) {
+          const mapped = res.data.map((c) => ({
+            src: c.imageUrl,
+            alt: c.title,
+            heading: c.title,
+            subtitle: c.subtitle,
+            buttonText: c.buttonText || 'Explore Shop',
+            buttonLink: c.buttonLink || '/shop',
+          }));
+          setHeroSlides(mapped);
+        }
+      } catch (err) {
+        console.error('Failed to load hero carousels:', err);
+      }
+    };
+    fetchCarousels();
+  }, []);
+
+  // Auto advance slides every 4.5s
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 4500);
     return () => clearInterval(timer);
-  }, [total]);
+  }, [heroSlides]);
 
   // Track scroll direction reliably
   const prevScrollY = useRef(typeof window !== 'undefined' ? window.scrollY : 0);
@@ -118,7 +143,7 @@ export default function HomePage({ setActivePage, onAddToCart }) {
           1. HERO CAROUSEL SLIDER
           ────────────────────────────────────────────── */}
       <section className="relative w-full overflow-hidden bg-gray-900 h-screen flex items-center">
-        {HERO_SLIDES.map((s, i) => (
+        {heroSlides.map((s, i) => (
           <div
             key={i}
             className={`absolute inset-0 transition-opacity duration-1000 ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
@@ -129,13 +154,18 @@ export default function HomePage({ setActivePage, onAddToCart }) {
               className="w-full h-screen object-cover"
             />
             {/* Subtle left vignette gradient so white text pops cleanly */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent" />
             
             {/* Slide Heading Overlay */}
             <div className="absolute left-6 md:left-16 top-1/2 -translate-y-1/2 max-w-xl text-white z-20 space-y-4">
               <h1 className="font-sansita text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight drop-shadow-md whitespace-pre-line">
                 {s.heading}
               </h1>
+              {s.subtitle && (
+                <p className="text-sm sm:text-base text-gray-200 font-medium max-w-md drop-shadow">
+                  {s.subtitle}
+                </p>
+              )}
             </div>
           </div>
         ))}
