@@ -11,7 +11,7 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
     address: '',
     city: 'Pune',
     pincode: '411033',
-    paymentMethod: 'upi',
+    paymentMethod: 'cashfree',
     upiId: '',
   });
   const [orderId, setOrderId] = useState('');
@@ -24,6 +24,8 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
     enableUpi: true,
     enableCod: true,
     enableStripe: true,
+    enableCashfree: true,
+    cashfreeMode: 'SANDBOX',
   });
 
   useEffect(() => {
@@ -45,7 +47,9 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
         const res = await api.getPublicSettings();
         if (res.data) {
           setPaymentConfig(res.data);
-          if (!res.data.enableUpi && res.data.enableCod) {
+          if (!res.data.enableCashfree && res.data.enableUpi) {
+            setFormData((prev) => ({ ...prev, paymentMethod: 'upi' }));
+          } else if (!res.data.enableCashfree && !res.data.enableUpi && res.data.enableCod) {
             setFormData((prev) => ({ ...prev, paymentMethod: 'cod' }));
           }
         }
@@ -97,11 +101,35 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
         },
       });
 
+      if (formData.paymentMethod === 'cashfree' && response.paymentSessionId) {
+        // Load Cashfree JS SDK dynamically
+        const loadCashfreeSdk = () => new Promise((resolve) => {
+          if (window.Cashfree) return resolve(window.Cashfree);
+          const script = document.createElement('script');
+          script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+          script.onload = () => resolve(window.Cashfree);
+          script.onerror = () => resolve(null);
+          document.body.appendChild(script);
+        });
+
+        const CashfreeSDK = await loadCashfreeSdk();
+        if (CashfreeSDK) {
+          const cashfree = CashfreeSDK({
+            mode: paymentConfig.cashfreeMode === 'PRODUCTION' ? 'production' : 'sandbox',
+          });
+          cashfree.checkout({
+            paymentSessionId: response.paymentSessionId,
+            redirectTarget: '_self',
+          });
+          return;
+        }
+      }
+
       if (formData.paymentMethod === 'stripe' && response.sessionUrl) {
         setStep('redirect');
         window.location.href = response.sessionUrl;
       } else {
-        const createdId = response.order?._id || response.data?.orderId || response.data?.order?._id || 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+        const createdId = response.order?._id || response.data?.orderId || response.orderId || 'ORD-' + Math.floor(100000 + Math.random() * 900000);
         setOrderId(createdId);
         setStep('success');
       }
@@ -223,7 +251,21 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
                   <CreditCard className="w-4 h-4 text-[#065750]" /> Payment Method
                 </h3>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                  {(paymentConfig.enableCashfree !== false) && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, paymentMethod: 'cashfree' })}
+                      className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                        formData.paymentMethod === 'cashfree'
+                          ? 'border-[#065750] bg-teal-50/70 text-[#065750] font-bold shadow-xs'
+                          : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <ShieldCheck className="w-5 h-5 mx-auto mb-1 text-[#065750]" />
+                      <p className="text-[11px] leading-tight">Cashfree PG (Instant UPI/Cards)</p>
+                    </button>
+                  )}
                   {paymentConfig.enableUpi && (
                     <button
                       type="button"

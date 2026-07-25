@@ -27,6 +27,25 @@ const settingSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  cashfreeAppId: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  cashfreeSecretKey: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  cashfreeMode: {
+    type: String,
+    enum: ['SANDBOX', 'PRODUCTION'],
+    default: 'SANDBOX',
+  },
+  enableCashfree: {
+    type: Boolean,
+    default: true,
+  },
   updatedAt: {
     type: Date,
     default: Date.now,

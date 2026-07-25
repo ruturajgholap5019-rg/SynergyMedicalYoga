@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { QrCode, Save, CheckCircle2, ShieldCheck, Copy, Check, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
+import { QrCode, Save, CheckCircle2, ShieldCheck, Copy, Check, Upload, Image as ImageIcon, Trash2, Key, Lock, Layers } from 'lucide-react';
 
 export default function PaymentSettingsTab({
   settings,
@@ -13,6 +13,10 @@ export default function PaymentSettingsTab({
     enableUpi: settings?.enableUpi ?? true,
     enableCod: settings?.enableCod ?? true,
     enableStripe: settings?.enableStripe ?? true,
+    cashfreeAppId: settings?.cashfreeAppId || '',
+    cashfreeSecretKey: settings?.cashfreeSecretKey || '',
+    cashfreeMode: settings?.cashfreeMode || 'SANDBOX',
+    enableCashfree: settings?.enableCashfree ?? true,
   });
 
   const [copied, setCopied] = useState(false);
@@ -29,7 +33,6 @@ export default function PaymentSettingsTab({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Handle direct QR photo file upload from computer
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -39,7 +42,6 @@ export default function PaymentSettingsTab({
       return;
     }
 
-    // Limit size to 3MB for clean Base64 storage
     if (file.size > 3 * 1024 * 1024) {
       alert('Image size is too large. Please select a photo under 3MB.');
       return;
@@ -73,21 +75,96 @@ export default function PaymentSettingsTab({
         {/* Header */}
         <div className="flex items-center gap-3 pb-4 border-b border-gray-200">
           <div className="w-12 h-12 rounded-2xl bg-teal-50 text-[#005550] flex items-center justify-center font-bold">
-            <QrCode className="w-6 h-6" />
+            <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
             <h3 className="font-sansita text-2xl font-bold text-gray-900">
-              Payment Gateway &amp; UPI QR Scanner Configuration
+              Cashfree PG &amp; Payment Gateway Configuration
             </h3>
             <p className="text-xs text-gray-500">
-              Upload your official QR Scanner photo or configure your merchant UPI ID
+              Configure Cashfree Payments API credentials, environment modes, and merchant UPI scanner settings
             </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6 text-xs">
           
-          {/* Live Scanner Preview */}
+          {/* 1. Cashfree PG API Credentials Section */}
+          <div className="bg-gradient-to-r from-teal-900 via-[#005550] to-teal-800 text-white p-6 rounded-2xl space-y-4 shadow-md">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-amber-300" />
+                <h4 className="font-bold text-sm text-white">Cashfree Payments PG Credentials (API v3)</h4>
+              </div>
+              <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-400/30">
+                Encrypted &amp; HMAC Verified
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-teal-100 font-semibold mb-1 flex items-center gap-1.5">
+                  <Key className="w-3.5 h-3.5 text-amber-300" /> Cashfree Client App ID *
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. TEST10091827... or PROD_APP_ID"
+                  value={formData.cashfreeAppId}
+                  onChange={(e) => setFormData({ ...formData, cashfreeAppId: e.target.value })}
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-teal-200/50 font-mono focus:outline-none focus:bg-white/20"
+                />
+              </div>
+
+              <div>
+                <label className="block text-teal-100 font-semibold mb-1 flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-amber-300" /> Cashfree Client Secret Key *
+                </label>
+                <input
+                  type="password"
+                  placeholder="Enter Cashfree Secret Key..."
+                  value={formData.cashfreeSecretKey}
+                  onChange={(e) => setFormData({ ...formData, cashfreeSecretKey: e.target.value })}
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-teal-200/50 font-mono focus:outline-none focus:bg-white/20"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2 border-t border-white/10">
+              <div className="flex items-center gap-3">
+                <span className="text-teal-200 text-xs font-semibold">Gateway Mode:</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, cashfreeMode: 'SANDBOX' })}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      formData.cashfreeMode === 'SANDBOX'
+                        ? 'bg-amber-400 text-slate-950 shadow-xs'
+                        : 'bg-white/10 text-white hover:bg-white/20'
+                    }`}
+                  >
+                    SANDBOX (Testing)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, cashfreeMode: 'PRODUCTION' })}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      formData.cashfreeMode === 'PRODUCTION'
+                        ? 'bg-emerald-400 text-slate-950 shadow-xs'
+                        : 'bg-white/10 text-white hover:bg-white/20'
+                    }`}
+                  >
+                    PRODUCTION (Live)
+                  </button>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-teal-200/80">
+                Webhooks HMAC verification is automatically enforced on all incoming PG notifications.
+              </p>
+            </div>
+          </div>
+
+          {/* 2. Live Scanner Preview */}
           <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center gap-6">
             <div className="relative group">
               <img
@@ -138,7 +215,7 @@ export default function PaymentSettingsTab({
               </div>
 
               <p className="text-[11px] text-slate-500">
-                This exact scanner image will render in the customer checkout modal for direct scanning with GPay, PhonePe, and Paytm.
+                This scanner image renders in customer checkout modal for direct scanning with GPay, PhonePe, and Paytm.
               </p>
             </div>
           </div>
@@ -209,11 +286,24 @@ export default function PaymentSettingsTab({
             </div>
           </div>
 
-          {/* Payment Toggles */}
+          {/* Payment Method Toggles */}
           <div className="space-y-3 pt-4 border-t border-gray-200">
             <h4 className="font-bold text-gray-900 text-sm">Enabled Payment Gateways &amp; Methods</h4>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <label className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-gray-200 cursor-pointer hover:bg-slate-100/80 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={formData.enableCashfree}
+                  onChange={(e) => setFormData({ ...formData, enableCashfree: e.target.checked })}
+                  className="w-4 h-4 text-[#005550] focus:ring-[#005550] rounded cursor-pointer"
+                />
+                <div>
+                  <p className="font-bold text-gray-900">Cashfree PG</p>
+                  <p className="text-[10px] text-gray-500">UPI, Cards, Netbanking</p>
+                </div>
+              </label>
+
               <label className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-gray-200 cursor-pointer hover:bg-slate-100/80 transition-colors">
                 <input
                   type="checkbox"
@@ -222,7 +312,7 @@ export default function PaymentSettingsTab({
                   className="w-4 h-4 text-[#005550] focus:ring-[#005550] rounded cursor-pointer"
                 />
                 <div>
-                  <p className="font-bold text-gray-900">UPI &amp; QR Code</p>
+                  <p className="font-bold text-gray-900">Manual UPI &amp; QR</p>
                   <p className="text-[10px] text-gray-500">GPay, PhonePe, Paytm</p>
                 </div>
               </label>
@@ -248,8 +338,8 @@ export default function PaymentSettingsTab({
                   className="w-4 h-4 text-[#005550] focus:ring-[#005550] rounded cursor-pointer"
                 />
                 <div>
-                  <p className="font-bold text-gray-900">Stripe Card Gateway</p>
-                  <p className="text-[10px] text-gray-500">Credit / Debit Cards</p>
+                  <p className="font-bold text-gray-900">Stripe Gateway</p>
+                  <p className="text-[10px] text-gray-500">International Cards</p>
                 </div>
               </label>
             </div>

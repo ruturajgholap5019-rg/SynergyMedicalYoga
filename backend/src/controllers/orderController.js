@@ -109,8 +109,10 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   });
 });
 
+const cashfreeService = require('../services/cashfreeService');
+
 exports.createCheckoutSession = catchAsync(async (req, res, next) => {
-  const { shippingAddress = {}, paymentMethod = 'upi', upiId } = req.body;
+  const { shippingAddress = {}, paymentMethod = 'cashfree', upiId, customerInfo } = req.body;
   const items = await extractValidItems(req);
 
   if (items.length === 0) {
@@ -130,15 +132,61 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
       pincode: shippingAddress.pincode || '411033',
       country: shippingAddress.country || 'India',
     },
-    paymentMethod: paymentMethod || 'upi',
+    paymentMethod: paymentMethod || 'cashfree',
     upiId: upiId || undefined,
-    paymentStatus: paymentMethod === 'cod' ? 'pending' : 'paid',
+    paymentStatus: paymentMethod === 'cod' ? 'pending' : (paymentMethod === 'cashfree' ? 'pending' : 'paid'),
     orderStatus: 'processing',
   });
 
   await order.save();
 
-  // If UPI or Cash on Delivery, complete order in Mongo directly and return order ID
+  // 1. Handle Cashfree Payments (Primary Gateway)
+  if (paymentMethod === 'cashfree') {
+    try {
+      const clientUrl = process.env.CLIENT_URL || req.headers.origin || 'http://localhost:5173';
+      const returnUrl = `${clientUrl}/order-success?order_id={order_id}&session_id={order_token}`;
+      const notifyUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/orders/cashfree-webhook`;
+
+      const cfSession = await cashfreeService.createCashfreeOrderSession({
+        orderId: order._id.toString(),
+        amount: totalAmount,
+        customerInfo: {
+          id: req.user._id.toString(),
+          name: customerInfo?.name || req.user.name,
+          email: customerInfo?.email || req.user.email,
+          phone: customerInfo?.phone || req.user.phone,
+        },
+        returnUrl,
+        notifyUrl,
+      });
+
+      order.cashfreeOrderId = cfSession.cashfreeOrderId;
+      await order.save();
+      await Cart.findOneAndDelete({ user: req.user._id });
+
+      return res.status(200).json({
+        status: 'success',
+        paymentSessionId: cfSession.paymentSessionId,
+        cashfreeOrderId: cfSession.cashfreeOrderId,
+        orderId: order._id,
+        order,
+      });
+    } catch (cfError) {
+      console.error('Cashfree PG error (fallback to local order):', cfError.message);
+      await Cart.findOneAndDelete({ user: req.user._id });
+      return res.status(201).json({
+        status: 'success',
+        order,
+        data: {
+          orderId: order._id,
+          order,
+          message: 'Order created with pending payment',
+        },
+      });
+    }
+  }
+
+  // 2. Handle Manual UPI or Cash on Delivery
   if (paymentMethod === 'upi' || paymentMethod === 'cod') {
     await Cart.findOneAndDelete({ user: req.user._id });
     return res.status(201).json({
@@ -152,7 +200,7 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
     });
   }
 
-  // Attempt Stripe Gateway Checkout Session for Cards
+  // 3. Attempt Stripe Gateway Checkout Session for Cards
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -251,4 +299,48 @@ exports.stripeWebhook = catchAsync(async (req, res) => {
   }
 
   res.status(200).json({ received: true });
+});
+
+exports.cashfreeWebhook = catchAsync(async (req, res) => {
+  const signature = req.headers['x-webhook-signature'];
+  const timestamp = req.headers['x-webhook-timestamp'];
+  const rawBody = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+
+  // Validate HMAC SHA256 Signature
+  const isValid = await cashfreeService.verifyCashfreeSignature(rawBody, signature, timestamp);
+  if (!isValid) {
+    console.warn('⚠️ Invalid Cashfree Webhook Signature received!');
+  }
+
+  const payload = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  const eventType = payload?.type;
+  const orderData = payload?.data?.order;
+  const paymentData = payload?.data?.payment;
+
+  if (eventType === 'PAYMENT_SUCCESS_WEBHOOK' || paymentData?.payment_status === 'SUCCESS') {
+    const cfOrderId = orderData?.order_id || payload?.data?.order_id;
+    if (cfOrderId) {
+      const parts = cfOrderId.split('_');
+      const mongoOrderId = parts[1];
+
+      if (mongoOrderId && mongoose.Types.ObjectId.isValid(mongoOrderId)) {
+        const order = await Order.findByIdAndUpdate(
+          mongoOrderId,
+          {
+            paymentStatus: 'paid',
+            orderStatus: 'processing',
+            cashfreePaymentId: paymentData?.cf_payment_id || paymentData?.payment_id,
+          },
+          { new: true }
+        );
+
+        if (order) {
+          await sendOrderConfirmation(order);
+          console.log(`✅ Cashfree payment confirmed for Order: ${order._id}`);
+        }
+      }
+    }
+  }
+
+  res.status(200).json({ status: 'OK' });
 });

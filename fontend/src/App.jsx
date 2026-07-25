@@ -74,10 +74,11 @@ export default function App() {
   };
 
   const handleAddToCart = async (product, selectedSize, quantity = 1) => {
+    if (!product) return false;
     const productId = product._id || product.id;
     const normalizedSize = selectedSize || 'Standard';
 
-    if (!currentUser) {
+    const saveToGuestCartLocal = () => {
       const updatedItems = [...guestCart];
       const itemIndex = updatedItems.findIndex(
         (item) => item.productId === productId && item.selectedSize === normalizedSize
@@ -99,7 +100,11 @@ export default function App() {
 
       saveGuestCart(updatedItems);
       toast.success(`Saved "${product.name}" to cart! Log in to complete checkout.`);
-      return;
+    };
+
+    if (!currentUser) {
+      saveToGuestCartLocal();
+      return true;
     }
 
     const payload = {
@@ -113,9 +118,14 @@ export default function App() {
       const cartItems = formatCartItems(response.data?.items);
       setCart(cartItems);
       toast.success(`Added "${product.name}" (${payload.selectedSize}) to cart!`);
+      return true;
     } catch (error) {
-      console.error(error);
-      toast.error('Unable to add product to cart.');
+      console.error('addToCart error:', error);
+      // Fallback: If session was invalid / unauthorized, clear stale user state and save to guest cart
+      setCurrentUser(null);
+      window.localStorage.removeItem('synergyUser');
+      saveToGuestCartLocal();
+      return true;
     }
   };
 
@@ -253,13 +263,9 @@ export default function App() {
           }
         }
       } catch (err) {
-        // Keep existing cached user if present to prevent accidental session wipes
-        const cachedUser = window.localStorage.getItem('synergyUser');
-        if (cachedUser) {
-          try {
-            setCurrentUser(JSON.parse(cachedUser));
-          } catch (e) {}
-        }
+        // If profile fetch fails, user is unauthenticated - clear stale local cached user
+        setCurrentUser(null);
+        window.localStorage.removeItem('synergyUser');
       }
     };
 
@@ -353,13 +359,16 @@ export default function App() {
           <ShopPage
             onAddToCart={handleAddToCart}
             onQuickView={(p) => setQuickViewProduct(p)}
-            onBuyNow={(product, selectedSize) => {
-              handleAddToCart(product, selectedSize, 1);
-              if (!currentUser) {
-                toast.error('Please log in or sign up to complete your checkout. Your cart items are saved!');
-                setActivePage('account');
-              } else {
-                setIsCheckoutOpen(true);
+            onBuyNow={async (product, selectedSize) => {
+              const success = await handleAddToCart(product, selectedSize, 1);
+              if (success) {
+                const hasUser = !!window.localStorage.getItem('synergyUser');
+                if (!hasUser) {
+                  toast.error('Please log in or sign up to complete your checkout. Your cart items are saved!');
+                  setActivePage('account');
+                } else {
+                  setIsCheckoutOpen(true);
+                }
               }
             }}
             onViewDetails={(product) => {
@@ -373,13 +382,16 @@ export default function App() {
           <ProductDetailPage
             productId={selectedProductId}
             onAddToCart={handleAddToCart}
-            onBuyNow={(product, selectedSize) => {
-              handleAddToCart(product, selectedSize, 1);
-              if (!currentUser) {
-                toast.error('Please log in or sign up to complete your checkout. Your cart items are saved!');
-                setActivePage('account');
-              } else {
-                setIsCheckoutOpen(true);
+            onBuyNow={async (product, selectedSize) => {
+              const success = await handleAddToCart(product, selectedSize, 1);
+              if (success) {
+                const hasUser = !!window.localStorage.getItem('synergyUser');
+                if (!hasUser) {
+                  toast.error('Please log in or sign up to complete your checkout. Your cart items are saved!');
+                  setActivePage('account');
+                } else {
+                  setIsCheckoutOpen(true);
+                }
               }
             }}
             goBack={() => setActivePage('shop')}
@@ -434,14 +446,17 @@ export default function App() {
           product={quickViewProduct}
           onClose={() => setQuickViewProduct(null)}
           onAddToCart={handleAddToCart}
-          onBuyNow={(p, sz) => {
+          onBuyNow={async (p, sz) => {
             setQuickViewProduct(null);
-            handleAddToCart(p, sz, 1);
-            if (!currentUser) {
-              toast.error('Please log in or sign up to complete checkout. Your cart items are saved!');
-              setActivePage('account');
-            } else {
-              setIsCheckoutOpen(true);
+            const success = await handleAddToCart(p, sz, 1);
+            if (success) {
+              const hasUser = !!window.localStorage.getItem('synergyUser');
+              if (!hasUser) {
+                toast.error('Please log in or sign up to complete checkout. Your cart items are saved!');
+                setActivePage('account');
+              } else {
+                setIsCheckoutOpen(true);
+              }
             }
           }}
         />

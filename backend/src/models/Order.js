@@ -45,8 +45,8 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['stripe', 'cod', 'upi', 'card', 'qr_code'],
-    default: 'upi',
+    enum: ['stripe', 'cod', 'upi', 'card', 'qr_code', 'cashfree'],
+    default: 'cashfree',
   },
   upiId: {
     type: String,
@@ -64,6 +64,8 @@ const orderSchema = new mongoose.Schema({
   },
   stripePaymentIntentId: String,
   stripeSessionId: String,
+  cashfreeOrderId: String,
+  cashfreePaymentId: String,
   createdAt: {
     type: Date,
     default: Date.now,
