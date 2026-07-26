@@ -146,16 +146,16 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-hidden">
-      <div className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden relative flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6 overflow-hidden">
+      <div className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden relative flex flex-col max-h-[96vh] sm:max-h-[92vh] animate-in zoom-in-95 duration-200">
         
         {/* Header (Sticky top) */}
-        <div className="bg-gradient-to-r from-[#065750] to-[#043f3a] px-6 py-4 text-white flex items-center justify-between shrink-0 shadow-xs">
+        <div className="bg-gradient-to-r from-[#065750] to-[#043f3a] px-5 py-4 text-white flex items-center justify-between shrink-0 shadow-xs">
           <div className="flex items-center gap-3">
             <ShieldCheck className="w-6 h-6 text-amber-300 shrink-0" />
             <div>
-              <h2 className="font-extrabold text-lg sm:text-xl leading-tight">Synergy Express Checkout</h2>
-              <p className="text-[11px] text-teal-200">Secure 256-bit encrypted checkout</p>
+              <h2 className="font-extrabold text-base sm:text-xl leading-tight">Synergy Express Checkout</h2>
+              <p className="text-[10px] sm:text-[11px] text-teal-200">Secure 256-bit encrypted checkout</p>
             </div>
           </div>
           <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 text-teal-200 hover:text-white cursor-pointer">
@@ -164,7 +164,7 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
         </div>
 
         {step === 'form' ? (
-          <form onSubmit={handleSubmitOrder} className="flex-1 overflow-y-auto p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-8">
+          <form onSubmit={handleSubmitOrder} className="flex-1 overflow-y-auto p-4 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8">
             {/* Left Inputs */}
             <div className="md:col-span-7 space-y-4">
               <h3 className="font-bold text-slate-800 text-xs uppercase tracking-wider mb-2 flex items-center gap-2">

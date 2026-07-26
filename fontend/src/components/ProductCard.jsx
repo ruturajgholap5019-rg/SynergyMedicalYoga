@@ -25,13 +25,13 @@ export default function ProductCard({ product, onAddToCart, onQuickView, onViewD
   const hasOptions = product.sizes && product.sizes.length > 1;
 
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100/90 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group relative">
+    <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-xs border border-gray-100/90 hover:shadow-xl hover-lift transition-all duration-300 flex flex-col justify-between group relative animate-scale-up">
       
       {/* Top Image Container */}
       <div>
         <div
           onClick={() => onQuickView(product)}
-          className="relative bg-[#f5f7f8] rounded-2xl p-6 flex justify-center items-center h-64 mb-5 overflow-hidden cursor-pointer"
+          className="relative bg-[#f5f7f8] rounded-2xl p-4 sm:p-6 flex justify-center items-center h-48 sm:h-64 mb-4 sm:mb-5 overflow-hidden cursor-pointer"
         >
           <img
             src={product.images?.[0] || product.image || 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80'}
@@ -47,7 +47,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView, onViewD
           {/* Quick view button */}
           <button
             onClick={(e) => { e.stopPropagation(); onQuickView(product); }}
-            className="absolute top-3 right-3 p-2 bg-white/90 text-gray-700 hover:text-[#005550] rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+            className="absolute top-3 right-3 p-2 bg-white/90 text-gray-700 hover:text-[#005550] rounded-full shadow-md sm:opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
             title="Quick View"
           >
             <Eye className="w-4 h-4" />
@@ -67,7 +67,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView, onViewD
         {/* Product Title */}
         <h3
           onClick={() => onQuickView(product)}
-          className="font-poppins font-bold text-[#2C2D33] text-base text-center leading-snug mb-2 cursor-pointer group-hover:text-[#005550] transition-colors"
+          className="font-poppins font-bold text-[#2C2D33] text-sm sm:text-base text-center leading-snug mb-2 cursor-pointer group-hover:text-[#005550] transition-colors line-clamp-2"
         >
           {product.name}
         </h3>
@@ -93,14 +93,14 @@ export default function ProductCard({ product, onAddToCart, onQuickView, onViewD
         )}
 
         <div className="flex items-center justify-center gap-2">
-          <p className="font-bold text-[#2C2D33] text-xl">₹{product.price.toFixed(2)}</p>
+          <p className="font-bold text-[#2C2D33] text-lg sm:text-xl">₹{product.price.toFixed(2)}</p>
           {product.originalPrice && (
             <p className="text-xs text-gray-400 line-through font-medium">₹{product.originalPrice.toFixed(2)}</p>
           )}
         </div>
 
         {/* Two Action Options: Add to Cart & Buy Product */}
-        <div className="grid grid-cols-2 gap-2 pt-1">
+        <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2 pt-1">
           <button
             type="button"
             onClick={handleAdd}
@@ -112,7 +112,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView, onViewD
           >
             {isAdded ? (
               <>
-                <Check className="w-3.5 h-3.5" /> Added
+                <Check className="w-3.5 h-3.5" /> Added to Cart
               </>
             ) : (
               <>
@@ -126,12 +126,13 @@ export default function ProductCard({ product, onAddToCart, onQuickView, onViewD
             onClick={handleBuy}
             className="font-bold py-2.5 px-3 text-xs rounded-xl bg-[#005550] hover:bg-[#003d39] text-white transition-all shadow-md shadow-[#005550]/20 flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            <Zap className="w-3.5 h-3.5 fill-amber-300 text-amber-300" /> Buy Product
+            <Zap className="w-3.5 h-3.5 fill-amber-300 text-amber-300" /> Buy Now
           </button>
         </div>
 
       </div>
 
     </div>
+
   );
 }

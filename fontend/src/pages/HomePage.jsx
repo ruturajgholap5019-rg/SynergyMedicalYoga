@@ -142,7 +142,7 @@ export default function HomePage({ setActivePage, onAddToCart }) {
       {/* ──────────────────────────────────────────────
           1. HERO CAROUSEL SLIDER
           ────────────────────────────────────────────── */}
-      <section className="relative w-full overflow-hidden bg-gray-900 h-screen flex items-center">
+      <section className="relative w-full overflow-hidden bg-gray-900 h-[70vh] min-h-[440px] sm:h-[80vh] lg:h-[calc(100vh-96px)] flex items-center">
         {heroSlides.map((s, i) => (
           <div
             key={i}
@@ -151,18 +151,18 @@ export default function HomePage({ setActivePage, onAddToCart }) {
             <img
               src={s.src}
               alt={s.alt}
-              className="w-full h-screen object-cover"
+              className="w-full h-full object-cover"
             />
             {/* Subtle left vignette gradient so white text pops cleanly */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
             
             {/* Slide Heading Overlay */}
-            <div className="absolute left-6 md:left-16 top-1/2 -translate-y-1/2 max-w-xl text-white z-20 space-y-4">
-              <h1 className="font-sansita text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight drop-shadow-md whitespace-pre-line">
+            <div className="absolute left-4 sm:left-10 md:left-16 right-4 top-1/2 -translate-y-1/2 max-w-xl text-white z-20 space-y-3 sm:space-y-4">
+              <h1 className="font-sansita text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight drop-shadow-md whitespace-pre-line">
                 {s.heading}
               </h1>
               {s.subtitle && (
-                <p className="text-sm sm:text-base text-gray-200 font-medium max-w-md drop-shadow">
+                <p className="text-xs sm:text-base text-gray-200 font-medium max-w-md drop-shadow line-clamp-3">
                   {s.subtitle}
                 </p>
               )}
@@ -172,32 +172,33 @@ export default function HomePage({ setActivePage, onAddToCart }) {
 
         {/* Carousel Arrow Controls */}
         <button
-          onClick={() => setSlide((slide - 1 + total) % total)}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-white/20 hover:bg-white/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all"
+          onClick={() => setSlide((slide - 1 + heroSlides.length) % heroSlides.length)}
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer"
           aria-label="Previous Slide"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
         <button
-          onClick={() => setSlide((slide + 1) % total)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-white/20 hover:bg-white/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all"
+          onClick={() => setSlide((slide + 1) % heroSlides.length)}
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer"
           aria-label="Next Slide"
         >
-          <ChevronRight className="w-6 h-6" />
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
         {/* Dots */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2.5">
-          {HERO_SLIDES.map((_, i) => (
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+          {heroSlides.map((_, i) => (
             <button
               key={i}
               onClick={() => setSlide(i)}
-              className={`w-3 h-3 rounded-full transition-all ${i === slide ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}`}
+              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all cursor-pointer ${i === slide ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}`}
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
         </div>
       </section>
+
 
 
       {/* ──────────────────────────────────────────────
@@ -426,7 +427,7 @@ export default function HomePage({ setActivePage, onAddToCart }) {
               <img
                 src={APP_MOCKUP}
                 alt="Download Synergy MYT App"
-                className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl"
+                className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl animate-float-slow"
               />
             </div>
 

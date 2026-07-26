@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, ShieldCheck } from 'lucide-react';
 
-export default function CartDrawer({ isOpen, onClose, cart, onUpdateQuantity, onRemoveItem, onProceedToCheckout }) {
+export default function CartDrawer({ isOpen, onClose, cart, onUpdateQuantity, onRemoveItem, onProceedToCheckout, onNavigateToShop }) {
   if (!isOpen) return null;
 
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -16,7 +16,7 @@ export default function CartDrawer({ isOpen, onClose, cart, onUpdateQuantity, on
         onClick={onClose}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
         <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between animate-in slide-in-from-right duration-300">
           
           {/* Cart Header */}
@@ -32,7 +32,7 @@ export default function CartDrawer({ isOpen, onClose, cart, onUpdateQuantity, on
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-white/10 text-teal-200 hover:text-white transition-colors"
+              className="p-1.5 rounded-lg hover:bg-white/10 text-teal-200 hover:text-white transition-colors cursor-pointer"
             >
               <X className="w-6 h-6" />
             </button>
@@ -72,8 +72,11 @@ export default function CartDrawer({ isOpen, onClose, cart, onUpdateQuantity, on
                   Explore our clinically designed orthopedic belts and rope therapy kits.
                 </p>
                 <button
-                  onClick={onClose}
-                  className="bg-[#065750] text-white text-xs font-bold px-6 py-3 rounded-xl shadow-md hover:bg-[#043f3a] transition-all"
+                  onClick={() => {
+                    onClose();
+                    onNavigateToShop?.();
+                  }}
+                  className="bg-[#065750] text-white text-xs font-bold px-6 py-3 rounded-xl shadow-md hover:bg-[#043f3a] transition-all cursor-pointer"
                 >
                   Start Shopping
                 </button>

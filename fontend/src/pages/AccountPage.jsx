@@ -48,11 +48,6 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     try {
       const response = await api.login({ email: loginEmail, password: loginPassword });
       onAuthSuccess?.(response.user);
-      if (response.user?.role === 'admin') {
-        setActivePage('admin');
-      } else {
-        setActivePage('home');
-      }
     } catch (error) {
       alert(error.message || 'Login failed');
     } finally {
@@ -71,7 +66,6 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
         password: signUpPassword,
       });
       onAuthSuccess?.(response.user);
-      setActivePage('home');
     } catch (error) {
       alert(error.message || 'Sign up failed');
     } finally {
@@ -155,28 +149,28 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
             </div>
 
             {/* Patient Tabs */}
-            <div className="flex gap-4 border-b border-gray-200 pb-2">
+            <div className="flex gap-2 sm:gap-4 overflow-x-auto no-scrollbar border-b border-gray-200 pb-2">
               <button
                 onClick={() => setUserTab('appointments')}
-                className={`pb-2 px-3 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all border-b-2 cursor-pointer ${
+                className={`pb-2 px-3 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all border-b-2 whitespace-nowrap cursor-pointer ${
                   userTab === 'appointments'
                     ? 'border-[#005550] text-[#005550]'
                     : 'border-transparent text-gray-500 hover:text-gray-800'
                 }`}
               >
-                <Calendar className="w-4 h-4" />
+                <Calendar className="w-4 h-4 shrink-0" />
                 <span>My Appointments ({myAppointments.length})</span>
               </button>
 
               <button
                 onClick={() => setUserTab('orders')}
-                className={`pb-2 px-3 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all border-b-2 cursor-pointer ${
+                className={`pb-2 px-3 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all border-b-2 whitespace-nowrap cursor-pointer ${
                   userTab === 'orders'
                     ? 'border-[#005550] text-[#005550]'
                     : 'border-transparent text-gray-500 hover:text-gray-800'
                 }`}
               >
-                <Package className="w-4 h-4" />
+                <Package className="w-4 h-4 shrink-0" />
                 <span>My Product Orders ({myOrders.length})</span>
               </button>
             </div>

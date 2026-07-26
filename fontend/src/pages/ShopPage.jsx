@@ -53,17 +53,17 @@ export default function ShopPage({ onAddToCart, onQuickView, onViewDetails, onBu
 
       {/* Filter & Sorting Header Bar */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#f4f7f8] p-5 rounded-2xl border border-gray-200/80 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="bg-[#f4f7f8] p-4 sm:p-5 rounded-2xl border border-gray-200/80 flex flex-col sm:flex-row justify-between items-center gap-4">
           
           {/* Category Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full sm:w-auto py-1">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   selectedCategory === cat
-                    ? 'bg-[#005550] text-white shadow-sm'
+                    ? 'bg-[#005550] text-white shadow-xs'
                     : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200/60'
                 }`}
               >
@@ -73,13 +73,15 @@ export default function ShopPage({ onAddToCart, onQuickView, onViewDetails, onBu
           </div>
 
           {/* Sort Dropdown */}
-          <div className="flex items-center gap-2 shrink-0">
-            <SlidersHorizontal className="w-4 h-4 text-[#005550]" />
-            <span className="text-xs font-bold text-gray-700">Sort By:</span>
+          <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-200/60">
+            <div className="flex items-center gap-1.5">
+              <SlidersHorizontal className="w-4 h-4 text-[#005550]" />
+              <span className="text-xs font-bold text-gray-700">Sort By:</span>
+            </div>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="text-xs font-bold bg-white border border-gray-200 rounded-xl px-3 py-2 text-gray-800 focus:outline-none focus:border-[#005550]"
+              className="text-xs font-bold bg-white border border-gray-200 rounded-xl px-3 py-2 text-gray-800 focus:outline-none focus:border-[#005550] cursor-pointer"
             >
               <option value="default">Featured / Default</option>
               <option value="price-low">Price: Low to High</option>
@@ -94,9 +96,9 @@ export default function ShopPage({ onAddToCart, onQuickView, onViewDetails, onBu
       {/* Products Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {loading ? (
-          <div className="text-center text-gray-600">Loading products...</div>
+          <div className="text-center py-12 text-gray-600 font-medium">Loading products...</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {filtered.map((product) => (
               <ProductCard
                 key={product._id || product.id}

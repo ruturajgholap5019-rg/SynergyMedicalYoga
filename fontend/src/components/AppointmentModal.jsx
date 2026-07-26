@@ -67,8 +67,8 @@ export default function AppointmentModal({ isOpen, onClose, selectedService, cur
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-hidden">
-      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6 overflow-hidden">
+      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden relative flex flex-col max-h-[96vh] sm:max-h-[90vh] animate-in zoom-in-95 duration-200">
         
         {/* Header (Sticky top) */}
         <div className="bg-gradient-to-r from-[#005550] via-[#006660] to-[#007068] px-6 py-4 sm:py-5 text-white flex items-center justify-between shrink-0 shadow-xs">
