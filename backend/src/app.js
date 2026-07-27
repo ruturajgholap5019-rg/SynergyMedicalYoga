@@ -63,10 +63,10 @@ app.use(hpp());
 // Serve uploaded static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-app.get('/', (req, res) => {
+app.get(['/', '/api'], (req, res) => {
   res.json({
     status: 'success',
-    message: 'SynergyMedical API is running',
+    message: 'SynergyMedical API is online and running successfully 🚀',
     endpoints: {
       auth: '/api/auth',
       products: '/api/products',
@@ -74,6 +74,7 @@ app.get('/', (req, res) => {
       orders: '/api/orders',
       admin: '/api/admin',
       public: '/api/public',
+      appointments: '/api/appointments',
     },
   });
 });
