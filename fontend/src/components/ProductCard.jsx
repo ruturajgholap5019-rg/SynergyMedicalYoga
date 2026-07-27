@@ -37,12 +37,12 @@ export default function ProductCard({ product, onAddToCart, onQuickView, onViewD
       <div>
         <div
           onClick={handleNavigateToDetails}
-          className="relative bg-[#f5f7f8] rounded-2xl p-4 sm:p-6 flex justify-center items-center h-48 sm:h-56 mb-4 overflow-hidden cursor-pointer"
+          className="relative bg-[#f5f7f8] rounded-2xl flex justify-center items-center h-56 sm:h-64 mb-4 overflow-hidden cursor-pointer w-full"
         >
           <img
             src={product.images?.[0] || product.image || 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80'}
             alt={product.name}
-            className="max-h-full object-contain group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
 
           {/* Category Pill */}

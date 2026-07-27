@@ -680,7 +680,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
                 <img
                   src={PRODUCT_NECK}
                   alt="Cervical Therapy Blog"
-                  className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div className="p-6 space-y-3">
@@ -697,7 +697,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
                 <img
                   src={DOCTOR}
                   alt="Back Therapy Blog"
-                  className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div className="p-6 space-y-3">

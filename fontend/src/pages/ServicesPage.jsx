@@ -187,7 +187,70 @@ export default function ServicesPage({ setActivePage, currentUser }) {
 
 
       {/* ──────────────────────────────────────────────
-          3. FULL-WIDTH SERVICE PROMOTIONAL SLIDER (Elementor Widget Slides)
+          3. DOWNLOAD OUR APP SECTION (Moved above Carousel)
+          ────────────────────────────────────────────── */}
+      <section className="py-20 bg-[#eaf6f6]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+            {/* App Mockup */}
+            <div className="lg:col-span-5 flex justify-center">
+              <img
+                src={settings.appMockupImage || APP_MOCKUP}
+                alt="Synergy MYT App"
+                className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+
+            {/* Text & Download Options */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className="space-y-2">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#005550]">
+                  FIND THE NEAREST THERAPIST / CENTER
+                </p>
+                <div className="w-16 h-0.5 bg-[#005550]" />
+              </div>
+
+              <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
+                Download Our App
+              </h2>
+
+              <div className="space-y-4 text-base sm:text-lg leading-relaxed text-gray-700">
+                <p>
+                  Discover the transformative power of Medical Yoga Therapy with our all-in-one app! Whether you're seeking a qualified therapist nearby, who can come to your place or you want to find a nearest medical yoga center which is on synergy platform of integrated approach nearby who can take care of your pain management end to end, our app has you covered.
+                </p>
+                <p>
+                  Our app has certified medical yoga therapists from various institutes and who work closely with yoga physicians and nuitritionists to provide a holistic regimen for recovery from pain.
+                </p>
+              </div>
+
+              {/* QR Code & Store Badges */}
+              <div className="flex flex-wrap gap-6 pt-4 items-center">
+                <a href={settings.playStoreUrl || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100 hover:shadow-md transition-all cursor-pointer">
+                  <QrCode className="w-10 h-10 text-[#005550]" />
+                  <div>
+                    <img src={PLAYSTORE} alt="Google Play" className="h-8 object-contain" />
+                    <p className="text-[10px] text-gray-500 font-medium mt-0.5">Scan or tap to download</p>
+                  </div>
+                </a>
+
+                <a href={settings.appStoreUrl || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100 hover:shadow-md transition-all cursor-pointer">
+                  <QrCode className="w-10 h-10 text-[#005550]" />
+                  <div>
+                    <img src={APPSTORE} alt="App Store" className="h-8 object-contain" />
+                    <p className="text-[10px] text-gray-500 font-medium mt-0.5">Scan or tap to download</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      {/* ──────────────────────────────────────────────
+          4. FULL-WIDTH SERVICE PROMOTIONAL SLIDER (Elementor Widget Slides)
           ────────────────────────────────────────────── */}
       <section
         onMouseEnter={() => setIsSlidePaused(true)}
@@ -295,17 +358,17 @@ export default function ServicesPage({ setActivePage, currentUser }) {
             </div>
 
             {/* Right Column (50%): Dynamic Toggle Image Display */}
-            <div className="lg:col-span-6 lg:sticky lg:top-24 bg-gradient-to-b from-[#f4fbfb] to-[#ebf7f7] p-6 sm:p-8 rounded-3xl border border-teal-100/80 shadow-md flex flex-col items-center justify-center">
-              <div className="relative w-full aspect-square max-h-[480px] overflow-hidden rounded-2xl bg-white p-3 shadow-inner flex items-center justify-center">
+            <div className="lg:col-span-6 lg:sticky lg:top-24 bg-white rounded-3xl border border-teal-100/80 shadow-md overflow-hidden flex flex-col justify-between">
+              <div className="relative w-full h-[400px] sm:h-[480px] overflow-hidden">
                 <img
                   key={currentTherapy.id}
                   src={currentTherapy.image}
                   alt={currentTherapy.title}
-                  className="max-h-full max-w-full object-contain animate-in fade-in duration-500 transform hover:scale-105 transition-all duration-500 filter drop-shadow"
+                  className="w-full h-full object-cover animate-in fade-in duration-500 transform hover:scale-105 transition-all duration-500"
                 />
               </div>
-              <div className="mt-6 text-center">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-[#005550] bg-white px-4 py-2 rounded-full border border-teal-200/60 shadow-xs">
+              <div className="p-4 bg-[#f4fbfb] border-t border-teal-100/60 text-center">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-[#005550]">
                   Anatomical Diagram: {currentTherapy.title}
                 </span>
               </div>
@@ -400,69 +463,6 @@ export default function ServicesPage({ setActivePage, currentUser }) {
             </div>
           </div>
 
-        </div>
-      </section>
-
-
-      {/* ──────────────────────────────────────────────
-          7. DOWNLOAD OUR APP SECTION
-          ────────────────────────────────────────────── */}
-      <section className="py-20 bg-[#eaf6f6]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-
-            {/* App Mockup */}
-            <div className="lg:col-span-5 flex justify-center">
-              <img
-                src={settings.appMockupImage || APP_MOCKUP}
-                alt="Synergy MYT App"
-                className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
-              />
-            </div>
-
-            {/* Text & Download Options */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="space-y-2">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#005550]">
-                  FIND THE NEAREST THERAPIST / CENTER
-                </p>
-                <div className="w-16 h-0.5 bg-[#005550]" />
-              </div>
-
-              <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
-                Download Our App
-              </h2>
-
-              <div className="space-y-4 text-base sm:text-lg leading-relaxed text-gray-700">
-                <p>
-                  Discover the transformative power of Medical Yoga Therapy with our all-in-one app! Whether you're seeking a qualified therapist nearby, who can come to your place or you want to find a nearest medical yoga center which is on synergy platform of integrated approach nearby who can take care of your pain management end to end, our app has you covered.
-                </p>
-                <p>
-                  Our app has certified medical yoga therapists from various institutes and who work closely with yoga physicians and nuitritionists to provide a holistic regimen for recovery from pain.
-                </p>
-              </div>
-
-              {/* QR Code & Store Badges */}
-              <div className="flex flex-wrap gap-6 pt-4 items-center">
-                <a href={settings.playStoreUrl || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100 hover:shadow-md transition-all cursor-pointer">
-                  <QrCode className="w-10 h-10 text-[#005550]" />
-                  <div>
-                    <img src={PLAYSTORE} alt="Google Play" className="h-8 object-contain" />
-                    <p className="text-[10px] text-gray-500 font-medium mt-0.5">Scan or tap to download</p>
-                  </div>
-                </a>
-
-                <a href={settings.appStoreUrl || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100 hover:shadow-md transition-all cursor-pointer">
-                  <QrCode className="w-10 h-10 text-[#005550]" />
-                  <div>
-                    <img src={APPSTORE} alt="App Store" className="h-8 object-contain" />
-                    <p className="text-[10px] text-gray-500 font-medium mt-0.5">Scan or tap to download</p>
-                  </div>
-                </a>
-              </div>
-            </div>
-
-          </div>
         </div>
       </section>
 

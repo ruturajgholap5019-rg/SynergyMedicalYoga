@@ -226,11 +226,11 @@ export default function AboutPage() {
                 <div className="w-20 h-1 bg-[#005550] rounded" />
               </div>
 
-              <div className="bg-white p-6 rounded-3xl shadow-md border border-gray-200 flex items-center justify-center">
+              <div className="bg-white rounded-3xl shadow-md border border-gray-200 overflow-hidden h-[360px] sm:h-[420px] w-full">
                 <img
                   src={INTEGRATED_BG}
                   alt="Integrated Approach To Joint Care"
-                  className="w-full max-w-sm object-contain rounded-2xl transform hover:scale-105 transition-transform duration-500 filter drop-shadow"
+                  className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
                 />
               </div>
             </div>
