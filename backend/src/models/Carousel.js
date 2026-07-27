@@ -17,6 +17,11 @@ const carouselSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  page: {
+    type: String,
+    enum: ['home', 'services'],
+    default: 'home',
+  },
   order: {
     type: Number,
     default: 0,

@@ -75,6 +75,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
   const [selectedService, setSelectedService] = useState(null);
 
   // Carousel State
+  const [serviceSlides, setServiceSlides] = useState(SERVICE_SLIDES);
   const [slide, setSlide] = useState(0);
   const [isSlidePaused, setIsSlidePaused] = useState(false);
 
@@ -90,17 +91,37 @@ export default function ServicesPage({ setActivePage, currentUser }) {
         setLoadingServices(false);
       }
     };
+
+    const fetchCarousels = async () => {
+      try {
+        const res = await api.getPublicCarousels();
+        if (res.data && res.data.length > 0) {
+          const srvSlides = res.data.filter((c) => c.page === 'services');
+          if (srvSlides.length > 0) {
+            const mapped = srvSlides.map((c) => ({
+              src: c.imageUrl,
+              alt: c.title || 'Synergy Medical Yoga Therapy Service',
+            }));
+            setServiceSlides(mapped);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load services carousels:', err);
+      }
+    };
+
     fetchServices();
+    fetchCarousels();
   }, []);
 
   // Carousel Autoplay Timer (5000ms) with Pause on Hover
   useEffect(() => {
-    if (isSlidePaused) return;
+    if (isSlidePaused || serviceSlides.length === 0) return;
     const timer = setInterval(() => {
-      setSlide((prev) => (prev + 1) % SERVICE_SLIDES.length);
+      setSlide((prev) => (prev + 1) % serviceSlides.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [isSlidePaused]);
+  }, [isSlidePaused, serviceSlides]);
 
   const currentTherapy = THERAPY_ACCORDION.find((t) => t.id === openTab) || THERAPY_ACCORDION[0];
 
@@ -257,7 +278,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
         onMouseLeave={() => setIsSlidePaused(false)}
         className="relative w-full overflow-hidden bg-slate-900 h-[450px] sm:h-[550px] lg:h-[600px] flex items-center group shadow-md"
       >
-        {SERVICE_SLIDES.map((s, i) => (
+        {serviceSlides.map((s, i) => (
           <div
             key={i}
             className={`absolute inset-0 transition-opacity duration-1000 ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
@@ -273,14 +294,14 @@ export default function ServicesPage({ setActivePage, currentUser }) {
 
         {/* Carousel Arrow Controls */}
         <button
-          onClick={() => setSlide((slide - 1 + SERVICE_SLIDES.length) % SERVICE_SLIDES.length)}
+          onClick={() => setSlide((slide - 1 + serviceSlides.length) % serviceSlides.length)}
           className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-black/40 hover:bg-black/70 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer opacity-80 hover:opacity-100"
           aria-label="Previous Slide"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
         <button
-          onClick={() => setSlide((slide + 1) % SERVICE_SLIDES.length)}
+          onClick={() => setSlide((slide + 1) % serviceSlides.length)}
           className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-black/40 hover:bg-black/70 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer opacity-80 hover:opacity-100"
           aria-label="Next Slide"
         >
@@ -289,7 +310,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
 
         {/* Pagination Dots */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2.5">
-          {SERVICE_SLIDES.map((_, i) => (
+          {serviceSlides.map((_, i) => (
             <button
               key={i}
               onClick={() => setSlide(i)}

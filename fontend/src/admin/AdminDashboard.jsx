@@ -255,6 +255,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
       imageUrl: '',
       buttonText: 'Explore Shop',
       buttonLink: '/shop',
+      page: 'home',
       order: carousels.length + 1,
       isActive: true,
     });
@@ -270,6 +271,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
       imageUrl: slide.imageUrl || '',
       buttonText: slide.buttonText || 'Explore Shop',
       buttonLink: slide.buttonLink || '/shop',
+      page: slide.page || 'home',
       order: slide.order || 1,
       isActive: slide.isActive ?? true,
     });
@@ -951,6 +953,18 @@ export default function AdminDashboard({ showToast, currentUser }) {
                 )}
               </div>
 
+              <div>
+                <label className="block font-bold text-gray-800 text-xs mb-1">Target Display Page / Section *</label>
+                <select
+                  value={carouselFormData.page || 'home'}
+                  onChange={(e) => setCarouselFormData({ ...carouselFormData, page: e.target.value })}
+                  className="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs font-bold text-[#005550] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
+                >
+                  <option value="home">Home Page Banner (Hero Slider)</option>
+                  <option value="services">Services Page Banner (Promotional Slider)</option>
+                </select>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block font-bold text-gray-700 mb-1">Button Text</label>
@@ -984,7 +998,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
                   className="w-4 h-4 text-[#005550] focus:ring-[#005550] rounded cursor-pointer"
                 />
                 <label htmlFor="carouselIsActive" className="font-bold text-gray-800 cursor-pointer">
-                  Slide is active and visible on homepage
+                  Slide is active and visible on website
                 </label>
               </div>
 

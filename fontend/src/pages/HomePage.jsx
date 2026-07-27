@@ -80,15 +80,18 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       try {
         const res = await api.getPublicCarousels();
         if (res.data && res.data.length > 0) {
-          const mapped = res.data.map((c) => ({
-            src: c.imageUrl,
-            alt: c.title || 'Synergy Medical Yoga Banner',
-            heading: c.title,
-            subtitle: c.subtitle,
-            buttonText: c.buttonText || 'Explore Shop',
-            buttonLink: c.buttonLink || '/shop',
-          }));
-          setHeroSlides(mapped);
+          const homeSlides = res.data.filter((c) => !c.page || c.page === 'home');
+          if (homeSlides.length > 0) {
+            const mapped = homeSlides.map((c) => ({
+              src: c.imageUrl,
+              alt: c.title || 'Synergy Medical Yoga Banner',
+              heading: c.title,
+              subtitle: c.subtitle,
+              buttonText: c.buttonText || 'Explore Shop',
+              buttonLink: c.buttonLink || '/shop',
+            }));
+            setHeroSlides(mapped);
+          }
         }
       } catch (err) {
         console.error('Failed to load hero carousels:', err);
