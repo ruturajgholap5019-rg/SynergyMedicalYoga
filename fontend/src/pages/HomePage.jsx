@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight, Star, QrCode } from 'lucide-react';
 import { PRODUCTS } from '../data/mockData';
 import { api } from '../lib/api';
+import ProductCard from '../components/ProductCard';
+import { useSiteSettings } from '../lib/useSiteSettings';
 
 /* ── Exact Image URLs from Original Site ── */
 const HERO_SLIDES = [
@@ -63,9 +65,11 @@ function Counter({ end, suffix = '' }) {
   return <span ref={ref}>{val}{suffix}</span>;
 }
 
-export default function HomePage({ setActivePage, onAddToCart }) {
+export default function HomePage({ setActivePage, onAddToCart, onQuickView, onViewDetails, onBuyNow }) {
+  const { settings } = useSiteSettings();
   const [slide, setSlide] = useState(0);
   const [heroSlides, setHeroSlides] = useState(HERO_SLIDES);
+  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [aboutVisible, setAboutVisible] = useState(false);
   const [orthVisible, setOrthVisible] = useState(false);
   const aboutRef = useRef(null);
@@ -78,7 +82,7 @@ export default function HomePage({ setActivePage, onAddToCart }) {
         if (res.data && res.data.length > 0) {
           const mapped = res.data.map((c) => ({
             src: c.imageUrl,
-            alt: c.title,
+            alt: c.title || 'Synergy Medical Yoga Banner',
             heading: c.title,
             subtitle: c.subtitle,
             buttonText: c.buttonText || 'Explore Shop',
@@ -93,13 +97,14 @@ export default function HomePage({ setActivePage, onAddToCart }) {
     fetchCarousels();
   }, []);
 
-  // Auto advance slides every 4.5s
+  // Auto advance slides every 5000ms (5s) with pause on hover/interaction
   useEffect(() => {
+    if (isCarouselPaused) return;
     const timer = setInterval(() => {
       setSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 4500);
+    }, 5000);
     return () => clearInterval(timer);
-  }, [heroSlides]);
+  }, [heroSlides, isCarouselPaused]);
 
   // Track scroll direction reliably
   const prevScrollY = useRef(typeof window !== 'undefined' ? window.scrollY : 0);
@@ -142,7 +147,11 @@ export default function HomePage({ setActivePage, onAddToCart }) {
       {/* ──────────────────────────────────────────────
           1. HERO CAROUSEL SLIDER
           ────────────────────────────────────────────── */}
-      <section className="relative w-full overflow-hidden bg-gray-900 h-[70vh] min-h-[440px] sm:h-[80vh] lg:h-[calc(100vh-96px)] flex items-center">
+      <section
+        onMouseEnter={() => setIsCarouselPaused(true)}
+        onMouseLeave={() => setIsCarouselPaused(false)}
+        className="relative w-full overflow-hidden bg-gray-900 h-[70vh] min-h-[440px] sm:h-[80vh] lg:h-[calc(100vh-96px)] flex items-center group"
+      >
         {heroSlides.map((s, i) => (
           <div
             key={i}
@@ -151,22 +160,26 @@ export default function HomePage({ setActivePage, onAddToCart }) {
             <img
               src={s.src}
               alt={s.alt}
-              className="w-full h-full object-cover"
+              className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === slide ? 'scale-105' : 'scale-100'}`}
             />
-            {/* Subtle left vignette gradient so white text pops cleanly */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
-            
-            {/* Slide Heading Overlay */}
-            <div className="absolute left-4 sm:left-10 md:left-16 right-4 top-1/2 -translate-y-1/2 max-w-xl text-white z-20 space-y-3 sm:space-y-4">
-              <h1 className="font-sansita text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight drop-shadow-md whitespace-pre-line">
-                {s.heading}
-              </h1>
-              {s.subtitle && (
-                <p className="text-xs sm:text-base text-gray-200 font-medium max-w-md drop-shadow line-clamp-3">
-                  {s.subtitle}
-                </p>
-              )}
-            </div>
+            {/* Optional Slide Heading Overlay (only shown if title/subtitle exists) */}
+            {(s.heading || s.subtitle) && (
+              <>
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent pointer-events-none" />
+                <div className="absolute left-4 sm:left-10 md:left-16 right-4 top-1/2 -translate-y-1/2 max-w-xl text-white z-20 space-y-3 sm:space-y-4 pointer-events-none">
+                  {s.heading && (
+                    <h1 className="font-sansita text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight drop-shadow-md whitespace-pre-line">
+                      {s.heading}
+                    </h1>
+                  )}
+                  {s.subtitle && (
+                    <p className="text-xs sm:text-base text-gray-200 font-medium max-w-md drop-shadow line-clamp-3">
+                      {s.subtitle}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         ))}
 
@@ -246,88 +259,111 @@ export default function HomePage({ setActivePage, onAddToCart }) {
 
 
       {/* ──────────────────────────────────────────────
-          3. WHY LEARN RBT WITH SYNERGY MEDICAL YOGA
+          3. WHY LEARN RBT WITH SYNERGY MEDICAL YOGA (Live WordPress Alternating Timeline Design)
           ────────────────────────────────────────────── */}
-      <section className="py-20 bg-[#f4f9f9]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="mb-14">
-            <h2 className="font-sansita italic text-3xl sm:text-4xl font-bold text-[#005550] leading-tight">
-              Why Learn RBT with<br />Synergy Medical Yoga
-            </h2>
-          </div>
+      <section className="py-24 bg-gradient-to-b from-[#f8fdfe] to-[#f1fafe] relative overflow-hidden">
+        {/* Decorative Botanical Timeline Wave connecting illustrations across columns */}
+        <div className="absolute top-[52%] left-0 w-full -translate-y-1/2 pointer-events-none hidden lg:block overflow-hidden opacity-70 z-0">
+          <svg viewBox="0 0 1400 200" className="w-full h-44 stroke-emerald-600/40 fill-none" strokeWidth="1.5">
+            <path d="M -100,100 C 200,10 400,190 700,100 C 1000,10 1200,180 1500,100" strokeDasharray="6 6" />
+            <path d="M 280,60 Q 295,45 305,60 Q 295,75 280,60 Z" className="fill-emerald-100 stroke-emerald-700/60" strokeDasharray="none" />
+            <path d="M 660,135 Q 675,120 685,135 Q 675,150 660,135 Z" className="fill-emerald-100 stroke-emerald-700/60" strokeDasharray="none" />
+            <path d="M 1040,75 Q 1055,60 1065,75 Q 1055,90 1040,75 Z" className="fill-emerald-100 stroke-emerald-700/60" strokeDasharray="none" />
+          </svg>
+        </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 items-center">
-            <div className="text-center space-y-4 px-6">
-              <div className="mx-auto w-44 h-44 flex items-center justify-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 items-stretch">
+            
+            {/* Column 1: Title ABOVE, Image CENTER, Text BELOW */}
+            <div className="flex flex-col justify-between text-left">
+              <div>
+                <h2 className="font-sansita italic text-2xl sm:text-3xl lg:text-[32px] font-bold text-[#005550] leading-tight mb-4">
+                  Why Learn RBT with<br />Synergy Medical Yoga
+                </h2>
+              </div>
+              <div className="my-6 h-52 sm:h-60 flex items-center justify-center relative transform hover:scale-105 transition-transform duration-500">
                 <img
                   src={RBT_LEARN}
                   alt="Learn it from Experts"
-                  className="max-h-full object-contain"
+                  className="max-h-full object-contain filter drop-shadow-md"
                   onError={(e) => { e.target.onerror = null; e.target.src = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/Education_Titl_Img.webp'; }}
                 />
               </div>
-              <h3 className="font-poppins font-bold text-[#005550] text-lg">
-                Learn it from Experts
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed max-w-xs mx-auto">
-                of 45 Hours of Intensive Training in hybrid online and offline mode offering flexibility.
-              </p>
+              <div>
+                <h3 className="font-poppins font-bold text-[#005550] text-lg mb-1.5">
+                  Learn it from Experts
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                  of 45 Hours of Intensive Training in hybrid online and offline mode offering flexibility.
+                </p>
+              </div>
             </div>
 
-            <div className="text-center space-y-4 px-6">
-              <div className="mx-auto w-44 h-44 flex items-center justify-center">
+            {/* Column 2: Text ABOVE, Image CENTER/BELOW */}
+            <div className="flex flex-col justify-between text-left lg:pt-2">
+              <div className="mb-6">
+                <h3 className="font-poppins font-bold text-[#005550] text-lg mb-1.5">
+                  Structured &amp; Focused Curriculum
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                  Comprehensive Theory &amp; Practical Curriculum, Course Books &amp; Personalized Tying Protocol Video Access
+                </p>
+              </div>
+              <div className="my-6 h-56 sm:h-64 flex items-center justify-center relative transform hover:scale-105 transition-transform duration-500">
                 <img
                   src={RBT_CURRIC}
                   alt="Structured & Focused Curriculum"
-                  className="max-h-full object-contain"
+                  className="max-h-full object-contain filter drop-shadow-md"
                   onError={(e) => { e.target.onerror = null; e.target.src = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-२-1-scaled.png'; }}
                 />
               </div>
-              <h3 className="font-poppins font-bold text-[#005550] text-lg">
-                Structured &amp; Focused Curriculum
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed max-w-xs mx-auto">
-                Comprehensive Theory &amp; Practical Curriculum, Course Books &amp; Personalized Tying Protocol Video Access
-              </p>
+              <div className="hidden lg:block h-12"></div>
             </div>
 
-            <div className="text-center space-y-4 px-6">
-              <div className="mx-auto w-44 h-44 flex items-center justify-center">
+            {/* Column 3: Image ABOVE/CENTER, Text BELOW */}
+            <div className="flex flex-col justify-between text-left">
+              <div className="hidden lg:block h-6"></div>
+              <div className="my-6 h-60 sm:h-68 flex items-center justify-center relative transform hover:scale-105 transition-transform duration-500">
                 <img
                   src={RBT_MONETIZE}
                   alt="Monetize Your Skil"
-                  className="max-h-full object-contain"
+                  className="max-h-full object-contain filter drop-shadow-lg"
                   onError={(e) => { e.target.onerror = null; e.target.src = PRODUCT_KNEE; }}
                 />
               </div>
-              <h3 className="font-poppins font-bold text-[#005550] text-lg">
-                Monetize Your Skil
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed max-w-xs mx-auto">
-                Opportunity to become Synergy Medical Yoga Products Reseller
-              </p>
+              <div>
+                <h3 className="font-poppins font-bold text-[#005550] text-lg mb-1.5">
+                  Monetize Your Skil
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                  Opportunity to become Synergy Medical Yoga Products Reseller
+                </p>
+              </div>
             </div>
 
-            <div className="text-center space-y-4 px-6">
-              <div className="mx-auto w-44 h-44 flex items-center justify-center">
+            {/* Column 4: Text ABOVE, Image BELOW */}
+            <div className="flex flex-col justify-between text-left lg:pt-4">
+              <div className="mb-6">
+                <h3 className="font-poppins font-bold text-[#005550] text-lg mb-1.5">
+                  Build Your Career
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                  Become the part of Synergy App to get enquires from patients directly in your inbox
+                </p>
+              </div>
+              <div className="my-6 h-56 sm:h-64 flex items-center justify-center relative transform hover:scale-105 transition-transform duration-500">
                 <img
                   src={RBT_CAREER}
                   alt="Build Your Career"
-                  className="max-h-full object-contain"
+                  className="max-h-full object-contain filter drop-shadow-lg"
                   onError={(e) => { e.target.onerror = null; e.target.src = APP_MOCKUP; }}
                 />
               </div>
-              <h3 className="font-poppins font-bold text-[#005550] text-lg">
-                Build Your Career
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed max-w-xs mx-auto">
-                Become the part of Synergy App to get enquires from patients directly in your inbox
-              </p>
+              <div className="hidden lg:block h-8"></div>
             </div>
 
           </div>
-
         </div>
       </section>
 
@@ -369,48 +405,53 @@ export default function HomePage({ setActivePage, onAddToCart }) {
       <section className="py-20 bg-[#f4f7f8] border-t border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
-          <div>
-            <p className="text-[#005550] font-semibold text-sm">Showing all 3 results</p>
+          <div className="flex justify-between items-center">
+            <p className="text-[#005550] font-semibold text-sm">Showing top featured therapeutic kits (4 in a row)</p>
+            <button
+              onClick={() => setActivePage('shop')}
+              className="text-xs font-extrabold text-[#005550] hover:underline flex items-center gap-1 cursor-pointer"
+            >
+              View All Products <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {PRODUCTS.slice(0,3).map((p, idx) => (
-              <div key={p.id} className="bg-white rounded-4xl p-6 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="bg-[#f5f7f8] rounded-3xl p-6 flex justify-center items-center h-64 mb-6">
-                    <img
-                      src={p.image}
-                      alt={p.name}
-                      className="max-h-full object-contain hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  <h3 className="font-poppins font-bold text-[#2C2D33] text-lg text-center leading-snug mb-3">
-                    {p.name}
-                  </h3>
-                </div>
-                <div className="text-center space-y-4 pt-4">
-                  <p className="font-bold text-[#2C2D33] text-xl">₹{p.price.toFixed(2)}</p>
-                  {idx === 0 ? (
-                    <button
-                      onClick={() => onQuickView(p)}
-                      className="bg-[#005550] hover:bg-[#003d39] text-white font-bold py-3.5 px-6 rounded-lg w-full transition-colors shadow-sm"
-                    >
-                      Select options
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => onAddToCart(p, p.sizes?.[0])}
-                      className="bg-[#005550] hover:bg-[#003d39] text-white font-bold py-3.5 px-6 rounded-lg w-full transition-colors shadow-sm"
-                    >
-                      Add to cart
-                    </button>
-                  )}
-                </div>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            {PRODUCTS.slice(0, 4).map((p) => (
+              <ProductCard
+                key={p._id || p.id}
+                product={p}
+                onAddToCart={onAddToCart}
+                onQuickView={onQuickView}
+                onViewDetails={onViewDetails}
+                onBuyNow={onBuyNow}
+              />
             ))}
-
           </div>
 
+        </div>
+      </section>
+
+
+      {/* ──────────────────────────────────────────────
+          5.5 BECAUSE SHE DESERVES TO WALK FREE FROM PAIN
+          ────────────────────────────────────────────── */}
+      <section className="py-16 bg-[#e0f5f3] overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-6 space-y-4">
+              <h2 className="font-sansita text-4xl sm:text-5xl lg:text-6xl font-bold text-[#005550] leading-tight">
+                Because She<br />Deserves<br />to Walk Free<br />from Pain.
+              </h2>
+            </div>
+            <div className="lg:col-span-6 flex justify-center">
+              <img
+                src="https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png"
+                alt="Because She Deserves to Walk Free from Pain"
+                className="w-full max-w-lg object-contain rounded-3xl drop-shadow-xl hover:scale-102 transition-transform duration-500"
+                onError={(e) => { e.target.onerror = null; e.target.src = APP_MOCKUP; }}
+              />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -474,24 +515,75 @@ export default function HomePage({ setActivePage, onAddToCart }) {
           <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-teal-100/60 max-w-4xl mx-auto mt-16 grid grid-cols-3 divide-x divide-gray-200 text-center">
             <div className="px-4">
               <div className="font-poppins font-extrabold text-3xl sm:text-4xl md:text-5xl text-[#005550]">
-                <Counter end={15} />
+                <Counter end={settings.statsCities ?? 15} />
               </div>
               <p className="text-xs sm:text-sm font-bold tracking-widest text-gray-600 uppercase mt-2">CITIES</p>
             </div>
             <div className="px-4">
               <div className="font-poppins font-extrabold text-3xl sm:text-4xl md:text-5xl text-[#005550]">
-                <Counter end={200} suffix="+" />
+                <Counter end={settings.statsCenters ?? 200} suffix="+" />
               </div>
               <p className="text-xs sm:text-sm font-bold tracking-widest text-gray-600 uppercase mt-2">CENTERS</p>
             </div>
             <div className="px-4">
               <div className="font-poppins font-extrabold text-3xl sm:text-4xl md:text-5xl text-[#005550]">
-                <Counter end={400} suffix="+" />
+                <Counter end={settings.statsTherapists ?? 400} suffix="+" />
               </div>
               <p className="text-xs sm:text-sm font-bold tracking-widest text-gray-600 uppercase mt-2">THERAPISTS</p>
             </div>
           </div>
 
+        </div>
+      </section>
+
+
+      {/* ──────────────────────────────────────────────
+          6.5 DOWNLOAD OUR APP TO BOOK AN APPOINTMENT
+          ────────────────────────────────────────────── */}
+      <section className="py-16 bg-[#eaf6f6]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-3xl p-8 sm:p-12 border border-teal-100 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-6 space-y-6">
+              <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight whitespace-pre-line">
+                {settings.appPromoHeading || 'Download Our App\nto Book an Appoiment'}
+              </h2>
+              <div className="flex flex-wrap gap-4 pt-2">
+                <a
+                  href={settings.playStoreUrl || "https://play.google.com/store/apps"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-3 bg-gray-900 text-white px-5 py-3 rounded-2xl hover:bg-black transition-all shadow-md"
+                >
+                  <QrCode className="w-8 h-8 text-teal-400" />
+                  <div className="text-left">
+                    <p className="text-[10px] uppercase font-bold text-gray-400">GET IT ON</p>
+                    <p className="text-sm font-bold text-white leading-none">Google Play</p>
+                  </div>
+                </a>
+
+                <a
+                  href={settings.appStoreUrl || "https://apps.apple.com"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-3 bg-gray-900 text-white px-5 py-3 rounded-2xl hover:bg-black transition-all shadow-md"
+                >
+                  <QrCode className="w-8 h-8 text-teal-400" />
+                  <div className="text-left">
+                    <p className="text-[10px] uppercase font-bold text-gray-400">DOWNLOAD ON THE</p>
+                    <p className="text-sm font-bold text-white leading-none">App Store</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div className="lg:col-span-6 flex justify-center">
+              <img
+                src={settings.appMockupImage || "https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png"}
+                alt="Therapist with Synergy MYT App"
+                className="max-w-md w-full object-contain drop-shadow-2xl animate-float-slow"
+              />
+            </div>
+          </div>
         </div>
       </section>
 

@@ -40,12 +40,12 @@ export default function CarouselsTab({
                   alt={slide.title}
                   className="w-full h-full object-cover opacity-80"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-5 flex flex-col justify-end text-white">
-                  <span className="text-[10px] font-bold uppercase tracking-wider bg-[#005550] px-2.5 py-1 rounded-full w-fit mb-1">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent p-4 flex flex-col justify-end text-white">
+                  <span className="text-[10px] font-bold uppercase tracking-wider bg-[#005550] px-2.5 py-1 rounded-full w-fit">
                     Slide #{slide.order || 1}
                   </span>
-                  <h4 className="font-bold text-lg leading-tight">{slide.title}</h4>
-                  <p className="text-xs text-gray-200 line-clamp-2 mt-1">{slide.subtitle}</p>
+                  {slide.title && <h4 className="font-bold text-base leading-tight mt-2">{slide.title}</h4>}
+                  {slide.subtitle && <p className="text-xs text-gray-200 line-clamp-2 mt-0.5">{slide.subtitle}</p>}
                 </div>
               </div>
 

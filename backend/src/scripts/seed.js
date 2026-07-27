@@ -121,8 +121,6 @@ const products = [
 
 const carousels = [
   {
-    title: 'Precision Spine & Joint Therapy Belts',
-    subtitle: 'Doctor-designed orthopaedic belts and rope posture aligners for non-invasive recovery.',
     imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1400&q=80',
     buttonText: 'Explore Shop',
     buttonLink: '/shop',
@@ -130,8 +128,6 @@ const carousels = [
     isActive: true,
   },
   {
-    title: 'Iyengar Medical Yoga Clinical Sessions',
-    subtitle: 'Targeted muscular relief and guided therapeutic poses supervised by clinical experts.',
     imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1400&q=80',
     buttonText: 'Book Therapy',
     buttonLink: '/services',
@@ -139,8 +135,6 @@ const carousels = [
     isActive: true,
   },
   {
-    title: 'Advanced Postural Realignment & Sciatica Care',
-    subtitle: 'Non-surgical rehabilitation for chronic back, neck, and joint ailments in Pune & online.',
     imageUrl: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1400&q=80',
     buttonText: 'Find Centers',
     buttonLink: '/find-centres',

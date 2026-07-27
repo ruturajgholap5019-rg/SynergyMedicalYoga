@@ -134,7 +134,7 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
     },
     paymentMethod: paymentMethod || 'cashfree',
     upiId: upiId || undefined,
-    paymentStatus: paymentMethod === 'cod' ? 'pending' : (paymentMethod === 'cashfree' ? 'pending' : 'paid'),
+    paymentStatus: ['cod', 'cashfree', 'stripe'].includes(paymentMethod) ? 'pending' : 'paid',
     orderStatus: 'processing',
   });
 
@@ -215,12 +215,14 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
         quantity: item.quantity,
       })),
       mode: 'payment',
-      success_url: `${process.env.CLIENT_URL || req.headers.origin || 'http://localhost:5173'}/order-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.CLIENT_URL || req.headers.origin || 'http://localhost:5173'}/checkout`,
+      success_url: `${process.env.CLIENT_URL || req.headers.origin || 'http://localhost:5173'}/order-success?order_id=${order._id}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.CLIENT_URL || req.headers.origin || 'http://localhost:5173'}/`,
       metadata: {
         orderId: order._id.toString(),
       },
     });
+
+    await Cart.findOneAndDelete({ user: req.user._id });
 
     res.status(200).json({
       status: 'success',
@@ -229,16 +231,8 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
       order: order,
     });
   } catch (stripeError) {
-    console.error('Stripe error (fallback to local order):', stripeError.message);
-    res.status(201).json({
-      status: 'success',
-      order: order,
-      data: {
-        orderId: order._id,
-        order: order,
-        message: 'Order created successfully',
-      },
-    });
+    console.error('Stripe Checkout Error:', stripeError.message);
+    return next(new AppError(`Stripe Payment Failed: ${stripeError.message}. Please check STRIPE_SECRET_KEY in backend .env`, 400));
   }
 });
 

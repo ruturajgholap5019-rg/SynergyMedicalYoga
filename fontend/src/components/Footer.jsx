@@ -1,5 +1,6 @@
 import React from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { useSiteSettings } from '../lib/useSiteSettings';
 
 const LOGO = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Synergy-Logo_png-02-scaled.png';
 
@@ -11,6 +12,7 @@ const LiIcon = () => (
 );
 
 export default function Footer({ setActivePage }) {
+  const { settings } = useSiteSettings();
   const goTo = (id) => {
     setActivePage(id);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -32,11 +34,11 @@ export default function Footer({ setActivePage }) {
               onClick={() => goTo('home')}
             />
             <p className="text-sm text-gray-600 leading-relaxed max-w-md">
-              Synergy Medical Yoga is iMediYog Healthcare LLP initiative. It is working with vision democratising rope &amp; belt therapy which is used in conservative management of knee pain , neck pain and back pain. It offers educational courses in Rope &amp; Belt Therapy , products for pain prevention and recovery as well as run a mobile app for people to find the nearest therapist around their locale.
+              {settings.synergyInitText || 'Synergy Medical Yoga is iMediYog Healthcare LLP initiative. It is working with vision democratising rope & belt therapy which is used in conservative management of knee pain, neck pain and back pain. It offers educational courses in Rope & Belt Therapy, products for pain prevention and recovery as well as run a mobile app for people to find the nearest therapist around their locale.'}
             </p>
             <div className="flex items-center gap-3 pt-2">
               <a
-                href="https://facebook.com/synergymedicalyoga"
+                href={settings.socialFacebook || "https://facebook.com/synergymedicalyoga"}
                 target="_blank"
                 rel="noreferrer"
                 className="w-9 h-9 bg-[#005550] hover:bg-[#003d39] rounded-full flex items-center justify-center transition-colors shadow-sm"
@@ -45,7 +47,7 @@ export default function Footer({ setActivePage }) {
                 <FbIcon />
               </a>
               <a
-                href="https://linkedin.com/company/synergy-medical-yoga"
+                href={settings.socialLinkedIn || "https://linkedin.com/company/synergy-medical-yoga"}
                 target="_blank"
                 rel="noreferrer"
                 className="w-9 h-9 bg-[#005550] hover:bg-[#003d39] rounded-full flex items-center justify-center transition-colors shadow-sm"
@@ -69,7 +71,7 @@ export default function Footer({ setActivePage }) {
                 <li key={i}>
                   <button
                     onClick={() => goTo(link.id)}
-                    className="text-gray-600 hover:text-[#005550] transition-colors font-medium text-left"
+                    className="text-gray-600 hover:text-[#005550] transition-colors font-medium text-left cursor-pointer"
                   >
                     {link.label}
                   </button>
@@ -95,22 +97,22 @@ export default function Footer({ setActivePage }) {
             <h5 className="font-poppins font-bold text-[#2C2D33] text-base">Get in touch</h5>
             <div className="space-y-3 text-sm text-gray-600">
               <a
-                href="mailto:support@synergymedicalyoga.com"
+                href={`mailto:${settings.contactEmail || 'support@synergymedicalyoga.com'}`}
                 className="flex items-center gap-3 hover:text-[#005550] transition-colors"
               >
                 <Mail className="w-4 h-4 text-[#005550] shrink-0" />
-                <span>support@synergymedicalyoga.com</span>
+                <span>{settings.contactEmail || 'support@synergymedicalyoga.com'}</span>
               </a>
               <a
-                href="tel:+919730321042"
+                href={`tel:${settings.contactPhone || '+91 97303 21042'}`}
                 className="flex items-center gap-3 hover:text-[#005550] transition-colors"
               >
                 <Phone className="w-4 h-4 text-[#005550] shrink-0" />
-                <span>+91 97303 21042</span>
+                <span>{settings.contactPhone || '+91 97303 21042'}</span>
               </a>
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4 text-[#005550] shrink-0" />
-                <span>Pune 411033</span>
+                <span>{settings.contactAddress || 'Pune 411033'}</span>
               </div>
             </div>
           </div>

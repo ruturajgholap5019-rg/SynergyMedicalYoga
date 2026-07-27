@@ -27,7 +27,7 @@ export default function Navbar({ activePage, setActivePage, cartCount, onOpenCar
   };
 
   return (
-    <header className="relative z-30 bg-white border-b border-gray-200/80 shadow-xs font-jakarta sticky top-0">
+    <header className="relative z-30 bg-white border-b border-gray-200/80 shadow-xs font-jakarta">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20 lg:h-24 transition-all">
           
@@ -137,7 +137,7 @@ export default function Navbar({ activePage, setActivePage, cartCount, onOpenCar
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-x-0 top-[64px] bg-white border-b border-gray-200 shadow-2xl z-40 max-h-[calc(100vh-64px)] overflow-y-auto animate-in slide-in-from-top duration-200">
+        <div className="lg:hidden absolute inset-x-0 top-[100%] bg-white border-b border-gray-200 shadow-2xl z-40 max-h-[calc(100vh-64px)] overflow-y-auto animate-in slide-in-from-top duration-200">
           
           {/* Quick Contact Header on Mobile */}
           <div className="bg-[#005550] text-white px-4 py-2.5 flex items-center justify-between text-xs font-medium">

@@ -12,6 +12,11 @@ import {
   Activity,
   QrCode,
   Calendar,
+  Upload,
+  Link,
+  Loader2,
+  Check,
+  Globe,
 } from 'lucide-react';
 import { api } from '../lib/api';
 
@@ -23,6 +28,7 @@ import CarouselsTab from './components/CarouselsTab';
 import ServicesTab from './components/ServicesTab';
 import PaymentSettingsTab from './components/PaymentSettingsTab';
 import AppointmentsTab from './components/AppointmentsTab';
+import CmsContentTab from './components/CmsContentTab';
 
 export default function AdminDashboard({ showToast, currentUser }) {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -106,6 +112,12 @@ export default function AdminDashboard({ showToast, currentUser }) {
     title: '',
   });
 
+  // Image Upload UX State (Multer vs URL Option)
+  const [carouselImageMode, setCarouselImageMode] = useState('upload');
+  const [uploadingCarouselImage, setUploadingCarouselImage] = useState(false);
+  const [productImageMode, setProductImageMode] = useState('upload');
+  const [uploadingProductImage, setUploadingProductImage] = useState(false);
+
   // Load Admin Data on mount or tab change
   useEffect(() => {
     if (currentUser?.role !== 'admin') return;
@@ -116,7 +128,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
     if (activeTab === 'carousels' || activeTab === 'dashboard') fetchCarousels();
     if (activeTab === 'services' || activeTab === 'dashboard') fetchServices();
     if (activeTab === 'appointments' || activeTab === 'dashboard') fetchAppointments();
-    if (activeTab === 'settings' || activeTab === 'dashboard') fetchPaymentSettings();
+    if (activeTab === 'settings' || activeTab === 'cms' || activeTab === 'dashboard') fetchPaymentSettings();
   }, [activeTab, refreshKey, currentUser]);
 
   const triggerRefresh = () => setRefreshKey((prev) => prev + 1);
@@ -236,6 +248,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
   // --- CAROUSEL HANDLERS ---
   const openAddCarouselModal = () => {
     setEditingCarousel(null);
+    setCarouselImageMode('upload');
     setCarouselFormData({
       title: '',
       subtitle: '',
@@ -250,6 +263,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
 
   const openEditCarouselModal = (slide) => {
     setEditingCarousel(slide);
+    setCarouselImageMode('url');
     setCarouselFormData({
       title: slide.title || '',
       subtitle: slide.subtitle || '',
@@ -267,10 +281,10 @@ export default function AdminDashboard({ showToast, currentUser }) {
     try {
       if (editingCarousel) {
         await api.updateAdminCarousel(editingCarousel._id, carouselFormData);
-        showToast?.(`Carousel slide "${carouselFormData.title}" updated!`);
+        showToast?.(`Carousel slide #${carouselFormData.order || 1} updated successfully!`);
       } else {
         await api.createAdminCarousel(carouselFormData);
-        showToast?.(`Carousel slide "${carouselFormData.title}" created!`);
+        showToast?.(`Carousel slide #${carouselFormData.order || 1} created successfully!`);
       }
       setIsCarouselModalOpen(false);
       triggerRefresh();
@@ -286,6 +300,25 @@ export default function AdminDashboard({ showToast, currentUser }) {
       triggerRefresh();
     } catch (err) {
       alert(err.message || 'Failed to delete carousel slide');
+    }
+  };
+
+  const handleCarouselFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingCarouselImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      const res = await api.uploadAdminImage(formData);
+      if (res && res.url) {
+        setCarouselFormData((prev) => ({ ...prev, imageUrl: res.url }));
+        showToast?.('Image uploaded successfully via Multer!');
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to upload image file');
+    } finally {
+      setUploadingCarouselImage(false);
     }
   };
 
@@ -366,6 +399,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
   // --- PRODUCT HANDLERS ---
   const openAddProductModal = () => {
     setEditingProduct(null);
+    setProductImageMode('upload');
     setProductFormData({
       name: '',
       category: 'Orthopaedic Belts',
@@ -382,6 +416,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
 
   const openEditProductModal = (product) => {
     setEditingProduct(product);
+    setProductImageMode('url');
     setProductFormData({
       name: product.name || '',
       category: product.category || 'Orthopaedic Belts',
@@ -439,6 +474,41 @@ export default function AdminDashboard({ showToast, currentUser }) {
       triggerRefresh();
     } catch (err) {
       alert(err.message || 'Failed to delete product');
+    }
+  };
+
+  const handleProductFileUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    setUploadingProductImage(true);
+    try {
+      const formData = new FormData();
+      if (files.length === 1) {
+        formData.append('image', files[0]);
+        const res = await api.uploadAdminImage(formData);
+        if (res && res.url) {
+          setProductFormData((prev) => ({
+            ...prev,
+            images: prev.images ? `${prev.images}, ${res.url}` : res.url,
+          }));
+          showToast?.('Product image uploaded successfully via Multer!');
+        }
+      } else {
+        files.forEach((file) => formData.append('images', file));
+        const res = await api.uploadAdminImages(formData);
+        if (res && res.urls) {
+          const newUrls = res.urls.join(', ');
+          setProductFormData((prev) => ({
+            ...prev,
+            images: prev.images ? `${prev.images}, ${newUrls}` : newUrls,
+          }));
+          showToast?.(`${res.urls.length} product images uploaded successfully via Multer!`);
+        }
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to upload product images');
+    } finally {
+      setUploadingProductImage(false);
     }
   };
 
@@ -580,7 +650,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
               <ShieldCheck className="w-4 h-4" />
               <span>Synergy Medical Yoga Management Console</span>
             </div>
-            <h1 className="font-sansita text-3xl sm:text-4xl font-bold tracking-tight">
+            <h1 className="font-sansita text-3xl sm:text-4xl font-bold tracking-tight text-white">
               Admin Control Panel
             </h1>
             <p className="text-teal-100 text-sm mt-1">
@@ -615,6 +685,18 @@ export default function AdminDashboard({ showToast, currentUser }) {
           >
             <LayoutDashboard className="w-4 h-4" />
             <span>Dashboard</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('cms')}
+            className={`px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === 'cms'
+                ? 'bg-[#005550] text-white shadow-md shadow-[#005550]/20'
+                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            <Globe className="w-4 h-4" />
+            <span>Website CMS &amp; Live Editor</span>
           </button>
 
           <button
@@ -758,6 +840,13 @@ export default function AdminDashboard({ showToast, currentUser }) {
             saving={savingSettings}
           />
         )}
+        {activeTab === 'cms' && (
+          <CmsContentTab
+            settings={settings}
+            onSaveSettings={handleSavePaymentSettings}
+            saving={savingSettings}
+          />
+        )}
       </div>
 
       {/* --- MODAL: CAROUSEL CREATE / EDIT --- */}
@@ -776,39 +865,90 @@ export default function AdminDashboard({ showToast, currentUser }) {
             </h3>
 
             <form onSubmit={handleCarouselSubmit} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Banner Title *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Precision Spine & Joint Therapy"
-                  value={carouselFormData.title}
-                  onChange={(e) => setCarouselFormData({ ...carouselFormData, title: e.target.value })}
-                  className="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
-                />
-              </div>
 
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Subtitle / Description</label>
-                <textarea
-                  rows={2}
-                  placeholder="Doctor-designed orthopaedic belts and posture aligners..."
-                  value={carouselFormData.subtitle}
-                  onChange={(e) => setCarouselFormData({ ...carouselFormData, subtitle: e.target.value })}
-                  className="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
-                />
-              </div>
+              <div className="space-y-3 bg-slate-50/70 p-4 rounded-2xl border border-gray-200/80">
+                <label className="block font-bold text-gray-800 text-xs">Banner Image Source *</label>
+                
+                {/* Option Tabs */}
+                <div className="grid grid-cols-2 gap-2 p-1 bg-gray-200/60 rounded-xl">
+                  <button
+                    type="button"
+                    onClick={() => setCarouselImageMode('upload')}
+                    className={`flex items-center justify-center gap-1.5 py-2 rounded-lg font-bold transition-all text-[11px] cursor-pointer ${
+                      carouselImageMode === 'upload'
+                        ? 'bg-white text-[#005550] shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload File (Multer)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCarouselImageMode('url')}
+                    className={`flex items-center justify-center gap-1.5 py-2 rounded-lg font-bold transition-all text-[11px] cursor-pointer ${
+                      carouselImageMode === 'url'
+                        ? 'bg-white text-[#005550] shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Link className="w-3.5 h-3.5" />
+                    <span>Image URL Option</span>
+                  </button>
+                </div>
 
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Banner Image URL *</label>
-                <input
-                  type="url"
-                  required
-                  placeholder="https://images.unsplash.com/..."
-                  value={carouselFormData.imageUrl}
-                  onChange={(e) => setCarouselFormData({ ...carouselFormData, imageUrl: e.target.value })}
-                  className="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
-                />
+                {carouselImageMode === 'upload' ? (
+                  <div className="mt-2">
+                    <label className="flex flex-col items-center justify-center h-32 px-4 py-6 bg-white text-[#005550] rounded-xl border-2 border-dashed border-[#005550]/30 hover:border-[#005550] hover:bg-teal-50/30 transition-all cursor-pointer group">
+                      {uploadingCarouselImage ? (
+                        <div className="flex flex-col items-center gap-2 text-gray-500">
+                          <Loader2 className="w-6 h-6 animate-spin text-[#005550]" />
+                          <span className="text-xs font-semibold">Uploading to Multer server...</span>
+                        </div>
+                      ) : (
+                        <>
+                          <Upload className="w-6 h-6 mb-2 text-gray-400 group-hover:text-[#005550] transition-colors" />
+                          <span className="text-xs font-bold">Click to upload banner image</span>
+                          <span className="text-[10px] text-gray-400 mt-0.5">Supports PNG, JPG, WEBP, GIF (Max 5MB)</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleCarouselFileUpload}
+                        disabled={uploadingCarouselImage}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                ) : (
+                  <div className="mt-2">
+                    <input
+                      type="url"
+                      placeholder="https://images.unsplash.com/..."
+                      value={carouselFormData.imageUrl}
+                      onChange={(e) => setCarouselFormData({ ...carouselFormData, imageUrl: e.target.value })}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#005550]"
+                    />
+                  </div>
+                )}
+
+                {/* Live Preview */}
+                {carouselFormData.imageUrl && (
+                  <div className="mt-3 p-2 bg-white rounded-xl border border-gray-200 flex items-center gap-3">
+                    <img
+                      src={carouselFormData.imageUrl}
+                      alt="Banner Preview"
+                      className="w-16 h-10 object-cover rounded-lg bg-slate-900 border border-gray-100"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] font-bold text-gray-800 flex items-center gap-1">
+                        <Check className="w-3.5 h-3.5 text-emerald-600" /> Image ready
+                      </p>
+                      <p className="text-[10px] text-gray-400 truncate">{carouselFormData.imageUrl}</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -1076,15 +1216,94 @@ export default function AdminDashboard({ showToast, currentUser }) {
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Image URL</label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/..."
-                  value={productFormData.images}
-                  onChange={(e) => setProductFormData({ ...productFormData, images: e.target.value })}
-                  className="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
-                />
+              <div className="space-y-3 bg-slate-50/70 p-4 rounded-2xl border border-gray-200/80">
+                <label className="block font-bold text-gray-800 text-xs">Product Image Source</label>
+                
+                {/* Option Tabs */}
+                <div className="grid grid-cols-2 gap-2 p-1 bg-gray-200/60 rounded-xl">
+                  <button
+                    type="button"
+                    onClick={() => setProductImageMode('upload')}
+                    className={`flex items-center justify-center gap-1.5 py-2 rounded-lg font-bold transition-all text-[11px] cursor-pointer ${
+                      productImageMode === 'upload'
+                        ? 'bg-white text-[#005550] shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload File (Multer)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProductImageMode('url')}
+                    className={`flex items-center justify-center gap-1.5 py-2 rounded-lg font-bold transition-all text-[11px] cursor-pointer ${
+                      productImageMode === 'url'
+                        ? 'bg-white text-[#005550] shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Link className="w-3.5 h-3.5" />
+                    <span>Image URL Option</span>
+                  </button>
+                </div>
+
+                {productImageMode === 'upload' ? (
+                  <div className="mt-2">
+                    <label className="flex flex-col items-center justify-center h-32 px-4 py-6 bg-white text-[#005550] rounded-xl border-2 border-dashed border-[#005550]/30 hover:border-[#005550] hover:bg-teal-50/30 transition-all cursor-pointer group">
+                      {uploadingProductImage ? (
+                        <div className="flex flex-col items-center gap-2 text-gray-500">
+                          <Loader2 className="w-6 h-6 animate-spin text-[#005550]" />
+                          <span className="text-xs font-semibold">Uploading via Multer...</span>
+                        </div>
+                      ) : (
+                        <>
+                          <Upload className="w-6 h-6 mb-2 text-gray-400 group-hover:text-[#005550] transition-colors" />
+                          <span className="text-xs font-bold">Click to upload product image(s)</span>
+                          <span className="text-[10px] text-gray-400 mt-0.5">Select single or multiple images (PNG, JPG, WEBP)</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleProductFileUpload}
+                        disabled={uploadingProductImage}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                ) : (
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      placeholder="https://images.unsplash.com/..., https://..."
+                      value={productFormData.images}
+                      onChange={(e) => setProductFormData({ ...productFormData, images: e.target.value })}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#005550]"
+                    />
+                    <p className="text-[10px] text-gray-400 mt-1">For multiple URLs, separate them with commas.</p>
+                  </div>
+                )}
+
+                {/* Live Previews */}
+                {productFormData.images && (
+                  <div className="mt-3 p-2.5 bg-white rounded-xl border border-gray-200">
+                    <p className="text-[11px] font-bold text-gray-800 flex items-center gap-1 mb-2">
+                      <Check className="w-3.5 h-3.5 text-emerald-600" /> Selected Image Previews
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {productFormData.images.split(',').map((url, index) => {
+                        const trimmed = url.trim();
+                        if (!trimmed) return null;
+                        return (
+                          <div key={index} className="relative group border border-gray-200 rounded-lg overflow-hidden w-14 h-14 bg-slate-50">
+                            <img src={trimmed} alt="Preview" className="w-full h-full object-cover" />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>

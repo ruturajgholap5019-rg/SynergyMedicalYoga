@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { useSiteSettings } from '../lib/useSiteSettings';
 
 export default function ContactPage() {
+  const { settings } = useSiteSettings();
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -57,7 +59,7 @@ export default function ContactPage() {
                   <div>
                     <h5 className="font-bold text-white text-sm">Main Office Address</h5>
                     <p className="text-teal-100 leading-relaxed">
-                      Greens Center, Old Mumbai-Pune Hwy, Chinchwad, Pune, Maharashtra 411033
+                      {settings.contactAddress || 'Greens Center, Old Mumbai-Pune Hwy, Chinchwad, Pune, Maharashtra 411033'}
                     </p>
                   </div>
                 </div>
@@ -68,8 +70,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h5 className="font-bold text-white text-sm">Helpline Phone</h5>
-                    <a href="tel:+919730321042" className="text-teal-200 hover:text-white font-bold text-sm block">
-                      +91 97303 21042
+                    <a href={`tel:${settings.contactPhone || '+919730321042'}`} className="text-teal-200 hover:text-white font-bold text-sm block">
+                      {settings.contactPhone || '+91 97303 21042'}
                     </a>
                   </div>
                 </div>
@@ -80,8 +82,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h5 className="font-bold text-white text-sm">Email Support</h5>
-                    <a href="mailto:support@synergymedicalyoga.com" className="text-teal-200 hover:text-white font-bold">
-                      support@synergymedicalyoga.com
+                    <a href={`mailto:${settings.contactEmail || 'support@synergymedicalyoga.com'}`} className="text-teal-200 hover:text-white font-bold">
+                      {settings.contactEmail || 'support@synergymedicalyoga.com'}
                     </a>
                   </div>
                 </div>

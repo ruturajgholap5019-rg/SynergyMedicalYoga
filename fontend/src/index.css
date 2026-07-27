@@ -34,6 +34,10 @@
     color: #005550;
     line-height: 1.25;
   }
+
+  .text-white h1, .text-white h2, .text-white h3, .text-white h4, .text-white h5, .text-white h6 {
+    color: inherit !important;
+  }
 }
 
 .font-sansita {

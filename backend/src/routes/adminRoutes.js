@@ -2,6 +2,7 @@ const express = require('express');
 const adminController = require('../controllers/adminController');
 const { protect } = require('../middleware/auth');
 const admin = require('../middleware/admin');
+const upload = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -72,5 +73,9 @@ router
 router.get('/appointments', adminController.getAllAppointments);
 router.put('/appointments/:id/status', adminController.updateAppointmentStatus);
 router.delete('/appointments/:id', adminController.deleteAppointment);
+
+// Image Upload Routes (Multer)
+router.post('/upload', upload.single('image'), adminController.uploadImage);
+router.post('/upload-multiple', upload.array('images', 5), adminController.uploadImages);
 
 module.exports = router;

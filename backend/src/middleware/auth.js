@@ -5,8 +5,14 @@ const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.protect = catchAsync(async (req, res, next) => {
-  const token = req.cookies.accessToken;
-  const refreshToken = req.cookies.refreshToken;
+  let token = req.cookies.accessToken;
+
+  // Support dual-channel authentication: inspect Authorization Bearer header if cookie is absent
+  if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  const refreshToken = req.cookies.refreshToken || req.headers['x-refresh-token'];
 
   if (token) {
     try {
@@ -17,11 +23,11 @@ exports.protect = catchAsync(async (req, res, next) => {
         return next();
       }
     } catch (err) {
-      // Access token expired, attempt fallback to refresh token
+      // Access token expired or invalid signature, fall back to valid refresh session
     }
   }
 
-  // Fallback check using refresh token if available
+  // Fallback check using secure refresh token session if available
   if (refreshToken) {
     try {
       const decodedRefresh = verifyRefreshToken(refreshToken);
@@ -29,7 +35,7 @@ exports.protect = catchAsync(async (req, res, next) => {
       if (storedToken) {
         const user = await User.findById(decodedRefresh.id).select('-password');
         if (user) {
-          const newAccessToken = generateAccessToken(user._id);
+          const newAccessToken = generateAccessToken(user._id, user.role);
           res.cookie('accessToken', newAccessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -41,9 +47,9 @@ exports.protect = catchAsync(async (req, res, next) => {
         }
       }
     } catch (refreshErr) {
-      // Invalid refresh token
+      // Refresh token expired or malformed
     }
   }
 
-  return next(new AppError('You are not logged in. Please log in to access this page.', 401));
+  return next(new AppError('Unauthorized: Please log in with valid security credentials to access this protected route.', 401));
 });

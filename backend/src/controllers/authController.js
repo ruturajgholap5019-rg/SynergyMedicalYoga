@@ -26,14 +26,15 @@ exports.register = catchAsync(async (req, res, next) => {
   if (existing) return next(new AppError('Email already registered.', 400));
 
   const user = await User.create({ name, email, phone, password });
-  const accessToken = generateAccessToken(user._id);
-  const refreshToken = generateRefreshToken(user._id);
+  const accessToken = generateAccessToken(user._id, user.role);
+  const refreshToken = generateRefreshToken(user._id, user.role);
 
   await RefreshToken.create({ token: refreshToken, user: user._id });
   setTokensCookies(res, accessToken, refreshToken);
 
   res.status(201).json({
     status: 'success',
+    token: accessToken,
     user: { id: user._id, name: user.name, email: user.email, role: user.role },
   });
 });
@@ -46,14 +47,15 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Invalid email or password.', 401));
   }
 
-  const accessToken = generateAccessToken(user._id);
-  const refreshToken = generateRefreshToken(user._id);
+  const accessToken = generateAccessToken(user._id, user.role);
+  const refreshToken = generateRefreshToken(user._id, user.role);
 
   await RefreshToken.create({ token: refreshToken, user: user._id });
   setTokensCookies(res, accessToken, refreshToken);
 
   res.status(200).json({
     status: 'success',
+    token: accessToken,
     user: { id: user._id, name: user.name, email: user.email, role: user.role },
   });
 });
@@ -75,15 +77,15 @@ exports.refresh = catchAsync(async (req, res, next) => {
   const user = await User.findById(decoded.id);
   if (!user) return next(new AppError('User not found.', 401));
 
-  const newAccessToken = generateAccessToken(user._id);
+  const newAccessToken = generateAccessToken(user._id, user.role);
   res.cookie('accessToken', newAccessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 15 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  res.status(200).json({ status: 'success', message: 'Access token refreshed' });
+  res.status(200).json({ status: 'success', token: newAccessToken, message: 'Access token refreshed' });
 });
 
 exports.logout = catchAsync(async (req, res, next) => {

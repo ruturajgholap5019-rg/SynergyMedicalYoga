@@ -13,13 +13,16 @@ function onRefreshed() {
 }
 
 async function request(path, options = {}, isRetry = false) {
+  const isFormData = options.body instanceof FormData;
+  const headers = {
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+    ...(options.headers || {}),
+  };
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-    },
     ...options,
+    headers,
   });
 
   if (response.status === 401 && !isRetry && !path.includes('/auth/login') && !path.includes('/auth/refresh')) {
@@ -177,9 +180,14 @@ export const api = {
     method: 'DELETE',
   }),
 
-  // Admin Payment Gateway Settings (UPI & Scanner)
+  // Admin System & CMS Settings (Payment Gateway, CMS Text, Stats)
   getAdminPaymentSettings: () => request('/admin/settings'),
   updateAdminPaymentSettings: (payload) => request('/admin/settings', {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  }),
+  getAdminSettings: () => request('/admin/settings'),
+  updateAdminSettings: (payload) => request('/admin/settings', {
     method: 'PUT',
     body: JSON.stringify(payload),
   }),
@@ -192,5 +200,15 @@ export const api = {
   }),
   deleteAdminAppointment: (id) => request(`/admin/appointments/${id}`, {
     method: 'DELETE',
+  }),
+
+  // Admin Image Uploads (Multer)
+  uploadAdminImage: (formData) => request('/admin/upload', {
+    method: 'POST',
+    body: formData,
+  }),
+  uploadAdminImages: (formData) => request('/admin/upload-multiple', {
+    method: 'POST',
+    body: formData,
   }),
 };

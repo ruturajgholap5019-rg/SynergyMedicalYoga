@@ -346,3 +346,33 @@ exports.getDashboardStats = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+// --- IMAGE UPLOADS (MULTER) ---
+exports.uploadImage = catchAsync(async (req, res, next) => {
+  if (!req.file) {
+    return next(new AppError('No image file provided for upload.', 400));
+  }
+  const baseUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
+  const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+
+  res.status(200).json({
+    status: 'success',
+    url: imageUrl,
+    filename: req.file.filename,
+  });
+});
+
+exports.uploadImages = catchAsync(async (req, res, next) => {
+  if (!req.files || req.files.length === 0) {
+    return next(new AppError('No image files provided for upload.', 400));
+  }
+  const baseUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
+  const urls = req.files.map((file) => `${baseUrl}/uploads/${file.filename}`);
+
+  res.status(200).json({
+    status: 'success',
+    urls: urls,
+    filenames: req.files.map((file) => file.filename),
+  });
+});
+

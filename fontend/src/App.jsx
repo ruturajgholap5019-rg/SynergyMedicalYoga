@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import React, { useEffect, useState, useCallback } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import TopBar from './components/TopBar';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import ProductDetailModal from './components/ProductDetailModal';
-import CheckoutModal from './components/CheckoutModal';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -17,10 +17,52 @@ import ContactPage from './pages/ContactPage';
 import AccountPage from './pages/AccountPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import AdminDashboard from './admin/AdminDashboard';
+import CheckoutPage from './pages/CheckoutPage';
 import { api } from './lib/api';
 
+// Route mapping configuration (Ensuring zero sensitive data in URL paths or parameters)
+const PAGE_TO_ROUTE = {
+  home: '/',
+  about: '/about',
+  services: '/services',
+  'find-centres': '/find-centres',
+  shop: '/shop',
+  contact: '/contact',
+  account: '/my-account',
+  checkout: '/checkout',
+  admin: '/admin',
+  'product-detail': '/shop', // product details fall back to clean shop url without exposing internal identifiers
+};
+
+const ROUTE_TO_PAGE = {
+  '/': 'home',
+  '/about': 'about',
+  '/services': 'services',
+  '/find-centres': 'find-centres',
+  '/shop': 'shop',
+  '/contact': 'contact',
+  '/my-account': 'account',
+  '/my-account/': 'account',
+  '/checkout': 'checkout',
+  '/admin': 'admin',
+  '/admin/': 'admin',
+};
+
 export default function App() {
-  const [activePage, setActivePage] = useState('home');
+  const [activePage, setActivePage] = useState(() => {
+    // 1. Synchronous URL routing initialization on load
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('/my-account')) return 'account';
+    if (path.includes('/admin')) return 'admin';
+    if (path.includes('/checkout')) return 'checkout';
+    if (path.includes('/shop')) return 'shop';
+    if (path.includes('/services')) return 'services';
+    if (path.includes('/about')) return 'about';
+    if (path.includes('/contact')) return 'contact';
+    if (path.includes('/find-centres')) return 'find-centres';
+    return ROUTE_TO_PAGE[path] || 'home';
+  });
+
   const [cart, setCart] = useState([]);
   const [guestCart, setGuestCart] = useState(() => {
     try {
@@ -31,7 +73,6 @@ export default function App() {
     }
   });
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [pendingCheckout, setPendingCheckout] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [selectedProductId, setSelectedProductId] = useState(null);
@@ -43,6 +84,27 @@ export default function App() {
       return null;
     }
   });
+
+  // Helper to safely update page state and push clean URL to browser address bar without reload
+  const handleNavigate = useCallback((page, scroll = true) => {
+    setActivePage(page);
+    const route = PAGE_TO_ROUTE[page] || '/';
+    if (window.location.pathname !== route) {
+      window.history.pushState({ page }, '', route);
+    }
+    if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  // Listen for browser Back/Forward navigation buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.toLowerCase();
+      const matchedPage = ROUTE_TO_PAGE[path] || 'home';
+      setActivePage(matchedPage);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Helper to safely format raw cart items from API
   const formatCartItems = (rawItems) => {
@@ -122,7 +184,6 @@ export default function App() {
       return true;
     } catch (error) {
       console.error('addToCart error:', error);
-      // Fallback: If session was invalid / unauthorized, clear stale user state and save to guest cart
       setCurrentUser(null);
       window.localStorage.removeItem('synergyUser');
       saveToGuestCartLocal();
@@ -182,6 +243,7 @@ export default function App() {
     saveGuestCart([]);
     setPendingCheckout(false);
     toast.success('🎉 Order placed successfully! Check your email for details.');
+    handleNavigate('account');
   };
 
   const handleAuthSuccess = async (user) => {
@@ -218,13 +280,12 @@ export default function App() {
 
     if (pendingCheckout) {
       setPendingCheckout(false);
-      setIsCheckoutOpen(true);
+      handleNavigate('checkout');
     } else if (user.role === 'admin') {
-      setActivePage('admin');
+      handleNavigate('admin');
     } else {
-      setActivePage('home');
+      handleNavigate('account');
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLogout = async () => {
@@ -239,7 +300,7 @@ export default function App() {
       setCart([]);
       saveGuestCart([]);
       setPendingCheckout(false);
-      setActivePage('home');
+      handleNavigate('home');
       toast.success('Logged out successfully.');
     }
   };
@@ -256,13 +317,11 @@ export default function App() {
           setGuestCart(JSON.parse(storedGuestCart));
         }
 
-        // Validate backend httpOnly Cookie Session
         const profile = await api.getProfile();
         if (profile?.user) {
           setCurrentUser(profile.user);
           window.localStorage.setItem('synergyUser', JSON.stringify(profile.user));
 
-          // Merge any stored guest cart items upon page load if user logged in
           const savedGuestItems = JSON.parse(window.localStorage.getItem('synergyGuestCart') || '[]');
           if (savedGuestItems.length > 0) {
             const mergeRes = await api.mergeCart(savedGuestItems);
@@ -276,50 +335,55 @@ export default function App() {
           }
         }
       } catch (err) {
-        // If profile fetch fails, user is unauthenticated - clear stale local cached user
         setCurrentUser(null);
         window.localStorage.removeItem('synergyUser');
       }
     };
 
     loadSession();
-  }, []);
+
+    // Handle return redirect from payment gateway after successful checkout
+    if (window.location.pathname.includes('/order-success') || window.location.search.includes('session_id') || window.location.search.includes('order_id')) {
+      const params = new URLSearchParams(window.location.search);
+      const orderRef = params.get('order_id') || params.get('session_id') || '';
+      toast.success(
+        `🎉 Payment Successful! Your order ${orderRef ? `(#${orderRef}) ` : ''}has been placed and is being processed.`,
+        { duration: 6000 }
+      );
+      setCart([]);
+      saveGuestCart([]);
+      handleNavigate('account', false);
+      window.history.replaceState({}, document.title, '/my-account');
+    }
+  }, [handleNavigate]);
 
   useEffect(() => {
     if (activePage === 'product-detail' && !selectedProductId) {
-      setActivePage('shop');
+      handleNavigate('shop');
     }
-  }, [activePage, selectedProductId]);
+  }, [activePage, selectedProductId, handleNavigate]);
 
   return (
     <div className="min-h-screen flex flex-col bg-white font-sans selection:bg-[#065750] selection:text-white">
       
-      {/* Global React Hot Toast Provider */}
-      <Toaster
+      {/* Global React Toastify Notification Provider */}
+      <ToastContainer
         position="top-right"
-        reverseOrder={false}
-        toastOptions={{
-          duration: 3500,
-          style: {
-            background: '#005550',
-            color: '#fff',
-            borderRadius: '16px',
-            fontSize: '13px',
-            fontWeight: '600',
-            boxShadow: '0 10px 25px -5px rgba(0, 85, 80, 0.3)',
-          },
-          success: {
-            iconTheme: {
-              primary: '#34d399',
-              secondary: '#005550',
-            },
-          },
-          error: {
-            style: {
-              background: '#e11d48',
-              color: '#fff',
-            },
-          },
+        autoClose={3500}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        toastStyle={{
+          borderRadius: '16px',
+          fontFamily: 'inherit',
+          fontWeight: '600',
+          fontSize: '14px',
+          boxShadow: '0 15px 30px -5px rgba(0, 85, 80, 0.25)',
         }}
       />
 
@@ -329,40 +393,53 @@ export default function App() {
         cartTotal={cartTotal}
         onOpenCart={() => setIsCartOpen(true)}
         activePage={activePage}
-        setActivePage={setActivePage}
+        setActivePage={handleNavigate}
       />
 
       {/* Main Responsive Header Navigation */}
       <Navbar
         activePage={activePage}
-        setActivePage={setActivePage}
+        setActivePage={handleNavigate}
         cartCount={cartCount}
         cartTotal={cartTotal}
         onOpenCart={() => setIsCartOpen(true)}
         currentUser={currentUser}
-        onAccountClick={() => {
-          setActivePage('account');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onAccountClick={() => handleNavigate('account')}
       />
 
-      {/* Dynamic Page Router Content */}
+      {/* Dynamic Page Router Content with Strict Security & Zero Leak Route Guards */}
       <main className="flex-1">
         {activePage === 'home' && (
           <HomePage
-            setActivePage={setActivePage}
+            setActivePage={handleNavigate}
             onAddToCart={handleAddToCart}
             onQuickView={(p) => setQuickViewProduct(p)}
+            onViewDetails={(product) => {
+              setSelectedProductId(product._id || product.id);
+              handleNavigate('product-detail');
+            }}
+            onBuyNow={async (product, selectedSize) => {
+              const success = await handleAddToCart(product, selectedSize, 1);
+              if (success) {
+                if (!currentUser) {
+                  setPendingCheckout(true);
+                  toast.error('Please log in or sign up to complete your checkout. Your cart items are saved!');
+                  handleNavigate('account');
+                } else {
+                  handleNavigate('checkout');
+                }
+              }
+            }}
           />
         )}
 
         {activePage === 'about' && (
-          <AboutPage setActivePage={setActivePage} />
+          <AboutPage setActivePage={handleNavigate} />
         )}
 
         {activePage === 'services' && (
           <ServicesPage
-            setActivePage={setActivePage}
+            setActivePage={handleNavigate}
             currentUser={currentUser}
           />
         )}
@@ -381,16 +458,15 @@ export default function App() {
                 if (!currentUser) {
                   setPendingCheckout(true);
                   toast.error('Please log in or sign up to complete your checkout. Your cart items are saved!');
-                  setActivePage('account');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  handleNavigate('account');
                 } else {
-                  setIsCheckoutOpen(true);
+                  handleNavigate('checkout');
                 }
               }
             }}
             onViewDetails={(product) => {
               setSelectedProductId(product._id || product.id);
-              setActivePage('product-detail');
+              handleNavigate('product-detail');
             }}
           />
         )}
@@ -405,17 +481,13 @@ export default function App() {
                 if (!currentUser) {
                   setPendingCheckout(true);
                   toast.error('Please log in or sign up to complete your checkout. Your cart items are saved!');
-                  setActivePage('account');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  handleNavigate('account');
                 } else {
-                  setIsCheckoutOpen(true);
+                  handleNavigate('checkout');
                 }
               }
             }}
-            goBack={() => {
-              setActivePage('shop');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            goBack={() => handleNavigate('shop')}
           />
         )}
 
@@ -425,23 +497,70 @@ export default function App() {
 
         {activePage === 'account' && (
           <AccountPage
-            setActivePage={setActivePage}
+            setActivePage={handleNavigate}
             currentUser={currentUser}
             onAuthSuccess={handleAuthSuccess}
             onLogout={handleLogout}
           />
         )}
 
+        {/* SECURITY PRECAUTION 1: Protected Private Checkout Route Guard */}
+        {activePage === 'checkout' && (
+          currentUser ? (
+            <CheckoutPage
+              cart={displayCart}
+              currentUser={currentUser}
+              onOrderComplete={handleOrderComplete}
+              setActivePage={handleNavigate}
+            />
+          ) : (
+            <div className="py-24 max-w-lg mx-auto text-center px-4 space-y-6 animate-fade-in">
+              <div className="w-16 h-16 rounded-3xl bg-amber-100 text-amber-800 flex items-center justify-center font-extrabold text-2xl mx-auto shadow-xs">
+                🔒
+              </div>
+              <h2 className="font-sansita font-bold text-3xl text-slate-800">Authentication Required</h2>
+              <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                To protect your sensitive payment credentials and order tracking information, please log in to your Synergy account before proceeding to secure checkout.
+              </p>
+              <button
+                onClick={() => handleNavigate('account')}
+                className="bg-[#005550] hover:bg-[#003d39] text-white font-extrabold py-3.5 px-8 rounded-xl shadow-md transition-all text-xs uppercase tracking-wider cursor-pointer"
+              >
+                Go to Secure Login / Sign Up
+              </button>
+            </div>
+          )
+        )}
+
+        {/* SECURITY PRECAUTION 2: Protected Admin Route Guard (Preventing unauthorized dashboard leaks) */}
         {activePage === 'admin' && (
-          <AdminDashboard
-            showToast={(msg) => toast.success(msg)}
-            currentUser={currentUser}
-          />
+          currentUser && currentUser.role === 'admin' ? (
+            <AdminDashboard
+              showToast={(msg) => toast.success(msg)}
+              currentUser={currentUser}
+            />
+          ) : (
+            <div className="py-28 max-w-xl mx-auto text-center px-4 space-y-6 animate-fade-in">
+              <div className="w-20 h-20 rounded-3xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center font-extrabold text-3xl mx-auto shadow-xs">
+                🛡️
+              </div>
+              <h2 className="font-sansita font-extrabold text-3xl text-rose-950">403 Restricted Admin Portal</h2>
+              <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                Access Denied: You are attempting to access a secured administrative endpoint. This route is cryptographically protected by Role-Based Access Control (RBAC). Unauthorized attempts are prohibited to preserve customer confidentiality and zero data leakage.
+              </p>
+              <button
+                onClick={() => handleNavigate('home')}
+                className="bg-[#005550] hover:bg-[#003d39] text-white font-extrabold py-3.5 px-8 rounded-xl shadow-md transition-all text-xs uppercase tracking-wider cursor-pointer"
+              >
+                Return to Synergy Homepage
+              </button>
+            </div>
+          )
         )}
       </main>
 
       {/* Website Footer */}
-      <Footer setActivePage={setActivePage} />
+      <Footer setActivePage={handleNavigate} />
 
       {/* Slide-over Cart Drawer */}
       <CartDrawer
@@ -450,20 +569,16 @@ export default function App() {
         cart={displayCart}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
-        onNavigateToShop={() => {
-          setActivePage('shop');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onNavigateToShop={() => handleNavigate('shop')}
         onProceedToCheckout={() => {
           setIsCartOpen(false);
           if (!currentUser) {
             setPendingCheckout(true);
             toast.error('Please log in or sign up to complete checkout. Your cart items are saved!');
-            setActivePage('account');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            handleNavigate('account');
             return;
           }
-          setIsCheckoutOpen(true);
+          handleNavigate('checkout');
         }}
       />
 
@@ -480,26 +595,15 @@ export default function App() {
               if (!currentUser) {
                 setPendingCheckout(true);
                 toast.error('Please log in or sign up to complete checkout. Your cart items are saved!');
-                setActivePage('account');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                handleNavigate('account');
               } else {
-                setIsCheckoutOpen(true);
+                handleNavigate('checkout');
               }
             }
           }}
         />
       )}
 
-      {/* Checkout Modal */}
-      <CheckoutModal
-        isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
-        cart={displayCart}
-        currentUser={currentUser}
-        onOrderComplete={handleOrderComplete}
-      />
-
     </div>
   );
 }
-
