@@ -225,20 +225,17 @@ const seedDB = async () => {
     await mongoose.connect(mongoUri);
     console.log('✅ Connected to MongoDB for seeding');
 
-    // 1. Seed Products
+    // 1. Clear Products
     await Product.deleteMany();
-    const createdProducts = await Product.insertMany(products);
-    console.log(`✅ ${createdProducts.length} Products seeded successfully.`);
+    console.log('✅ All Products cleared (Catalog ready for your custom entries).');
 
-    // 2. Seed Carousels
+    // 2. Clear Carousels
     await Carousel.deleteMany();
-    await Carousel.insertMany(carousels);
-    console.log(`✅ ${carousels.length} Carousels seeded successfully.`);
+    console.log('✅ All Carousels cleared (Sliders ready for your custom upload).');
 
-    // 3. Seed Services
+    // 3. Clear Services
     await Service.deleteMany();
-    const createdServices = await Service.insertMany(services);
-    console.log(`✅ ${createdServices.length} Services seeded successfully.`);
+    console.log('✅ All Services cleared (Clinical therapies ready for custom entries).');
 
     // 4. Seed Payment Gateway Settings
     await Setting.deleteMany();
@@ -251,7 +248,7 @@ const seedDB = async () => {
     });
     console.log('✅ Payment Gateway Settings initialized.');
 
-    // 5. Seed Users (Admin & Customers)
+    // 5. Seed Users (Admin & Customers) - RE-ADDED AND KEPT AS REQUESTED!
     await User.deleteMany();
     
     const admin = await User.create({
@@ -294,143 +291,12 @@ const seedDB = async () => {
       role: 'customer',
     });
 
-    console.log('✅ Default Admin & 4 Customer accounts created successfully.');
+    console.log('✅ Default Admin & 4 Customer accounts added successfully.');
 
-    // 6. Seed Sample Orders for Admin Dashboard Visibility
+    // 6. Clear Orders and Appointments
     await Order.deleteMany();
-    await Order.create([
-      {
-        user: user1._id,
-        items: [
-          {
-            productId: createdProducts[0]._id,
-            name: createdProducts[0].name,
-            price: createdProducts[0].price,
-            selectedSize: 'Medium',
-            quantity: 1,
-          },
-        ],
-        totalAmount: 1249,
-        shippingAddress: {
-          street: 'Flat 402, Sunshine Apartments, Kothrud',
-          city: 'Pune',
-          state: 'Maharashtra',
-          pincode: '411038',
-          country: 'India',
-        },
-        paymentMethod: 'upi',
-        paymentStatus: 'paid',
-        orderStatus: 'delivered',
-        createdAt: new Date(Date.now() - 3 * 86400000),
-      },
-      {
-        user: user2._id,
-        items: [
-          {
-            productId: createdProducts[3]._id,
-            name: createdProducts[3].name,
-            price: createdProducts[3].price,
-            selectedSize: 'Standard Kit',
-            quantity: 1,
-          },
-          {
-            productId: createdProducts[1]._id,
-            name: createdProducts[1].name,
-            price: createdProducts[1].price,
-            selectedSize: 'M',
-            quantity: 1,
-          },
-        ],
-        totalAmount: 3498,
-        shippingAddress: {
-          street: 'House No 12, Greens Colony, Chinchwad',
-          city: 'Pune',
-          state: 'Maharashtra',
-          pincode: '411033',
-          country: 'India',
-        },
-        paymentMethod: 'cod',
-        paymentStatus: 'pending',
-        orderStatus: 'shipped',
-        createdAt: new Date(Date.now() - 1 * 86400000),
-      },
-      {
-        user: user3._id,
-        items: [
-          {
-            productId: createdProducts[6]._id,
-            name: createdProducts[6].name,
-            price: createdProducts[6].price,
-            selectedSize: 'Complete Kit',
-            quantity: 1,
-          },
-        ],
-        totalAmount: 3499,
-        shippingAddress: {
-          street: 'Bunglow 5, Baner Road',
-          city: 'Pune',
-          state: 'Maharashtra',
-          pincode: '411045',
-          country: 'India',
-        },
-        paymentMethod: 'stripe',
-        paymentStatus: 'paid',
-        orderStatus: 'processing',
-        createdAt: new Date(),
-      },
-    ]);
-    console.log('✅ Sample Customer Orders seeded successfully.');
-
-    // 7. Seed Sample Appointments for Admin Dashboard Visibility
     await Appointment.deleteMany();
-    await Appointment.create([
-      {
-        user: user1._id,
-        patientName: 'Rahul Sharma',
-        patientPhone: '+919822012345',
-        patientEmail: 'rahul.sharma@example.com',
-        service: createdServices[0]._id,
-        serviceTitle: createdServices[0].title,
-        fee: createdServices[0].price,
-        appointmentDate: new Date(Date.now() + 86400000),
-        timeSlot: '10:00 AM - 11:00 AM',
-        center: 'Greens Center, Chinchwad, Pune',
-        notes: 'Lower back stiffness during morning routines',
-        status: 'confirmed',
-        paymentStatus: 'paid',
-      },
-      {
-        user: user2._id,
-        patientName: 'Priya Patel',
-        patientPhone: '+919822023456',
-        patientEmail: 'priya.patel@example.com',
-        service: createdServices[1]._id,
-        serviceTitle: createdServices[1].title,
-        fee: createdServices[1].price,
-        appointmentDate: new Date(Date.now() + 2 * 86400000),
-        timeSlot: '02:00 PM - 03:00 PM',
-        center: 'Greens Center, Chinchwad, Pune',
-        notes: 'Knee joint friction during stair climbing',
-        status: 'pending',
-        paymentStatus: 'pending',
-      },
-      {
-        user: user4._id,
-        patientName: 'Sneha Kulkarni',
-        patientPhone: '+919822045678',
-        patientEmail: 'sneha.k@example.com',
-        service: createdServices[2]._id,
-        serviceTitle: createdServices[2].title,
-        fee: createdServices[2].price,
-        appointmentDate: new Date(Date.now() - 86400000),
-        timeSlot: '11:30 AM - 12:30 PM',
-        center: 'Online Video Consultation',
-        notes: 'Kyphosis posture evaluation for IT professional',
-        status: 'completed',
-        paymentStatus: 'paid',
-      },
-    ]);
-    console.log('✅ Sample Patient Appointments seeded successfully.');
+    console.log('✅ Orders and appointments cleared for a completely authentic start.');
 
     console.log('\n🎉 DATABASE SEEDING COMPLETED SUCCESSFULLY!');
     console.log('----------------------------------------------------');

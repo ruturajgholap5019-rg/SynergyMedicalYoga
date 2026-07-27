@@ -14,8 +14,10 @@ function onRefreshed() {
 
 async function request(path, options = {}, isRetry = false) {
   const isFormData = options.body instanceof FormData;
+  const token = localStorage.getItem('synergy_access_token');
   const headers = {
     ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
     ...(options.headers || {}),
   };
 
@@ -24,7 +26,6 @@ async function request(path, options = {}, isRetry = false) {
     ...options,
     headers,
   });
-
   if (response.status === 401 && !isRetry && !path.includes('/auth/login') && !path.includes('/auth/refresh')) {
     if (!isRefreshing) {
       isRefreshing = true;
@@ -35,6 +36,10 @@ async function request(path, options = {}, isRetry = false) {
         });
         isRefreshing = false;
         if (refreshRes.ok) {
+          const refreshData = await refreshRes.json();
+          if (refreshData?.token) {
+            localStorage.setItem('synergy_access_token', refreshData.token);
+          }
           onRefreshed();
           return request(path, options, true);
         }
@@ -69,17 +74,31 @@ export const api = {
   getPublicServices: () => request('/public/services'),
   getPublicSettings: () => request('/public/settings'),
   getHealth: () => request('/'),
-  login: (payload) => request('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  }),
-  register: (payload) => request('/auth/register', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  }),
-  logout: () => request('/auth/logout', {
-    method: 'POST',
-  }),
+  login: async (payload) => {
+    const res = await request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    if (res?.token) localStorage.setItem('synergy_access_token', res.token);
+    return res;
+  },
+  register: async (payload) => {
+    const res = await request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    if (res?.token) localStorage.setItem('synergy_access_token', res.token);
+    return res;
+  },
+  logout: async () => {
+    try {
+      await request('/auth/logout', {
+        method: 'POST',
+      });
+    } finally {
+      localStorage.removeItem('synergy_access_token');
+    }
+  },
   refreshToken: () => request('/auth/refresh', {
     method: 'POST',
   }),
