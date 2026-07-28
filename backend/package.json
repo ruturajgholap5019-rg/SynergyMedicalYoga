@@ -8,6 +8,7 @@
     "dev": "nodemon src/server.js",
     "seed": "node src/scripts/seedAdmin.js",
     "seed:admin": "node src/scripts/seedAdmin.js",
+    "rotate:legacy-admin": "node src/scripts/rotateLegacyAdmin.js",
     "build": "echo 'No build required for backend'"
   },
   "dependencies": {

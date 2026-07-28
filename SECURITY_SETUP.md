@@ -32,6 +32,22 @@ Required environment variables:
 
 The password must be at least 12 characters and include uppercase, lowercase, number, and symbol.
 
+## Legacy Admin Rotation
+
+If the old seeded `admin@synergy.com` account exists in MongoDB, it can be used temporarily for staging, but rotate it before production launch:
+
+```bash
+npm --prefix backend run rotate:legacy-admin
+```
+
+Required environment variables:
+
+- `LEGACY_ADMIN_NEW_EMAIL`
+- `LEGACY_ADMIN_NEW_PASSWORD`
+- `LEGACY_ADMIN_NEW_NAME`
+
+The rotation script changes the legacy admin email/password and revokes its refresh sessions.
+
 ## Media
 
 Local uploads are acceptable only for development. For staging/production, configure Cloudinary or another persistent object store. SVG uploads are blocked.
