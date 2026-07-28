@@ -4,6 +4,8 @@ import {
   Package,
   Users,
   ShoppingBag,
+  FileText,
+  Mail,
   RefreshCw,
   X,
   AlertCircle,
@@ -18,6 +20,116 @@ import ProductsTab from './components/ProductsTab';
 import UsersTab from './components/UsersTab';
 import OrdersTab from './components/OrdersTab';
 
+function ContentManager({ items, refresh, showToast }) {
+  const [form, setForm] = useState({
+    type: 'blog',
+    title: '',
+    slug: '',
+    excerpt: '',
+    body: '',
+    imageUrl: '',
+    imageAlt: '',
+    isPublished: false,
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await api.createAdminContentItem(form);
+    showToast?.('CMS content item created');
+    setForm({ type: 'blog', title: '', slug: '', excerpt: '', body: '', imageUrl: '', imageAlt: '', isPublished: false });
+    refresh();
+  };
+
+  const togglePublished = async (item) => {
+    await api.updateAdminContentItem(item._id, { isPublished: !item.isPublished });
+    showToast?.('Publish status updated');
+    refresh();
+  };
+
+  const deleteItem = async (item) => {
+    if (!window.confirm(`Delete "${item.title}"?`)) return;
+    await api.deleteAdminContentItem(item._id);
+    showToast?.('CMS content item deleted');
+    refresh();
+  };
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <form onSubmit={handleSubmit} className="lg:col-span-4 bg-white p-6 rounded-3xl border border-gray-200 shadow-sm space-y-4 text-xs">
+        <h3 className="font-sansita text-2xl font-bold text-gray-900">Create CMS Item</h3>
+        <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2">
+          {['blog', 'faq', 'testimonial', 'gallery', 'video', 'course', 'courseBatch', 'team', 'policy', 'page'].map((type) => (
+            <option key={type} value={type}>{type}</option>
+          ))}
+        </select>
+        <input required placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2" />
+        <input placeholder="Slug (optional)" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2" />
+        <textarea placeholder="Excerpt / short answer" rows={3} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2" />
+        <textarea placeholder="Body content" rows={5} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2" />
+        <input placeholder="Image URL" value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2" />
+        <input placeholder="Image alt text" value={form.imageAlt} onChange={(e) => setForm({ ...form, imageAlt: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2" />
+        <label className="flex items-center gap-2 font-bold">
+          <input type="checkbox" checked={form.isPublished} onChange={(e) => setForm({ ...form, isPublished: e.target.checked })} />
+          Published
+        </label>
+        <button className="w-full bg-[#005550] text-white py-3 rounded-xl font-bold">Create Content</button>
+      </form>
+
+      <div className="lg:col-span-8 bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
+        <h3 className="font-sansita text-2xl font-bold text-gray-900 mb-4">CMS Library</h3>
+        <div className="space-y-3">
+          {items.map((item) => (
+            <div key={item._id} className="border border-gray-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span className="text-[10px] uppercase font-extrabold text-[#005550]">{item.type}</span>
+                <h4 className="font-bold text-gray-900">{item.title}</h4>
+                <p className="text-xs text-gray-500">{item.slug}</p>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => togglePublished(item)} className="px-3 py-2 rounded-xl bg-slate-100 text-xs font-bold">
+                  {item.isPublished ? 'Unpublish' : 'Publish'}
+                </button>
+                <button onClick={() => deleteItem(item)} className="px-3 py-2 rounded-xl bg-rose-50 text-rose-700 text-xs font-bold">Delete</button>
+              </div>
+            </div>
+          ))}
+          {items.length === 0 && <p className="text-sm text-gray-500">No CMS content created yet.</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EnquiriesManager({ enquiries, refresh, showToast }) {
+  const updateStatus = async (enquiry, status) => {
+    await api.updateAdminContactMessageStatus(enquiry._id, { status });
+    showToast?.('Enquiry status updated');
+    refresh();
+  };
+
+  return (
+    <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm space-y-4">
+      <h3 className="font-sansita text-2xl font-bold text-gray-900">Contact Enquiries</h3>
+      {enquiries.map((enquiry) => (
+        <div key={enquiry._id} className="border border-gray-200 rounded-2xl p-4 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+            <div>
+              <h4 className="font-bold text-gray-900">{enquiry.name}</h4>
+              <p className="text-xs text-gray-500">{enquiry.email} | {enquiry.phone}</p>
+              <p className="text-sm font-semibold text-[#005550] mt-1">{enquiry.subject}</p>
+            </div>
+            <select value={enquiry.status} onChange={(e) => updateStatus(enquiry, e.target.value)} className="bg-slate-50 border rounded-xl px-3 py-2 text-xs font-bold">
+              {['new', 'read', 'replied', 'archived'].map((status) => <option key={status} value={status}>{status}</option>)}
+            </select>
+          </div>
+          <p className="text-sm text-gray-700 whitespace-pre-line">{enquiry.message}</p>
+        </div>
+      ))}
+      {enquiries.length === 0 && <p className="text-sm text-gray-500">No enquiries yet.</p>}
+    </div>
+  );
+}
+
 export default function AdminApp() {
   const [currentUser, setCurrentUser] = useState(null);
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -26,14 +138,16 @@ export default function AdminApp() {
   const [toastMessage, setToastMessage] = useState(null);
 
   // Login form state
-  const [loginEmail, setLoginEmail] = useState('admin@synergy.com');
-  const [loginPassword, setLoginPassword] = useState('Admin@123456');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
 
   // Stats & Lists
   const [stats, setStats] = useState({ totalUsers: 0, totalProducts: 0, totalOrders: 0, totalRevenue: 0 });
   const [products, setProducts] = useState([]);
   const [users, setUsers] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [contentItems, setContentItems] = useState([]);
+  const [enquiries, setEnquiries] = useState([]);
 
   // Modals
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -97,6 +211,8 @@ export default function AdminApp() {
     if (activeTab === 'products' || activeTab === 'dashboard') fetchProducts();
     if (activeTab === 'users' || activeTab === 'dashboard') fetchUsers();
     if (activeTab === 'orders' || activeTab === 'dashboard') fetchOrders();
+    if (activeTab === 'content' || activeTab === 'dashboard') fetchContentItems();
+    if (activeTab === 'enquiries' || activeTab === 'dashboard') fetchEnquiries();
   }, [activeTab, refreshKey, currentUser]);
 
   const triggerRefresh = () => setRefreshKey((prev) => prev + 1);
@@ -108,6 +224,30 @@ export default function AdminApp() {
       if (res.data) setStats(res.data);
     } catch (err) {
       console.error('Failed to load database stats:', err);
+    }
+  };
+
+  const fetchContentItems = async () => {
+    setLoading(true);
+    try {
+      const res = await api.getAdminContentItems();
+      if (res.data) setContentItems(res.data);
+    } catch (err) {
+      showToast(err.message || 'Failed to fetch CMS content');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchEnquiries = async () => {
+    setLoading(true);
+    try {
+      const res = await api.getAdminContactMessages();
+      if (res.data) setEnquiries(res.data);
+    } catch (err) {
+      showToast(err.message || 'Failed to fetch enquiries');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -227,7 +367,7 @@ export default function AdminApp() {
           : ['Standard'],
         images: productFormData.images
           ? productFormData.images.split(',').map((s) => s.trim()).filter(Boolean)
-          : ['https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80'],
+          : [],
         inStock: Boolean(productFormData.inStock),
       };
 
@@ -504,6 +644,30 @@ export default function AdminApp() {
             <ShoppingBag className="w-4 h-4" />
             <span>Orders Management ({orders.length})</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('content')}
+            className={`px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === 'content'
+                ? 'bg-[#005550] text-white shadow-md shadow-[#005550]/20'
+                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            <FileText className="w-4 h-4" />
+            <span>Website CMS ({contentItems.length})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('enquiries')}
+            className={`px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === 'enquiries'
+                ? 'bg-[#005550] text-white shadow-md shadow-[#005550]/20'
+                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            <Mail className="w-4 h-4" />
+            <span>Enquiries ({enquiries.length})</span>
+          </button>
         </div>
 
         {/* Tab Views */}
@@ -530,6 +694,20 @@ export default function AdminApp() {
             handleUpdateOrderStatus={handleUpdateOrderStatus}
             handleUpdatePaymentStatus={handleUpdatePaymentStatus}
             setDeleteConfirmModal={setDeleteConfirmModal}
+          />
+        )}
+        {activeTab === 'content' && (
+          <ContentManager
+            items={contentItems}
+            refresh={triggerRefresh}
+            showToast={showToast}
+          />
+        )}
+        {activeTab === 'enquiries' && (
+          <EnquiriesManager
+            enquiries={enquiries}
+            refresh={triggerRefresh}
+            showToast={showToast}
           />
         )}
       </div>
@@ -619,7 +797,7 @@ export default function AdminApp() {
                 <label className="block font-bold text-gray-700 mb-1">Image URL</label>
                 <input
                   type="url"
-                  placeholder="https://images.unsplash.com/..."
+                  placeholder="https://your-cdn.example/path/product.jpg"
                   value={productFormData.images}
                   onChange={(e) => setProductFormData({ ...productFormData, images: e.target.value })}
                   className="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"

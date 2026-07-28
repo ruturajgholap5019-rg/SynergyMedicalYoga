@@ -123,4 +123,23 @@ export const api = {
   deleteAdminOrder: (id) => request(`/admin/orders/${id}`, {
     method: 'DELETE',
   }),
+
+  getAdminContentItems: () => request('/admin/content'),
+  createAdminContentItem: (payload) => request('/admin/content', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }),
+  updateAdminContentItem: (id, payload) => request(`/admin/content/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  }),
+  deleteAdminContentItem: (id) => request(`/admin/content/${id}`, {
+    method: 'DELETE',
+  }),
+
+  getAdminContactMessages: () => request('/admin/contact-messages'),
+  updateAdminContactMessageStatus: (id, payload) => request(`/admin/contact-messages/${id}/status`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  }),
 };

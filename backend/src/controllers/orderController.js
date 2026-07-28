@@ -92,7 +92,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     },
     paymentMethod: paymentMethod || 'upi',
     upiId: upiId || undefined,
-    paymentStatus: paymentMethod === 'cod' ? 'pending' : 'paid',
+    paymentStatus: 'pending',
     orderStatus: 'processing',
   });
 
@@ -195,12 +195,16 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
       data: {
         orderId: order._id,
         order: order,
-        message: `Order placed successfully with ${paymentMethod.toUpperCase()}`,
+        message: `Order received with ${paymentMethod.toUpperCase()} and pending confirmation.`,
       },
     });
   }
 
   // 3. Attempt Stripe Gateway Checkout Session for Cards
+  if (!stripe) {
+    return next(new AppError('Payment integration is under review. Please contact Synergy Medical Yoga to confirm this order.', 503));
+  }
+
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

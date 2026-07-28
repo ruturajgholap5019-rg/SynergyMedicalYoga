@@ -1,139 +1,105 @@
 const nodemailer = require('nodemailer');
 
-const createTransporter = () => {
-  const smtpUser = process.env.SMTP_USER || 'ruturajgholap5019@gmail.com';
-  const smtpPass = process.env.SMTP_PASS || 'otqghxgzqdczjjof';
-  
-  if (smtpUser && smtpPass) {
-    const cleanPass = smtpPass.replace(/\s+/g, '');
-    const isGmail = (process.env.SMTP_HOST && process.env.SMTP_HOST.includes('gmail')) || smtpUser.includes('@gmail.com');
-    
-    if (isGmail) {
-      return nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: smtpUser.trim(),
-          pass: cleanPass,
-        },
-        // Prevent hanging socket connection
-        connectionTimeout: 8000,
-        greetingTimeout: 5000,
-        socketTimeout: 8000,
-      });
-    }
+const escapeHtml = (value = '') => String(value)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;');
 
-    return nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_PORT === '465',
-      auth: {
-        user: smtpUser.trim(),
-        pass: cleanPass,
-      },
-      connectionTimeout: 8000,
-      greetingTimeout: 5000,
-      socketTimeout: 8000,
-    });
+const createTransporter = () => {
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  const smtpHost = process.env.SMTP_HOST;
+
+  if (!smtpUser || !smtpPass || !smtpHost) {
+    return null;
   }
-  return null;
+
+  return nodemailer.createTransport({
+    host: smtpHost,
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: String(process.env.SMTP_PORT) === '465',
+    auth: {
+      user: smtpUser.trim(),
+      pass: smtpPass.replace(/\s+/g, ''),
+    },
+    connectionTimeout: 8000,
+    greetingTimeout: 5000,
+    socketTimeout: 8000,
+  });
 };
 
 const sendEmail = async (mailOptions) => {
   try {
     const transporter = createTransporter();
-    if (transporter) {
-      // 8 second timeout wrapper so Node never hangs on network latency
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('SMTP email send timeout after 8000ms')), 8000)
-      );
-
-      const info = await Promise.race([transporter.sendMail(mailOptions), timeoutPromise]);
-      console.log('📧 Email sent successfully via SMTP:', info.messageId);
-      return { success: true, messageId: info.messageId };
-    } else {
-      console.log('\n======================================================');
-      console.log('📧 [DEV EMAIL SIMULATOR] Email dispatch triggered:');
-      console.log(`TO: ${mailOptions.to}`);
-      console.log(`SUBJECT: ${mailOptions.subject}`);
-      console.log(`HTML BODY:\n${mailOptions.html}`);
-      console.log('======================================================\n');
-      return { success: true, simulated: true };
+    if (!transporter) {
+      console.log('[EMAIL DISABLED] SMTP env vars are not configured; message stored only.');
+      return { success: false, skipped: true };
     }
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('SMTP email send timeout after 8000ms')), 8000)
+    );
+
+    const info = await Promise.race([transporter.sendMail(mailOptions), timeoutPromise]);
+    return { success: true, messageId: info.messageId };
   } catch (err) {
-    console.error('❌ Error dispatching email via SMTP:', err.message);
+    console.error('Email dispatch error:', err.message);
     return { success: false, error: err.message };
   }
 };
 
 exports.sendOrderConfirmation = async (order) => {
+  const recipient = order.user?.email || order.email;
+  if (!recipient) return { success: false, skipped: true };
+
   const mailOptions = {
-    from: `"Synergy Medical Yoga" <${process.env.SMTP_USER || 'ruturajgholap5019@gmail.com'}>`,
-    to: order.user.email,
-    subject: `Order Confirmation #${order._id}`,
+    from: `"Synergy Medical Yoga" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+    to: recipient,
+    subject: `Order received #${order._id}`,
     html: `
       <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-        <h2 style="color: #005550;">Thank you for your order!</h2>
-        <p>Your order <strong>#${order._id}</strong> has been placed successfully.</p>
-        <p>Total Amount: <strong>₹${order.totalAmount}</strong></p>
-        <p>We will notify you when your order is shipped.</p>
+        <h2 style="color: #005550;">Order received</h2>
+        <p>Your order <strong>#${escapeHtml(order._id)}</strong> has been received and is pending confirmation.</p>
+        <p>Total Amount: <strong>INR ${escapeHtml(order.totalAmount)}</strong></p>
       </div>
     `,
   };
 
-  return await sendEmail(mailOptions);
+  return sendEmail(mailOptions);
 };
 
 exports.sendContactEmail = async (data) => {
-  const targetEmail = process.env.CONTACT_RECEIVER_EMAIL || 'ruturajgholap5019@gmail.com';
-  const senderEmail = process.env.SMTP_USER || 'ruturajgholap5019@gmail.com';
-  
+  const targetEmail = process.env.CONTACT_RECEIVER_EMAIL;
+  const senderEmail = process.env.SMTP_FROM || process.env.SMTP_USER;
+  if (!targetEmail || !senderEmail) return { success: false, skipped: true };
+
   const mailOptions = {
     from: `"Synergy Contact Form" <${senderEmail}>`,
     to: targetEmail,
     replyTo: data.email,
-    subject: `📩 [Website Inquiry] ${data.subject || 'New Contact Message'} - ${data.name}`,
+    subject: `[Website Inquiry] ${escapeHtml(data.subject || 'New Contact Message')} - ${escapeHtml(data.name)}`,
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-        <div style="background-color: #005550; padding: 20px; text-align: center; color: white;">
-          <h2 style="margin: 0; font-size: 22px;">🌿 Synergy Medical Yoga</h2>
-          <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">New Website Contact Form Submission</p>
+      <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden;">
+        <div style="background-color: #005550; padding: 18px; color: white;">
+          <h2 style="margin: 0; font-size: 20px;">Synergy Medical Yoga</h2>
+          <p style="margin: 5px 0 0 0; font-size: 13px;">New website enquiry</p>
         </div>
-        
-        <div style="padding: 24px; background-color: #ffffff;">
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-              <td style="padding: 8px 0; font-weight: bold; width: 130px; color: #555;">Sender Name:</td>
-              <td style="padding: 8px 0; color: #111;">${data.name}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; font-weight: bold; color: #555;">Phone Number:</td>
-              <td style="padding: 8px 0; color: #111;"><a href="tel:${data.phone}" style="color: #005550; text-decoration: none; font-weight: bold;">${data.phone}</a></td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; font-weight: bold; color: #555;">Email Address:</td>
-              <td style="padding: 8px 0; color: #111;"><a href="mailto:${data.email}" style="color: #005550; text-decoration: none;">${data.email}</a></td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; font-weight: bold; color: #555;">Subject:</td>
-              <td style="padding: 8px 0; color: #005550; font-weight: bold;">${data.subject}</td>
-            </tr>
-          </table>
-          
-          <hr style="border: none; border-top: 1px solid #eeeeee; margin: 20px 0;" />
-          
-          <h4 style="margin: 0 0 10px 0; color: #005550;">Message / Symptoms Description:</h4>
-          <div style="background-color: #f9fbfb; padding: 15px; border-left: 4px solid #005550; border-radius: 4px; font-size: 14px; line-height: 1.6; color: #333; whitespace: pre-line;">
-            ${data.message}
-          </div>
-
-          <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #eeeeee; font-size: 12px; color: #888; text-align: center;">
-            This email was sent from the Contact Us form on Synergy Medical Yoga website.<br />
-            Recipient Inbox: <strong>${targetEmail}</strong>
+        <div style="padding: 22px; background-color: #ffffff;">
+          <p><strong>Name:</strong> ${escapeHtml(data.name)}</p>
+          <p><strong>Phone:</strong> ${escapeHtml(data.phone)}</p>
+          <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
+          <p><strong>Subject:</strong> ${escapeHtml(data.subject || 'General Inquiry / Consultation')}</p>
+          <hr style="border: none; border-top: 1px solid #eeeeee; margin: 18px 0;" />
+          <p><strong>Message / Symptoms:</strong></p>
+          <div style="white-space: pre-line; background: #f7fbfb; border-left: 4px solid #005550; padding: 12px;">
+            ${escapeHtml(data.message)}
           </div>
         </div>
       </div>
     `,
   };
 
-  return await sendEmail(mailOptions);
+  return sendEmail(mailOptions);
 };

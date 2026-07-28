@@ -1,94 +1,72 @@
-# Synergy Medical Yoga - Monorepo
+# Synergy Medical Yoga Monorepo
 
-A machine-independent, cross-platform full-stack application built with Node.js, Express, MongoDB, and React (Vite).
+Modern staging candidate for the Synergy Medical Yoga website migration.
 
-## 🚀 Architecture Overview
+## Structure
 
-The repository consists of 3 main services:
-- **`backend/`**: Node.js & Express REST API with MongoDB (Port 5000).
-- **`fontend/`**: Main Patient & Customer E-commerce / Appointment Web App (Port 5173).
-- **`admin/`**: Dedicated Admin Portal for management of products, appointments, services, orders, and users (Port 5174).
+- `backend/` - Node.js, Express, MongoDB REST API.
+- `frontend/` - React + Vite customer website.
+- `admin/` - React + Vite standalone admin portal.
 
----
+The previous misspelled frontend folder has been renamed to `frontend/`. The admin source of truth is the standalone `admin/` app.
 
-## 🛠️ Machine-Independent Quick Start
+## Local Setup
 
-### Method 1: Native Local Run (Windows / macOS / Linux)
+1. Install dependencies:
 
-#### Prerequisites
-- **Node.js**: v18 or v20+
-- **MongoDB**: Installed locally or running via Docker
-
-#### Step 1: Install Dependencies
-From the repository root, run:
 ```bash
 npm run install:all
 ```
 
-#### Step 2: Configure Environment Variables
-Copy `.env.example` templates in each service directory if needed:
-- `backend/.env.example` -> `backend/.env`
-- `fontend/.env.example` -> `fontend/.env`
-- `admin/.env.example` -> `admin/.env`
+2. Copy environment templates:
 
-*Note: Default fallback values are pre-configured, allowing out-of-the-box execution without mandatory environment edits.*
-
-#### Step 3: Seed Database (Optional)
-Populate default products, services, carousels, and admin account (`admin@synergy.com` / `Admin@123456`):
 ```bash
-npm run seed
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+cp admin/.env.example admin/.env
 ```
 
-#### Step 4: Run All Services Concurrently
+3. Configure MongoDB and secrets in `backend/.env`.
+
+4. Create the first admin explicitly:
+
+```bash
+cd backend
+SEED_ADMIN_EMAIL=admin@example.com SEED_ADMIN_PASSWORD="StrongPassw0rd!" npm run seed:admin
+```
+
+On Windows PowerShell:
+
+```powershell
+$env:SEED_ADMIN_EMAIL="admin@example.com"
+$env:SEED_ADMIN_PASSWORD="StrongPassw0rd!"
+npm run seed:admin
+```
+
+5. Run all services:
+
 ```bash
 npm run dev
 ```
-Access points:
-- **Patient App**: http://localhost:5173
-- **Admin App**: http://localhost:5174
-- **Backend API**: http://localhost:5000/api
 
----
+## URLs
 
-### Method 2: 1-Command Docker Setup (Zero Local Installation Needed)
+- Frontend: http://localhost:5173
+- Admin: http://localhost:5174
+- Backend API: http://localhost:5000/api
 
-#### Prerequisites
-- **Docker** & **Docker Compose** installed on your system.
+## Build
 
-#### Run Everything via Docker Compose
-From the project root:
+```bash
+npm run build
+```
+
+## Docker
+
+Copy `.env.example` to `.env`, replace secrets, then:
+
 ```bash
 docker compose up -d --build
 ```
 
-Access points:
-- **Patient Web App**: http://localhost:5173
-- **Admin Web App**: http://localhost:5174
-- **Backend API**: http://localhost:5000/api
-
-To stop containerized services:
-```bash
-docker compose down
-```
-
----
-
-## 🔑 Default Admin Credentials
-
-- **Email**: `admin@synergy.com`
-- **Password**: `Admin@123456`
-
----
-
-## 📦 Monorepo Scripts Reference
-
-| Command | Description |
-| :--- | :--- |
-| `npm run dev` | Runs Backend, Frontend, and Admin apps concurrently in development mode |
-| `npm run dev:backend` | Starts only the Backend REST API server |
-| `npm run dev:frontend` | Starts only the Frontend Patient web app |
-| `npm run dev:admin` | Starts only the Admin portal app |
-| `npm run build` | Builds production artifacts for Frontend and Admin |
-| `npm run seed` | Seeds initial MongoDB data and default admin user |
-| `npm run docker:up` | Builds and starts all containers via Docker Compose |
-| `npm run docker:down` | Stops all containerized services |
+Payment gateways are intentionally not production-enabled in this phase. Orders should be treated as pending manual confirmation.

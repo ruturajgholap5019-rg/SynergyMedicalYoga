@@ -2,6 +2,7 @@ const express = require('express');
 const Carousel = require('../models/Carousel');
 const Service = require('../models/Service');
 const Setting = require('../models/Setting');
+const ContentItem = require('../models/ContentItem');
 const catchAsync = require('../utils/catchAsync');
 
 const router = express.Router();
@@ -16,6 +17,26 @@ router.get('/carousels', catchAsync(async (req, res) => {
 router.get('/services', catchAsync(async (req, res) => {
   const services = await Service.find({ isActive: true }).sort({ createdAt: -1 });
   res.status(200).json({ status: 'success', data: services });
+}));
+
+router.get('/content/:type', catchAsync(async (req, res) => {
+  const items = await ContentItem.find({
+    type: req.params.type,
+    isPublished: true,
+  }).sort({ order: 1, createdAt: -1 });
+  res.status(200).json({ status: 'success', data: items });
+}));
+
+router.get('/content/:type/:slug', catchAsync(async (req, res) => {
+  const item = await ContentItem.findOne({
+    type: req.params.type,
+    slug: req.params.slug,
+    isPublished: true,
+  });
+  if (!item) {
+    return res.status(404).json({ status: 'fail', message: 'Content not found.' });
+  }
+  res.status(200).json({ status: 'success', data: item });
 }));
 
 // Get public payment gateway and dynamic website CMS settings

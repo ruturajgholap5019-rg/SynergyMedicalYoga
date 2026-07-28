@@ -26,7 +26,12 @@ const serviceSchema = new mongoose.Schema({
   },
   imageUrl: {
     type: String,
-    default: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80',
+    default: '',
+  },
+  imageAlt: {
+    type: String,
+    default: '',
+    trim: true,
   },
   isActive: {
     type: Boolean,

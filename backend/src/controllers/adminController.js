@@ -6,17 +6,35 @@ const Service = require('../models/Service');
 const Setting = require('../models/Setting');
 const Appointment = require('../models/Appointment');
 const ContactMessage = require('../models/ContactMessage');
+const ContentItem = require('../models/ContentItem');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 const fs = require('fs');
 const { uploadToCloudinary } = require('../utils/cloudinary');
 
+const paginate = (query) => {
+  const page = Math.max(Number(query.page) || 1, 1);
+  const limit = Math.min(Math.max(Number(query.limit) || 50, 1), 100);
+  return { page, limit, skip: (page - 1) * limit };
+};
+
+const searchRegex = (value) => value ? new RegExp(String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') : null;
+
 // --- USER CRUD ---
 exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find().select('-password').sort({ createdAt: -1 });
+  const { page, limit, skip } = paginate(req.query);
+  const search = searchRegex(req.query.search);
+  const filter = search ? { $or: [{ name: search }, { email: search }, { phone: search }] } : {};
+  const [users, total] = await Promise.all([
+    User.find(filter).select('-password').sort({ createdAt: -1 }).skip(skip).limit(limit),
+    User.countDocuments(filter),
+  ]);
   res.status(200).json({
     status: 'success',
     results: users.length,
+    total,
+    page,
+    limit,
     data: users,
   });
 });
@@ -88,10 +106,19 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
 
 // --- PRODUCT CRUD ---
 exports.getAllProducts = catchAsync(async (req, res, next) => {
-  const products = await Product.find().sort({ createdAt: -1 });
+  const { page, limit, skip } = paginate(req.query);
+  const search = searchRegex(req.query.search);
+  const filter = search ? { $or: [{ name: search }, { category: search }, { description: search }] } : {};
+  const [products, total] = await Promise.all([
+    Product.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    Product.countDocuments(filter),
+  ]);
   res.status(200).json({
     status: 'success',
     results: products.length,
+    total,
+    page,
+    limit,
     data: products,
   });
 });
@@ -129,13 +156,22 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
 
 // --- ORDER MANAGEMENT ---
 exports.getAllOrders = catchAsync(async (req, res, next) => {
-  const orders = await Order.find()
+  const { page, limit, skip } = paginate(req.query);
+  const [orders, total] = await Promise.all([
+    Order.find()
     .populate('user', 'name email phone')
-    .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    Order.countDocuments(),
+  ]);
 
   res.status(200).json({
     status: 'success',
     results: orders.length,
+    total,
+    page,
+    limit,
     data: orders,
   });
 });
@@ -259,7 +295,7 @@ exports.getPaymentSettings = catchAsync(async (req, res, next) => {
   }
   res.status(200).json({
     status: 'success',
-    data: settings,
+    data: { ...settings.toObject(), cashfreeSecretKey: '' },
   });
 });
 
@@ -268,16 +304,18 @@ exports.updatePaymentSettings = catchAsync(async (req, res, next) => {
   if (!settings) {
     settings = await Setting.create(req.body);
   } else {
+    const nextBody = { ...req.body };
+    if (!nextBody.cashfreeSecretKey) delete nextBody.cashfreeSecretKey;
     settings = await Setting.findByIdAndUpdate(
       settings._id,
-      { ...req.body, updatedAt: Date.now() },
+      { ...nextBody, updatedAt: Date.now() },
       { new: true, runValidators: true }
     );
   }
 
   res.status(200).json({
     status: 'success',
-    data: settings,
+    data: { ...settings.toObject(), cashfreeSecretKey: '' },
   });
 });
 
@@ -416,12 +454,30 @@ exports.uploadImages = catchAsync(async (req, res, next) => {
 
 // --- CONTACT MESSAGES MANAGEMENT ---
 exports.getAllContactMessages = catchAsync(async (req, res, next) => {
-  const messages = await ContactMessage.find().sort({ createdAt: -1 });
+  const { page, limit, skip } = paginate(req.query);
+  const search = searchRegex(req.query.search);
+  const filter = search ? { $or: [{ name: search }, { email: search }, { phone: search }, { subject: search }] } : {};
+  const [messages, total] = await Promise.all([
+    ContactMessage.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    ContactMessage.countDocuments(filter),
+  ]);
   res.status(200).json({
     status: 'success',
     results: messages.length,
+    total,
+    page,
+    limit,
     data: messages,
   });
+});
+
+exports.updateContactMessageStatus = catchAsync(async (req, res, next) => {
+  const message = await ContactMessage.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!message) return next(new AppError('No contact message found with that ID', 404));
+  res.status(200).json({ status: 'success', data: message });
 });
 
 exports.deleteContactMessage = catchAsync(async (req, res, next) => {
@@ -433,5 +489,41 @@ exports.deleteContactMessage = catchAsync(async (req, res, next) => {
     status: 'success',
     data: null,
   });
+});
+
+// --- GENERIC WEBSITE CMS CONTENT ---
+exports.getContentItems = catchAsync(async (req, res) => {
+  const { page, limit, skip } = paginate(req.query);
+  const search = searchRegex(req.query.search);
+  const filter = {};
+  if (req.query.type) filter.type = req.query.type;
+  if (search) filter.$or = [{ title: search }, { slug: search }, { excerpt: search }, { category: search }];
+
+  const [items, total] = await Promise.all([
+    ContentItem.find(filter).sort({ type: 1, order: 1, createdAt: -1 }).skip(skip).limit(limit),
+    ContentItem.countDocuments(filter),
+  ]);
+
+  res.status(200).json({ status: 'success', results: items.length, total, page, limit, data: items });
+});
+
+exports.createContentItem = catchAsync(async (req, res) => {
+  const item = await ContentItem.create(req.body);
+  res.status(201).json({ status: 'success', data: item });
+});
+
+exports.updateContentItem = catchAsync(async (req, res, next) => {
+  const item = await ContentItem.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!item) return next(new AppError('Content item not found.', 404));
+  res.status(200).json({ status: 'success', data: item });
+});
+
+exports.deleteContentItem = catchAsync(async (req, res, next) => {
+  const item = await ContentItem.findByIdAndDelete(req.params.id);
+  if (!item) return next(new AppError('Content item not found.', 404));
+  res.status(200).json({ status: 'success', message: 'Content item deleted successfully' });
 });
 

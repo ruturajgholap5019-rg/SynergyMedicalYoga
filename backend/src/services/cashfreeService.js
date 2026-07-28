@@ -30,6 +30,9 @@ exports.createCashfreeOrderSession = async ({ orderId, amount, customerInfo, ret
   if (!appId || !secretKey) {
     throw new Error('Cashfree App ID or Secret Key is missing in settings.');
   }
+  if (!customerInfo?.email) {
+    throw new Error('Customer email is required to create a payment session.');
+  }
 
   const baseUrl = mode.toUpperCase() === 'PRODUCTION'
     ? 'https://api.cashfree.com/pg/orders'
@@ -42,7 +45,7 @@ exports.createCashfreeOrderSession = async ({ orderId, amount, customerInfo, ret
     customer_details: {
       customer_id: customerInfo.id || `CUST_${Date.now()}`,
       customer_name: customerInfo.name || 'Customer',
-      customer_email: customerInfo.email || 'customer@example.com',
+      customer_email: customerInfo.email,
       customer_phone: customerInfo.phone ? customerInfo.phone.replace(/[^0-9]/g, '').slice(-10) : '9999999999',
     },
     order_meta: {

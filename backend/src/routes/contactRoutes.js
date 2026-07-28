@@ -2,19 +2,15 @@ const express = require('express');
 const ContactMessage = require('../models/ContactMessage');
 const emailService = require('../services/emailService');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/AppError');
+const { formSpamLimiter } = require('../middleware/rateLimiter');
+const { validate } = require('../middleware/validate');
+const { contact } = require('../validators/schemas');
 
 const router = express.Router();
 
 // POST /api/contact - Submit contact form (Non-blocking response)
-router.post('/', catchAsync(async (req, res, next) => {
+router.post('/', formSpamLimiter, validate(contact), catchAsync(async (req, res, next) => {
   const { name, phone, email, subject, message } = req.body;
-
-  if (!name || !phone || !email || !message) {
-    return next(new AppError('Please provide all required fields: name, phone, email, and message.', 400));
-  }
-
-  const recipientEmail = process.env.CONTACT_RECEIVER_EMAIL || 'ruturajgholap5019@gmail.com';
 
   // 1. Save message to MongoDB immediately
   const contactEntry = await ContactMessage.create({
@@ -23,7 +19,7 @@ router.post('/', catchAsync(async (req, res, next) => {
     email,
     subject: subject || 'General Inquiry / Consultation',
     message,
-    recipientEmail,
+    recipientEmail: process.env.CONTACT_RECEIVER_EMAIL || '',
   });
 
   // 2. Dispatch email notification asynchronously in background (Non-blocking)
@@ -45,7 +41,6 @@ router.post('/', catchAsync(async (req, res, next) => {
     message: 'Your inquiry message has been submitted successfully.',
     data: {
       id: contactEntry._id,
-      recipientEmail,
     },
   });
 }));

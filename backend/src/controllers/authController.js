@@ -28,8 +28,7 @@ exports.register = catchAsync(async (req, res, next) => {
   const existing = await User.findOne({ email });
   if (existing) return next(new AppError('Email already registered.', 400));
 
-  const role = (email === 'admin@synergy.com' || email.endsWith('@synergy-admin.com')) ? 'admin' : 'customer';
-  const user = await User.create({ name, email, phone, password, role });
+  const user = await User.create({ name, email, phone, password, role: 'customer' });
   const accessToken = generateAccessToken(user._id, user.role);
   const refreshToken = generateRefreshToken(user._id, user.role);
 
@@ -47,25 +46,7 @@ exports.login = catchAsync(async (req, res, next) => {
   const email = req.body.email ? req.body.email.toLowerCase().trim() : '';
   const password = req.body.password;
 
-  let user = await User.findOne({ email }).select('+password');
-
-  // On-the-fly auto-bootstrap or role upgrade for default admin account during login
-  if (email === 'admin@synergy.com') {
-    if (!user && password === 'Admin@123456') {
-      user = await User.create({
-        name: 'Synergy Admin',
-        email: 'admin@synergy.com',
-        password: 'Admin@123456',
-        phone: '+919876543210',
-        role: 'admin',
-      });
-      // reload to include password hash matching
-      user = await User.findOne({ email }).select('+password');
-    } else if (user && user.role !== 'admin') {
-      user.role = 'admin';
-      await user.save();
-    }
-  }
+  const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.matchPassword(password))) {
     return next(new AppError('Invalid email or password.', 401));

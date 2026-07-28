@@ -39,9 +39,6 @@ app.use(cors({
     if (
       !origin ||
       allowedOrigins.includes(origin) ||
-      allowedOrigins.includes('*') ||
-      origin.endsWith('.vercel.app') ||
-      origin.endsWith('.onrender.com') ||
       process.env.NODE_ENV !== 'production'
     ) {
       callback(null, true);

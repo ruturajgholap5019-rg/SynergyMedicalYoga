@@ -3,6 +3,8 @@ const adminController = require('../controllers/adminController');
 const { protect } = require('../middleware/auth');
 const admin = require('../middleware/admin');
 const upload = require('../middleware/upload');
+const { validate } = require('../middleware/validate');
+const { adminUser, product, service, carousel, content } = require('../validators/schemas');
 
 const router = express.Router();
 
@@ -17,23 +19,23 @@ router.get('/dashboard', adminController.getDashboardStats);
 router
   .route('/users')
   .get(adminController.getAllUsers)
-  .post(adminController.createUser);
+  .post(validate(adminUser.create), adminController.createUser);
 
 router
   .route('/users/:id')
   .get(adminController.getUser)
-  .put(adminController.updateUser)
+  .put(validate(adminUser.update), adminController.updateUser)
   .delete(adminController.deleteUser);
 
 // Product CRUD
 router
   .route('/products')
   .get(adminController.getAllProducts)
-  .post(adminController.createProduct);
+  .post(validate(product), adminController.createProduct);
 
 router
   .route('/products/:id')
-  .put(adminController.updateProduct)
+  .put(validate(product.partial()), adminController.updateProduct)
   .delete(adminController.deleteProduct);
 
 // Order Management
@@ -45,22 +47,22 @@ router.delete('/orders/:id', adminController.deleteOrder);
 router
   .route('/carousels')
   .get(adminController.getAllCarousels)
-  .post(adminController.createCarousel);
+  .post(validate(carousel), adminController.createCarousel);
 
 router
   .route('/carousels/:id')
-  .put(adminController.updateCarousel)
+  .put(validate(carousel.partial()), adminController.updateCarousel)
   .delete(adminController.deleteCarousel);
 
 // Services CRUD
 router
   .route('/services')
   .get(adminController.getAllServices)
-  .post(adminController.createService);
+  .post(validate(service), adminController.createService);
 
 router
   .route('/services/:id')
-  .put(adminController.updateService)
+  .put(validate(service.partial()), adminController.updateService)
   .delete(adminController.deleteService);
 
 // Payment Gateway Settings (UPI & Scanner)
@@ -76,7 +78,19 @@ router.delete('/appointments/:id', adminController.deleteAppointment);
 
 // Contact Messages Management
 router.get('/contact-messages', adminController.getAllContactMessages);
+router.put('/contact-messages/:id/status', validate(content.simpleStatus), adminController.updateContactMessageStatus);
 router.delete('/contact-messages/:id', adminController.deleteContactMessage);
+
+// Website CMS Content Management
+router
+  .route('/content')
+  .get(adminController.getContentItems)
+  .post(validate(content.item), adminController.createContentItem);
+
+router
+  .route('/content/:id')
+  .put(validate(content.item.partial()), adminController.updateContentItem)
+  .delete(adminController.deleteContentItem);
 
 // Image Upload Routes (Multer)
 router.post('/upload', upload.single('image'), adminController.uploadImage);
