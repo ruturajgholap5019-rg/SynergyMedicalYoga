@@ -480,7 +480,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
               <img
                 src={PRODUCT_KNEE}
                 alt="Knee Stabilizer Belts"
-                className="w-full h-80 sm:h-[480px] object-cover rounded-3xl drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+                className="w-full sm:h-[480px] object-cover rounded-3xl drop-shadow-2xl hover:scale-105 transition-transform duration-500"
               />
             </div>
 
