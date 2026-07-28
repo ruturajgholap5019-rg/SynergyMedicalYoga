@@ -444,8 +444,8 @@ export default function App() {
               setSelectedProductId(slug);
               handleNavigate('product-detail', true, `/product/${slug}`);
             }}
-            onBuyNow={async (product, selectedSize) => {
-              const success = await handleAddToCart(product, selectedSize, 1);
+            onBuyNow={async (product, selectedSize, quantity = 1) => {
+              const success = await handleAddToCart(product, selectedSize, quantity);
               if (success) {
                 if (!currentUser) {
                   setPendingCheckout(true);
@@ -478,8 +478,8 @@ export default function App() {
           <ShopPage
             onAddToCart={handleAddToCart}
             onQuickView={(p) => setQuickViewProduct(p)}
-            onBuyNow={async (product, selectedSize) => {
-              const success = await handleAddToCart(product, selectedSize, 1);
+            onBuyNow={async (product, selectedSize, quantity = 1) => {
+              const success = await handleAddToCart(product, selectedSize, quantity);
               if (success) {
                 if (!currentUser) {
                   setPendingCheckout(true);
@@ -502,8 +502,8 @@ export default function App() {
           <ProductDetailPage
             productId={selectedProductId}
             onAddToCart={handleAddToCart}
-            onBuyNow={async (product, selectedSize) => {
-              const success = await handleAddToCart(product, selectedSize, 1);
+            onBuyNow={async (product, selectedSize, quantity = 1) => {
+              const success = await handleAddToCart(product, selectedSize, quantity);
               if (success) {
                 if (!currentUser) {
                   setPendingCheckout(true);
@@ -615,9 +615,9 @@ export default function App() {
           product={quickViewProduct}
           onClose={() => setQuickViewProduct(null)}
           onAddToCart={handleAddToCart}
-          onBuyNow={async (p, sz) => {
+          onBuyNow={async (p, sz, q = 1) => {
             setQuickViewProduct(null);
-            const success = await handleAddToCart(p, sz, 1);
+            const success = await handleAddToCart(p, sz, q);
             if (success) {
               if (!currentUser) {
                 setPendingCheckout(true);

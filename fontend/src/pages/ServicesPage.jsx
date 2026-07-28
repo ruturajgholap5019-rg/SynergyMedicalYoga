@@ -51,11 +51,6 @@ const THERAPY_ACCORDION = [
   },
 ];
 
-const DEFAULT_SERVICE_SLIDES = [
-  { src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=85', alt: 'Cervical & Lumbar Traction Therapy' },
-  { src: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=85', alt: 'Clinical Medical Yoga & Rehabilitation' },
-];
-
 export default function ServicesPage({ setActivePage, currentUser }) {
   const { settings } = useSiteSettings();
   const [openTab, setOpenTab] = useState('knee');
@@ -65,7 +60,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
   const [selectedService, setSelectedService] = useState(null);
 
   // Carousel State
-  const [serviceSlides, setServiceSlides] = useState(DEFAULT_SERVICE_SLIDES);
+  const [serviceSlides, setServiceSlides] = useState([]);
   const [slide, setSlide] = useState(0);
   const [isSlidePaused, setIsSlidePaused] = useState(false);
 
@@ -263,53 +258,55 @@ export default function ServicesPage({ setActivePage, currentUser }) {
       {/* ──────────────────────────────────────────────
           4. FULL-WIDTH SERVICE PROMOTIONAL SLIDER (Strictly Database Driven from MongoDB Atlas)
           ────────────────────────────────────────────── */}
-      <section
-        onMouseEnter={() => setIsSlidePaused(true)}
-        onMouseLeave={() => setIsSlidePaused(false)}
-        className="relative w-full overflow-hidden bg-slate-900 h-[450px] sm:h-[550px] lg:h-[600px] flex items-center group shadow-md"
-      >
-        {serviceSlides.map((s, i) => (
-          <div
-            key={i}
-            className={`absolute inset-0 transition-opacity duration-1000 ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-          >
-            <img
-              src={s.src}
-              alt={s.alt}
-              className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === slide ? 'scale-105' : 'scale-100'}`}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-          </div>
-        ))}
-
-        {/* Carousel Arrow Controls */}
-        <button
-          onClick={() => setSlide((slide - 1 + serviceSlides.length) % serviceSlides.length)}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-black/40 hover:bg-black/70 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer opacity-80 hover:opacity-100"
-          aria-label="Previous Slide"
+      {serviceSlides.length > 0 && (
+        <section
+          onMouseEnter={() => setIsSlidePaused(true)}
+          onMouseLeave={() => setIsSlidePaused(false)}
+          className="relative w-full overflow-hidden bg-slate-900 h-[450px] sm:h-[550px] lg:h-[600px] flex items-center group shadow-md"
         >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-        <button
-          onClick={() => setSlide((slide + 1) % serviceSlides.length)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-black/40 hover:bg-black/70 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer opacity-80 hover:opacity-100"
-          aria-label="Next Slide"
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
-
-        {/* Pagination Dots */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2.5">
-          {serviceSlides.map((_, i) => (
-            <button
+          {serviceSlides.map((s, i) => (
+            <div
               key={i}
-              onClick={() => setSlide(i)}
-              className={`w-3 h-3 rounded-full transition-all cursor-pointer ${i === slide ? 'bg-white scale-125 shadow-sm' : 'bg-white/50 hover:bg-white/80'}`}
-              aria-label={`Go to service slide ${i + 1}`}
-            />
+              className={`absolute inset-0 transition-opacity duration-1000 ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+            >
+              <img
+                src={s.src}
+                alt={s.alt}
+                className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === slide ? 'scale-105' : 'scale-100'}`}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+            </div>
           ))}
-        </div>
-      </section>
+
+          {/* Carousel Arrow Controls */}
+          <button
+            onClick={() => setSlide((slide - 1 + serviceSlides.length) % serviceSlides.length)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-black/40 hover:bg-black/70 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer opacity-80 hover:opacity-100"
+            aria-label="Previous Slide"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button
+            onClick={() => setSlide((slide + 1) % serviceSlides.length)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-black/40 hover:bg-black/70 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer opacity-80 hover:opacity-100"
+            aria-label="Next Slide"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+
+          {/* Pagination Dots */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2.5">
+            {serviceSlides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setSlide(i)}
+                className={`w-3 h-3 rounded-full transition-all cursor-pointer ${i === slide ? 'bg-white scale-125 shadow-sm' : 'bg-white/50 hover:bg-white/80'}`}
+                aria-label={`Go to service slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
 
       {/* ──────────────────────────────────────────────

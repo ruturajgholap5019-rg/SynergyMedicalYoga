@@ -160,10 +160,9 @@ export default function ProductDetailModal({ product, onClose, onAddToCart, onBu
 
                 <button
                   onClick={() => {
-                    handleAdd();
-                    onBuyNow?.(product, selectedSize);
+                    onBuyNow?.(product, selectedSize, quantity);
                   }}
-                  className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3.5 px-4 rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-1"
+                  className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3.5 px-4 rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-1 cursor-pointer hover:scale-105"
                 >
                   Buy Now Directly
                 </button>

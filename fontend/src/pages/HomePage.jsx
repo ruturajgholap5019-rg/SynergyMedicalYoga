@@ -5,28 +5,6 @@ import { api } from '../lib/api';
 import ProductCard from '../components/ProductCard';
 import { useSiteSettings } from '../lib/useSiteSettings';
 
-/* ── Image URLs from Original Site ── */
-const DEFAULT_HERO_SLIDES = [
-  {
-    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80',
-    alt: 'Synergy Medical Yoga Therapy',
-    heading: 'Guided Training Videos\nfor Therapeutic Exercises\nat Home',
-    subtitle: 'Clinical medical yoga alignments for knee, spine, and neck strain rehabilitation.',
-  },
-  {
-    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner-2.jpg',
-    alt: 'Synergy Medical Yoga Banner 2',
-    heading: 'Professional Rope & Belt\nTherapy for Pain Management',
-    subtitle: 'Doctor supervised posture realignment & joint friction elimination.',
-  },
-  {
-    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner-3.jpg',
-    alt: 'Synergy Medical Yoga Banner 3',
-    heading: 'Evidence-Based\nTherapy Programs\nfor Faster Recovery',
-    subtitle: 'Integrated approach to pain relief with certified therapeutic instructors.',
-  },
-];
-
 const IMEDIYOG_LOGO  = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/I-Mediyog-Logo_PNG-06.png';
 const PRODUCT_KNEE   = 'https://synergymedicalyoga.com/wp-content/uploads/2026/06/HEaro-Image-300x300.png';
 const PRODUCT_NECK   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Neck-Pain-01-300x300.png';
@@ -71,7 +49,7 @@ function Counter({ end, suffix = '' }) {
 export default function HomePage({ setActivePage, onAddToCart, onQuickView, onViewDetails, onBuyNow }) {
   const { settings } = useSiteSettings();
   const [slide, setSlide] = useState(0);
-  const [heroSlides, setHeroSlides] = useState(DEFAULT_HERO_SLIDES);
+  const [heroSlides, setHeroSlides] = useState([]);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [aboutVisible] = useState(true);
   const [orthVisible] = useState(true);
@@ -116,9 +94,10 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
     <div className="bg-white font-inter text-[#555555]">
 
       {/* ──────────────────────────────────────────────
-          1. HERO CAROUSEL SLIDER (Dynamic from MongoDB Atlas with clean instant default)
+          1. HERO CAROUSEL SLIDER (Strictly Database Driven from MongoDB Atlas)
           ────────────────────────────────────────────── */}
-      <section
+      {heroSlides.length > 0 && (
+        <section
           onMouseEnter={() => setIsCarouselPaused(true)}
           onMouseLeave={() => setIsCarouselPaused(false)}
           className="relative w-full overflow-hidden bg-gray-900 h-[70vh] min-h-[440px] sm:h-[80vh] lg:h-[calc(100vh-96px)] flex items-center group"
@@ -182,6 +161,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
             ))}
           </div>
         </section>
+      )}
       
       {/* ──────────────────────────────────────────────
           2. ABOUT iMediYog Healthcare LLP

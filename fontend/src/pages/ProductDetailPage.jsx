@@ -167,10 +167,9 @@ export default function ProductDetailPage({ productId, onAddToCart, onBuyNow, go
 
                 <button
                   onClick={() => {
-                    handleAdd();
-                    onBuyNow?.();
+                    onBuyNow?.(product, selectedSize, quantity);
                   }}
-                  className="inline-flex items-center justify-center gap-2 rounded-3xl py-4 px-5 text-sm font-bold bg-amber-500 hover:bg-amber-600 text-slate-950"
+                  className="inline-flex items-center justify-center gap-2 rounded-3xl py-4 px-5 text-sm font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 cursor-pointer shadow-md transition-all hover:scale-105"
                 >
                   <Check className="w-4 h-4" /> Buy Product
                 </button>
