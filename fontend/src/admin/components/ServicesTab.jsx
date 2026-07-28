@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Plus, CheckCircle, X, Edit2, Trash2, Activity } from 'lucide-react';
+import { getImageUrl } from '../../lib/api';
 
 export default function ServicesTab({
   services,
@@ -82,7 +83,7 @@ export default function ServicesTab({
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <img
-                          src={service.imageUrl || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b'}
+                          src={getImageUrl(service.imageUrl || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b')}
                           alt={service.title}
                           className="w-12 h-12 rounded-xl object-cover border border-gray-200"
                         />

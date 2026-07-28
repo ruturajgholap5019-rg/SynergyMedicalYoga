@@ -18,7 +18,7 @@ import {
   Check,
   Globe,
 } from 'lucide-react';
-import { api } from '../lib/api';
+import { api, getImageUrl } from '../lib/api';
 
 import OverviewTab from './components/OverviewTab';
 import ProductsTab from './components/ProductsTab';
@@ -939,7 +939,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
                 {carouselFormData.imageUrl && (
                   <div className="mt-3 p-2 bg-white rounded-xl border border-gray-200 flex items-center gap-3">
                     <img
-                      src={carouselFormData.imageUrl}
+                      src={getImageUrl(carouselFormData.imageUrl)}
                       alt="Banner Preview"
                       className="w-16 h-10 object-cover rounded-lg bg-slate-900 border border-gray-100"
                     />
@@ -1311,7 +1311,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
                         if (!trimmed) return null;
                         return (
                           <div key={index} className="relative group border border-gray-200 rounded-lg overflow-hidden w-14 h-14 bg-slate-50">
-                            <img src={trimmed} alt="Preview" className="w-full h-full object-cover" />
+                            <img src={getImageUrl(trimmed)} alt="Preview" className="w-full h-full object-cover" />
                           </div>
                         );
                       })}

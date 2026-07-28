@@ -63,7 +63,10 @@ export default function ServicesPage({ setActivePage, currentUser }) {
   const [serviceSlides, setServiceSlides] = useState(() => {
     try {
       const cached = localStorage.getItem('synergy_cached_services_carousels');
-      if (cached) return JSON.parse(cached);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        return Array.isArray(parsed) ? parsed.map((s) => ({ ...s, src: getImageUrl(s.src) })) : [];
+      }
     } catch (e) {}
     return [];
   });
@@ -159,7 +162,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
                   <div>
                     <div className="h-48 overflow-hidden relative">
                       <img
-                        src={srv.imageUrl || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b'}
+                        src={getImageUrl(srv.imageUrl || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b')}
                         alt={srv.title}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                       />
@@ -212,7 +215,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
             {/* App Mockup */}
             <div className="lg:col-span-5 flex justify-center">
               <img
-                src={settings.appMockupImage || APP_MOCKUP}
+                src={getImageUrl(settings.appMockupImage || APP_MOCKUP)}
                 alt="Synergy MYT App"
                 className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
               />
@@ -295,7 +298,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
               className={`absolute inset-0 transition-opacity duration-1000 ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
             >
               <img
-                src={s.src}
+                src={getImageUrl(s.src)}
                 alt={s.alt}
                 className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === slide ? 'scale-105' : 'scale-100'}`}
               />

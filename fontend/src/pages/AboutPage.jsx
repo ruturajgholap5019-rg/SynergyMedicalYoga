@@ -1,6 +1,7 @@
 import React from 'react';
 import { Target, Eye, Award } from 'lucide-react';
 import { useSiteSettings } from '../lib/useSiteSettings';
+import { getImageUrl } from '../lib/api';
 
 const CEO  = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/MD.jpeg';
 const CMO  = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/Poonam-Deshmukh-with-apron.jpeg';
@@ -315,7 +316,7 @@ export default function AboutPage() {
                     <img src={PLAYSTORE} alt="GET IT ON Google Play" className="h-11 sm:h-12 object-contain" />
                   </a>
                   <div className="w-32 h-32 sm:w-36 sm:h-36 bg-white p-2.5 rounded-2xl shadow-md border border-gray-200/80">
-                    <img src={settings.playStoreQrImage || PLAY_QR} alt="Google Play QR Code" className="w-full h-full object-cover rounded-xl" />
+                    <img src={getImageUrl(settings.playStoreQrImage || PLAY_QR)} alt="Google Play QR Code" className="w-full h-full object-cover rounded-xl" />
                   </div>
                 </div>
 
@@ -330,7 +331,7 @@ export default function AboutPage() {
                     <img src={APPSTORE} alt="Download on the App Store" className="h-11 sm:h-12 object-contain" />
                   </a>
                   <div className="w-32 h-32 sm:w-36 sm:h-36 bg-white p-2.5 rounded-2xl shadow-md border border-gray-200/80">
-                    <img src={settings.appStoreQrImage || APPLE_QR} alt="App Store QR Code" className="w-full h-full object-cover rounded-xl" />
+                    <img src={getImageUrl(settings.appStoreQrImage || APPLE_QR)} alt="App Store QR Code" className="w-full h-full object-cover rounded-xl" />
                   </div>
                 </div>
               </div>
@@ -339,7 +340,7 @@ export default function AboutPage() {
             {/* Right Column: Therapist with Synergy MYT App */}
             <div className="lg:col-span-5 flex justify-center lg:justify-end mt-6 lg:mt-0">
               <img
-                src={settings.appMockupImage || APP_MOCKUP}
+                src={getImageUrl(settings.appMockupImage || APP_MOCKUP)}
                 alt="Therapist holding Synergy MYT App"
                 className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl transform hover:scale-102 transition-transform duration-500"
               />

@@ -74,8 +74,10 @@ export function getImageUrl(path) {
     const backendHost = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || 'https://synergymedicalyoga.onrender.com';
     fullUrl = `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`;
   }
-  // Automatically upgrade unencrypted http links to secure https on Vercel/cloud domains to prevent browser mixed-content blocking
-  if (fullUrl.startsWith('http://') && (fullUrl.includes('.onrender.com') || (typeof window !== 'undefined' && window.location.protocol === 'https:'))) {
+  // Automatically upgrade unencrypted http links to secure https (unless pointing to local dev servers) to prevent browser mixed-content blocking
+  if (fullUrl.startsWith('http://') && !fullUrl.match(/^http:\/\/(localhost|127\.0\.0\.1|192\.168\.)/i)) {
+    fullUrl = fullUrl.replace(/^http:\/\//i, 'https://');
+  } else if (fullUrl.startsWith('http://') && typeof window !== 'undefined' && window.location.protocol === 'https:') {
     fullUrl = fullUrl.replace(/^http:\/\//i, 'https://');
   }
   return fullUrl;

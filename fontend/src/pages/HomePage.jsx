@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight, Star, QrCode } from 'lucide-react';
 import { PRODUCTS } from '../data/mockData';
-import { api } from '../lib/api';
+import { api, getImageUrl } from '../lib/api';
 import ProductCard from '../components/ProductCard';
 import { useSiteSettings } from '../lib/useSiteSettings';
 
@@ -52,7 +52,10 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
   const [heroSlides, setHeroSlides] = useState(() => {
     try {
       const cached = localStorage.getItem('synergy_cached_home_carousels');
-      if (cached) return JSON.parse(cached);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        return Array.isArray(parsed) ? parsed.map((s) => ({ ...s, src: getImageUrl(s.src) })) : [];
+      }
     } catch (e) {}
     return [];
   });
@@ -147,7 +150,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
               className={`absolute inset-0 transition-opacity duration-1000 ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
             >
               <img
-                src={s.src}
+                src={getImageUrl(s.src)}
                 alt={s.alt}
                 className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === slide ? 'scale-105' : 'scale-100'}`}
               />
@@ -566,7 +569,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
 
             <div className="lg:col-span-6 flex justify-center">
               <img
-                src={settings.appMockupImage || "https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png"}
+                src={getImageUrl(settings.appMockupImage || "https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png")}
                 alt="Therapist with Synergy MYT App"
                 className="max-w-md w-full object-contain drop-shadow-2xl animate-float-slow"
               />
