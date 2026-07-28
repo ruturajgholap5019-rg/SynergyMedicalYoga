@@ -6,6 +6,27 @@ import ProductCard from '../components/ProductCard';
 import { useSiteSettings } from '../lib/useSiteSettings';
 
 /* ── Image URLs from Original Site ── */
+const DEFAULT_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80',
+    alt: 'Synergy Medical Yoga Therapy',
+    heading: 'Guided Training Videos\nfor Therapeutic Exercises\nat Home',
+    subtitle: 'Clinical medical yoga alignments for knee, spine, and neck strain rehabilitation.',
+  },
+  {
+    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner-2.jpg',
+    alt: 'Synergy Medical Yoga Banner 2',
+    heading: 'Professional Rope & Belt\nTherapy for Pain Management',
+    subtitle: 'Doctor supervised posture realignment & joint friction elimination.',
+  },
+  {
+    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner-3.jpg',
+    alt: 'Synergy Medical Yoga Banner 3',
+    heading: 'Evidence-Based\nTherapy Programs\nfor Faster Recovery',
+    subtitle: 'Integrated approach to pain relief with certified therapeutic instructors.',
+  },
+];
+
 const IMEDIYOG_LOGO  = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/I-Mediyog-Logo_PNG-06.png';
 const PRODUCT_KNEE   = 'https://synergymedicalyoga.com/wp-content/uploads/2026/06/HEaro-Image-300x300.png';
 const PRODUCT_NECK   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Neck-Pain-01-300x300.png';
@@ -50,10 +71,10 @@ function Counter({ end, suffix = '' }) {
 export default function HomePage({ setActivePage, onAddToCart, onQuickView, onViewDetails, onBuyNow }) {
   const { settings } = useSiteSettings();
   const [slide, setSlide] = useState(0);
-  const [heroSlides, setHeroSlides] = useState([]);
+  const [heroSlides, setHeroSlides] = useState(DEFAULT_HERO_SLIDES);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
-  const [aboutVisible, setAboutVisible] = useState(false);
-  const [orthVisible, setOrthVisible] = useState(false);
+  const [aboutVisible] = useState(true);
+  const [orthVisible] = useState(true);
   const aboutRef = useRef(null);
   const orthRef = useRef(null);
 
@@ -84,56 +105,20 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
 
   // Auto advance slides every 5000ms (5s) with pause on hover/interaction
   useEffect(() => {
-    if (isCarouselPaused) return;
+    if (isCarouselPaused || heroSlides.length === 0) return;
     const timer = setInterval(() => {
       setSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000);
     return () => clearInterval(timer);
   }, [heroSlides, isCarouselPaused]);
 
-  // Track scroll direction reliably
-  const prevScrollY = useRef(typeof window !== 'undefined' ? window.scrollY : 0);
-  const scrollDir = useRef(false); // true = down, false = up
-
-  useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      scrollDir.current = y > prevScrollY.current;
-      prevScrollY.current = y;
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        const scrolledDown = scrollDir.current;
-            if (e.isIntersecting && scrolledDown) {
-              if (e.target === aboutRef.current) {
-                setAboutVisible(true);
-              }
-              if (e.target === orthRef.current) {
-                setOrthVisible(true);
-              }
-            }
-      });
-    }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
-
-    if (aboutRef.current) obs.observe(aboutRef.current);
-    if (orthRef.current) obs.observe(orthRef.current);
-
-    return () => obs.disconnect();
-  }, []);
-
   return (
     <div className="bg-white font-inter text-[#555555]">
 
       {/* ──────────────────────────────────────────────
-          1. HERO CAROUSEL SLIDER (Strictly Database Driven from MongoDB Atlas)
+          1. HERO CAROUSEL SLIDER (Dynamic from MongoDB Atlas with clean instant default)
           ────────────────────────────────────────────── */}
-      {heroSlides.length > 0 && (
-        <section
+      <section
           onMouseEnter={() => setIsCarouselPaused(true)}
           onMouseLeave={() => setIsCarouselPaused(false)}
           className="relative w-full overflow-hidden bg-gray-900 h-[70vh] min-h-[440px] sm:h-[80vh] lg:h-[calc(100vh-96px)] flex items-center group"
@@ -197,10 +182,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
             ))}
           </div>
         </section>
-      )}
-
-
-
+      
       {/* ──────────────────────────────────────────────
           2. ABOUT iMediYog Healthcare LLP
           ────────────────────────────────────────────── */}
@@ -208,8 +190,8 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            {/* Text column */}
-            <div ref={aboutRef} className={`lg:col-span-7 space-y-6 transition-all duration-700 ${aboutVisible ? 'animate-fade-in-left-lg opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
+            {/* Text column - Immediately visible to eliminate hidden text bug */}
+            <div ref={aboutRef} className="lg:col-span-7 space-y-6 animate-fade-in-left-lg opacity-100 translate-x-0">
               <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
                 About iMediYog Healthcare LLP
               </h2>
@@ -362,8 +344,8 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            {/* Left text */}
-            <div ref={orthRef} className={`lg:col-span-6 space-y-6 transition-all duration-700 ${orthVisible ? 'animate-fade-in-left-lg opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
+            {/* Left text - Immediately visible to eliminate hidden text bug */}
+            <div ref={orthRef} className="lg:col-span-6 space-y-6 animate-fade-in-left-lg opacity-100 translate-x-0">
               <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
                 Explore Our Orthopaedic Pain Relief &amp; Posture Correction Belts
               </h2>
