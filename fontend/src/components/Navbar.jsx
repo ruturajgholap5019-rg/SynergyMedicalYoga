@@ -40,7 +40,7 @@ export default function Navbar({ activePage, setActivePage, cartCount, onOpenCar
             <img
               src={LOGO}
               alt="Synergy Medical Yoga"
-              className="h-16 sm:h-20 lg:h-24 w-auto object-contain transition-all"
+              className="h-20 sm:h-24 lg:h-28 w-auto object-contain transition-all"
               srcSet="https://synergymedicalyoga.com/wp-content/uploads/2025/05/Synergy-Logo_png-02-300x169.png 300w, https://synergymedicalyoga.com/wp-content/uploads/2025/05/Synergy-Logo_png-02-scaled.png 2560w"
               sizes="(max-width: 768px) 160px, 260px"
             />

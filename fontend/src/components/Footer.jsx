@@ -36,7 +36,7 @@ export default function Footer({ setActivePage }) {
             <img
               src={LOGO}
               alt="Synergy Medical Yoga"
-              className="h-16 sm:h-20 w-auto object-contain cursor-pointer"
+              className="h-20 sm:h-24 w-auto object-contain cursor-pointer"
               onClick={() => goTo('home')}
             />
             <p className="text-sm text-gray-600 leading-relaxed max-w-md">
@@ -65,7 +65,7 @@ export default function Footer({ setActivePage }) {
                 href={settings.socialYoutube || "https://www.youtube.com/@synergymedicalyoga"}
                 target="_blank"
                 rel="noreferrer"
-                className="w-9 h-9 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center transition-colors shadow-sm"
+                className="w-9 h-9 bg-[#FF0000] hover:bg-red-700 rounded-full flex items-center justify-center transition-colors shadow-sm"
                 aria-label="YouTube Channel"
               >
                 <YtIcon />

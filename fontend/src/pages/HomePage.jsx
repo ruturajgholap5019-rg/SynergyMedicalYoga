@@ -136,7 +136,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
     } catch (e) {}
     return [];
   });
-  const [blogs, setBlogs] = useState(DEFAULT_BLOGS);
+  const [blogs, setBlogs] = useState([]);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [aboutVisible] = useState(true);
   const [orthVisible] = useState(true);
@@ -340,7 +340,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       {/* ──────────────────────────────────────────────
           3. WHY LEARN RBT WITH SYNERGY MEDICAL YOGA (Live WordPress Alternating Timeline Design)
           ────────────────────────────────────────────── */}
-      <section className="py-10 bg-gradient-to-b from-[#f8fdfe] to-[#f1fafe] relative overflow-hidden">
+      <section className="py-6 bg-gradient-to-b from-[#f8fdfe] to-[#f1fafe] relative overflow-hidden">
         {/* Decorative Botanical Timeline Wave connecting illustrations across columns */}
         <div className="absolute top-[52%] left-0 w-full -translate-y-1/2 pointer-events-none hidden lg:block overflow-hidden opacity-70 z-0">
           <svg viewBox="0 0 1400 200" className="w-full h-44 stroke-emerald-600/40 fill-none" strokeWidth="1.5">
@@ -475,12 +475,12 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
               </p>
             </div>
 
-            {/* Right image - Enlarged width & height */}
+            {/* Right image - Full Object Cover Box Fit */}
             <div className="lg:col-span-6 flex justify-center">
               <img
                 src={PRODUCT_KNEE}
                 alt="Knee Stabilizer Belts"
-                className="w-full max-w-lg sm:max-w-xl max-h-[520px] object-cover sm:object-contain rounded-3xl drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+                className="w-full h-80 sm:h-[480px] object-cover rounded-3xl drop-shadow-2xl hover:scale-105 transition-transform duration-500"
               />
             </div>
 
@@ -737,42 +737,53 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
 
 
       {/* ──────────────────────────────────────────────
-          8. EXPERT BLOGS
+          8. EXPERT BLOGS (Dynamic from Backend API / Admin Panel)
           ────────────────────────────────────────────── */}
-      <section className="py-20 bg-[#f4f7f8]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section className="py-8 bg-[#f4f7f8]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           
           <div className="text-center space-y-2">
-            <p className="text-xs font-bold uppercase tracking-widest text-[#005550]">READ OUR EXPERT TERAPISTS</p>
-            <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550]">
+            <p className="text-xs font-bold uppercase tracking-widest text-[#005550]">READ OUR EXPERT THERAPISTS</p>
+            <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
               Expert Blogs
             </h2>
             <div className="w-16 h-0.5 bg-[#005550] mx-auto mt-2" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {blogs.map((b, i) => (
-              <div key={b._id || i} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group flex flex-col justify-between">
-                <div>
-                  <div className="h-48 overflow-hidden bg-gray-100">
-                    <img
-                      src={getImageUrl(b.image || b.imageUrl)}
-                      alt={b.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="p-6 space-y-3">
-                    <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">{b.category || 'Therapy Guide'}</span>
-                    <h3 className="font-poppins font-bold text-[#2C2D33] text-lg leading-snug group-hover:text-[#005550] transition-colors">
-                      {b.title}
-                    </h3>
-                    {b.excerpt && <p className="text-xs text-gray-600 line-clamp-2">{b.excerpt}</p>}
-                    <p className="text-xs text-gray-400">{b.date || 'Clinical Publication'}</p>
+          {blogs.length === 0 ? (
+            <div className="bg-white rounded-2xl p-8 text-center max-w-xl mx-auto border border-gray-200/60 shadow-xs space-y-3">
+              <p className="text-gray-600 font-medium text-sm">
+                No blog posts published yet. Stay tuned for expert medical yoga therapy insights!
+              </p>
+              <p className="text-xs text-gray-400">
+                Admin can publish and manage blogs from the Admin Dashboard.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {blogs.map((b, i) => (
+                <div key={b._id || i} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group flex flex-col justify-between">
+                  <div>
+                    <div className="h-44 overflow-hidden bg-gray-100">
+                      <img
+                        src={getImageUrl(b.image || b.imageUrl)}
+                        alt={b.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="p-5 space-y-2.5">
+                      <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">{b.category || 'Therapy Guide'}</span>
+                      <h3 className="font-poppins font-bold text-[#2C2D33] text-base leading-snug group-hover:text-[#005550] transition-colors">
+                        {b.title}
+                      </h3>
+                      {b.excerpt && <p className="text-xs text-gray-600 line-clamp-2">{b.excerpt}</p>}
+                      <p className="text-xs text-gray-400">{b.date || 'Clinical Publication'}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
         </div>
       </section>
