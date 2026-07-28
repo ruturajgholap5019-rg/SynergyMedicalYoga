@@ -13,10 +13,12 @@ function onRefreshed() {
 }
 
 async function request(path, options = {}, isRetry = false) {
+  const token = localStorage.getItem('synergy_access_token');
   const response = await fetch(`${API_BASE_URL}${path}`, {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     },
     ...options,
@@ -32,6 +34,10 @@ async function request(path, options = {}, isRetry = false) {
         });
         isRefreshing = false;
         if (refreshRes.ok) {
+          const refreshData = await refreshRes.json();
+          if (refreshData?.token) {
+            localStorage.setItem('synergy_access_token', refreshData.token);
+          }
           onRefreshed();
           return request(path, options, true);
         }
@@ -59,13 +65,25 @@ async function request(path, options = {}, isRetry = false) {
 }
 
 export const api = {
-  login: (payload) => request('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  }),
-  logout: () => request('/auth/logout', {
-    method: 'POST',
-  }),
+  login: async (payload) => {
+    const res = await request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    if (res?.token) {
+      localStorage.setItem('synergy_access_token', res.token);
+    }
+    return res;
+  },
+  logout: async () => {
+    try {
+      await request('/auth/logout', {
+        method: 'POST',
+      });
+    } finally {
+      localStorage.removeItem('synergy_access_token');
+    }
+  },
   getProfile: () => request('/auth/profile'),
 
   // Admin APIs
