@@ -153,51 +153,51 @@ export default function AboutPage() {
       </section>
 
       {/* ──────────────────────────────────────────────
-          4. MISSION, VISION, OBJECTIVE
+          4. MISSION, VISION, OBJECTIVE (Compact Sleek Cards)
           ────────────────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           
           {/* Mission */}
-          <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all space-y-4 flex flex-col justify-between group">
+          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all space-y-3 flex flex-col justify-between group">
             <div>
-              <div className="w-14 h-14 bg-[#005550]/10 rounded-2xl flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors duration-300 mb-6">
-                <Target className="w-7 h-7" />
+              <div className="w-12 h-12 bg-[#005550]/10 rounded-2xl flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors duration-300 mb-3">
+                <Target className="w-6 h-6" />
               </div>
-              <h4 className="font-poppins font-extrabold text-2xl text-gray-900 mb-3">Mission</h4>
-              <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-normal">
+              <h4 className="font-poppins font-extrabold text-xl text-gray-900 mb-2">Mission</h4>
+              <p className="text-xs sm:text-sm text-gray-700 leading-relaxed font-normal">
                 {settings.missionText || 'To establish Medical Yoga Therapy as the preferred first-line treatment for individuals managing knee, back, and neck pain.'}
               </p>
             </div>
-            <div className="w-12 h-1 bg-[#005550] rounded-full pt-0 mt-6" />
+            <div className="w-10 h-1 bg-[#005550] rounded-full pt-0 mt-3" />
           </div>
 
           {/* Vision */}
-          <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all space-y-4 flex flex-col justify-between group">
+          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all space-y-3 flex flex-col justify-between group">
             <div>
-              <div className="w-14 h-14 bg-[#005550]/10 rounded-2xl flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors duration-300 mb-6">
-                <Eye className="w-7 h-7" />
+              <div className="w-12 h-12 bg-[#005550]/10 rounded-2xl flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors duration-300 mb-3">
+                <Eye className="w-6 h-6" />
               </div>
-              <h4 className="font-poppins font-extrabold text-2xl text-gray-900 mb-3">Vision</h4>
-              <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-normal">
+              <h4 className="font-poppins font-extrabold text-xl text-gray-900 mb-2">Vision</h4>
+              <p className="text-xs sm:text-sm text-gray-700 leading-relaxed font-normal">
                 {settings.visionText || 'To minimize the need for surgeries by effectively managing degenerative musculoskeletal diseases and injuries of the knee, back, neck, and shoulder.'}
               </p>
             </div>
-            <div className="w-12 h-1 bg-[#005550] rounded-full pt-0 mt-6" />
+            <div className="w-10 h-1 bg-[#005550] rounded-full pt-0 mt-3" />
           </div>
 
           {/* Objective */}
-          <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all space-y-4 flex flex-col justify-between group">
+          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all space-y-3 flex flex-col justify-between group">
             <div>
-              <div className="w-14 h-14 bg-[#005550]/10 rounded-2xl flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors duration-300 mb-6">
-                <Award className="w-7 h-7" />
+              <div className="w-12 h-12 bg-[#005550]/10 rounded-2xl flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors duration-300 mb-3">
+                <Award className="w-6 h-6" />
               </div>
-              <h4 className="font-poppins font-extrabold text-2xl text-gray-900 mb-3">Objective</h4>
-              <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-normal">
+              <h4 className="font-poppins font-extrabold text-xl text-gray-900 mb-2">Objective</h4>
+              <p className="text-xs sm:text-sm text-gray-700 leading-relaxed font-normal">
                 {settings.objectiveText || 'To empower every household in India with at least one person trained in Medical Yoga Therapy.'}
               </p>
             </div>
-            <div className="w-12 h-1 bg-[#005550] rounded-full pt-0 mt-6" />
+            <div className="w-10 h-1 bg-[#005550] rounded-full pt-0 mt-3" />
           </div>
 
         </div>
@@ -224,7 +224,7 @@ export default function AboutPage() {
                 <div className="w-20 h-1 bg-[#005550] rounded" />
               </div>
 
-              <div className="bg-white rounded-3xl shadow-md border border-gray-200 overflow-hidden h-[360px] sm:h-[420px] w-full">
+              <div className="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden h-[480px] sm:h-[540px] lg:h-[600px] w-full">
                 <img
                   src={INTEGRATED_BG}
                   alt="Integrated Approach To Joint Care"

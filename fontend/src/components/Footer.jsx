@@ -28,11 +28,11 @@ export default function Footer({ setActivePage }) {
     <footer className="font-inter bg-[#f4f7f8] text-gray-700 border-t border-gray-200/80">
 
       {/* Main Footer Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
 
           {/* Col 1: Brand & Logo */}
-          <div className="lg:col-span-5 space-y-5">
+          <div className="lg:col-span-5 space-y-3">
             <img
               src={LOGO}
               alt="Synergy Medical Yoga"
