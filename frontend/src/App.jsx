@@ -18,9 +18,9 @@ import AccountPage from './pages/AccountPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CheckoutPage from './pages/CheckoutPage';
 import CoursePage from './pages/CoursePage';
+import AdminPortalPage from './pages/AdminPortalPage';
 import { CmsListingPage, PolicyPage } from './pages/ContentPages';
 import { api } from './lib/api';
-import { getAdminConsoleUrl } from './lib/urls';
 
 // Route mapping configuration
 const PAGE_TO_ROUTE = {
@@ -42,6 +42,7 @@ const PAGE_TO_ROUTE = {
   'terms-and-conditions': '/terms-and-conditions',
   'shipping-policy': '/shipping-policy',
   account: '/my-account',
+  admin: '/admin',
   checkout: '/checkout',
   'product-detail': '/shop',
 };
@@ -68,6 +69,8 @@ const ROUTE_TO_PAGE = {
   '/shipping-policy': 'shipping-policy',
   '/my-account': 'account',
   '/my-account/': 'account',
+  '/admin': 'admin',
+  '/admin/': 'admin',
   '/checkout': 'checkout',
 };
 
@@ -83,6 +86,7 @@ const PAGE_META = {
   gallery: ['Gallery | Synergy Medical Yoga', 'Synergy Medical Yoga gallery and media updates.'],
   testimonials: ['Testimonials | Synergy Medical Yoga', 'Patient and course participant feedback for Synergy Medical Yoga.'],
   education: ['Education | Synergy Medical Yoga', 'Education programs and course resources for Rope & Belt Therapy.'],
+  admin: ['Admin Console | Synergy Medical Yoga', 'Secure Synergy Medical Yoga administration portal.'],
 };
 
 // Helper to parse route and extract page & parameters (handling trailing slashes and SEO product slugs)
@@ -93,6 +97,7 @@ function parsePathname(pathname) {
     return { page: 'product-detail', param: parts[1] || null };
   }
   if (cleanPath.includes('/my-account')) return { page: 'account', param: null };
+  if (cleanPath.includes('/admin')) return { page: 'admin', param: null };
   if (cleanPath.includes('/checkout')) return { page: 'checkout', param: null };
   if (cleanPath.includes('/shop')) return { page: 'shop', param: null };
   if (cleanPath.includes('/services')) return { page: 'services', param: null };
@@ -375,12 +380,7 @@ export default function App() {
       setPendingCheckout(false);
       handleNavigate('checkout');
     } else if (user.role === 'admin') {
-      const adminUrl = getAdminConsoleUrl();
-      if (adminUrl) {
-        window.location.href = adminUrl;
-      } else {
-        toast.error('Admin portal URL is not configured.');
-      }
+      handleNavigate('admin');
     } else {
       handleNavigate('account');
     }
@@ -406,6 +406,7 @@ export default function App() {
   const displayCart = currentUser ? cart : guestCart;
   const cartCount = displayCart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = displayCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const isAdminPage = activePage === 'admin';
 
   useEffect(() => {
     const loadSession = async () => {
@@ -482,28 +483,36 @@ export default function App() {
         }}
       />
 
-      {/* Top Header Contact Bar */}
-      <TopBar
-        cartCount={cartCount}
-        cartTotal={cartTotal}
-        onOpenCart={() => setIsCartOpen(true)}
-        activePage={activePage}
-        setActivePage={handleNavigate}
-      />
+      {!isAdminPage && (
+        <>
+          {/* Top Header Contact Bar */}
+          <TopBar
+            cartCount={cartCount}
+            cartTotal={cartTotal}
+            onOpenCart={() => setIsCartOpen(true)}
+            activePage={activePage}
+            setActivePage={handleNavigate}
+          />
 
-      {/* Main Responsive Header Navigation */}
-      <Navbar
-        activePage={activePage}
-        setActivePage={handleNavigate}
-        cartCount={cartCount}
-        cartTotal={cartTotal}
-        onOpenCart={() => setIsCartOpen(true)}
-        currentUser={currentUser}
-        onAccountClick={() => handleNavigate('account')}
-      />
+          {/* Main Responsive Header Navigation */}
+          <Navbar
+            activePage={activePage}
+            setActivePage={handleNavigate}
+            cartCount={cartCount}
+            cartTotal={cartTotal}
+            onOpenCart={() => setIsCartOpen(true)}
+            currentUser={currentUser}
+            onAccountClick={() => handleNavigate('account')}
+          />
+        </>
+      )}
 
       {/* Dynamic Page Router Content with Strict Security & Zero Leak Route Guards */}
       <main className="flex-1">
+        {activePage === 'admin' && (
+          <AdminPortalPage />
+        )}
+
         {activePage === 'home' && (
           <HomePage
             setActivePage={handleNavigate}
@@ -642,28 +651,34 @@ export default function App() {
         )}
       </main>
 
-      {/* Website Footer */}
-      <Footer setActivePage={handleNavigate} />
+      {!isAdminPage && (
+        <>
+          {/* Website Footer */}
+          <Footer setActivePage={handleNavigate} />
+        </>
+      )}
 
       {/* Slide-over Cart Drawer */}
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cart={displayCart}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveItem={handleRemoveItem}
-        onNavigateToShop={() => handleNavigate('shop')}
-        onProceedToCheckout={() => {
-          setIsCartOpen(false);
-          if (!currentUser) {
-            setPendingCheckout(true);
-            toast.error('Please log in or sign up to complete checkout. Your cart items are saved!');
-            handleNavigate('account');
-            return;
-          }
-          handleNavigate('checkout');
-        }}
-      />
+      {!isAdminPage && (
+        <CartDrawer
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
+          cart={displayCart}
+          onUpdateQuantity={handleUpdateQuantity}
+          onRemoveItem={handleRemoveItem}
+          onNavigateToShop={() => handleNavigate('shop')}
+          onProceedToCheckout={() => {
+            setIsCartOpen(false);
+            if (!currentUser) {
+              setPendingCheckout(true);
+              toast.error('Please log in or sign up to complete checkout. Your cart items are saved!');
+              handleNavigate('account');
+              return;
+            }
+            handleNavigate('checkout');
+          }}
+        />
+      )}
 
       {/* Product Quick View / Detail Modal */}
       {quickViewProduct && (
