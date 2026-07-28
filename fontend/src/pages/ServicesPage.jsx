@@ -487,50 +487,118 @@ export default function ServicesPage({ setActivePage, currentUser }) {
 
 
       {/* ──────────────────────────────────────────────
-          6. STORE LOCATOR & CENTERS MAP SECTION
+          6. MEDICAL YOGA CENTRES ACROSS INDIA SECTION (Exact Match to synergymedicalyoga.com)
           ────────────────────────────────────────────── */}
-      <section className="py-20 bg-[#f4f7f8]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          
-          <div className="text-center space-y-3 max-w-3xl mx-auto">
-            <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
-              Medical yoga centres across India (currently live in Pune )
-            </h2>
-            <div className="w-16 h-0.5 bg-[#005550] mx-auto" />
-          </div>
-
-          <div className="max-w-5xl mx-auto bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-200/80">
-            <div className="aspect-video w-full relative bg-gray-100">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3781.8839395259!2d73.80168!3d18.6279!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2b985e95a6e9d%3A0xd66ee99eca65ac47!2sChinchwad%2C%20Pimpri-Chinchwad%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin"
-                className="w-full h-full border-0"
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Synergy Medical Yoga Centers Map"
-              />
-            </div>
+      <section className="py-16 sm:py-20 bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
             
-            <div className="p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white border-t border-gray-100">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-[#005550]/10 rounded-full flex items-center justify-center shrink-0">
-                  <MapPin className="w-6 h-6 text-[#005550]" />
-                </div>
-                <div>
-                  <h4 className="font-poppins font-bold text-[#2C2D33] text-lg">Greens Center, Chinchwad</h4>
-                  <p className="text-gray-500 text-sm mt-0.5">Pune 411033, Maharashtra, India</p>
+            {/* Left Column: Vector India Map with Glowing Teal Pins */}
+            <div className="lg:col-span-6 flex justify-center items-center relative py-4">
+              <div className="w-full max-w-lg relative drop-shadow-sm">
+                <svg
+                  viewBox="0 0 500 550"
+                  className="w-full h-auto"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  {/* Outer Map Contour / State Silhouette */}
+                  <g className="transition-all">
+                    {/* Jammu & Kashmir / North */}
+                    <path d="M 200,100 L 220,50 L 245,30 L 270,40 L 285,70 L 270,100 L 255,130 L 230,135 Z" fill="#90D5CE" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <path d="M 230,135 L 255,130 L 275,150 L 260,180 L 230,175 L 210,150 Z" fill="#A8E0D9" stroke="#FFFFFF" strokeWidth="1.5" />
+                    {/* Rajasthan / West */}
+                    <path d="M 165,190 L 230,175 L 225,235 L 180,260 L 150,230 Z" fill="#BCE8E2" stroke="#FFFFFF" strokeWidth="1.5" />
+                    {/* Gujarat */}
+                    <path d="M 150,230 L 180,260 L 205,300 L 160,315 L 150,280 L 170,270 Z" fill="#8FD5CD" stroke="#FFFFFF" strokeWidth="1.5" />
+                    {/* Maharashtra / Central West */}
+                    <path d="M 180,310 L 245,300 L 285,335 L 240,390 L 195,365 L 190,325 Z" fill="#69C8BE" stroke="#FFFFFF" strokeWidth="1.5" />
+                    {/* Madhya Pradesh */}
+                    <path d="M 225,235 L 305,245 L 315,310 L 245,300 L 210,260 Z" fill="#A4DFD8" stroke="#FFFFFF" strokeWidth="1.5" />
+                    {/* Uttar Pradesh / Bihar / North Central */}
+                    <path d="M 255,130 L 335,175 L 365,225 L 305,245 L 260,180 Z" fill="#BCE8E2" stroke="#FFFFFF" strokeWidth="1.5" />
+                    {/* Odisha / East */}
+                    <path d="M 315,310 L 375,305 L 390,365 L 340,380 L 285,335 Z" fill="#7FD0C6" stroke="#FFFFFF" strokeWidth="1.5" />
+                    {/* Karnataka / Telangana / Andhra / South */}
+                    <path d="M 195,365 L 240,390 L 285,335 L 305,400 L 275,475 L 235,465 Z" fill="#65C6BC" stroke="#FFFFFF" strokeWidth="1.5" />
+                    {/* Tamil Nadu / Kerala / Far South */}
+                    <path d="M 235,465 L 275,475 L 285,530 L 250,540 Z" fill="#A0DFD8" stroke="#FFFFFF" strokeWidth="1.5" />
+                    {/* Northeast */}
+                    <path d="M 365,225 L 425,205 L 470,230 L 440,280 L 375,260 Z" fill="#BCE8E2" stroke="#FFFFFF" strokeWidth="1.5" />
+                  </g>
+
+                  {/* Location Pins (Teal Glowing Circles matching screenshot) */}
+                  {/* 1. Pune (Flagship Live Center) */}
+                  <g className="cursor-pointer group">
+                    <circle cx="225" cy="365" r="14" fill="#007A73" fillOpacity="0.3" className="animate-ping" />
+                    <circle cx="225" cy="365" r="9" fill="#005550" stroke="#FFFFFF" strokeWidth="2" />
+                    <circle cx="225" cy="365" r="3.5" fill="#50E3C2" />
+                  </g>
+
+                  {/* 2. Mumbai */}
+                  <circle cx="198" cy="350" r="7.5" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  {/* 3. Delhi / NCR */}
+                  <circle cx="235" cy="195" r="7.5" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  {/* 4. Ahmedabad / Gujarat */}
+                  <circle cx="178" cy="275" r="7.5" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  {/* 5. Surat */}
+                  <circle cx="188" cy="315" r="7" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  {/* 6. Bangalore */}
+                  <circle cx="235" cy="460" r="7.5" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  {/* 7. Hyderabad */}
+                  <circle cx="270" cy="390" r="7.5" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  {/* 8. Chennai */}
+                  <circle cx="280" cy="475" r="7" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  {/* 9. Odisha / Bhubaneswar */}
+                  <circle cx="375" cy="355" r="7" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  {/* 10. Kolkata */}
+                  <circle cx="385" cy="305" r="7" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  {/* 11. Jaipur */}
+                  <circle cx="205" cy="225" r="7" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  {/* 12. Chandigarh */}
+                  <circle cx="235" cy="155" r="7" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                </svg>
+
+                {/* Floating Pune Badge */}
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl shadow-lg border border-teal-100 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#005550] animate-pulse" />
+                  <span className="text-xs font-extrabold text-[#005550]">Pune Flagship Center (Live)</span>
                 </div>
               </div>
-
-              <button
-                onClick={() => { setActivePage && setActivePage('find-centres'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className="bg-[#005550] hover:bg-[#003d39] text-white font-bold text-sm px-6 py-3 rounded-xl transition-colors shadow-sm shrink-0 cursor-pointer"
-              >
-                Find All Centers
-              </button>
             </div>
-          </div>
 
+            {/* Right Column: Exact Typography Matching synergymedicalyoga.com */}
+            <div className="lg:col-span-6 space-y-6">
+              <h2 className="font-poppins text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-[#005550] leading-[1.15] tracking-tight">
+                Medical yoga centres <br />
+                across India <br />
+                <span className="font-bold text-[#005550]">(currently live in Pune )</span>
+              </h2>
+
+              <div className="w-16 h-0.5 bg-[#005550]/40" />
+
+              <p className="text-base sm:text-lg leading-relaxed text-[#005550]/80 font-medium max-w-xl">
+                Synergy Medical Yoga is expanding across India with trusted centers in major cities. From Pune to Mumbai, Bangalore, Delhi, and more, our Rope &amp; Belt Therapy is reaching people wherever they are. Each location is guided by certified therapists to ensure you receive expert care close to home
+              </p>
+
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <button
+                  onClick={() => { setActivePage && setActivePage('find-centres'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="bg-[#005550] hover:bg-[#003d39] text-white font-bold text-sm px-8 py-3.5 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 inline-flex items-center gap-2 cursor-pointer"
+                >
+                  <span>Explore Pune Centers</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setIsAppointmentModalOpen(true)}
+                  className="border-2 border-[#005550] text-[#005550] hover:bg-[#005550] hover:text-white font-bold text-sm px-6 py-3 rounded-2xl transition-all duration-300 cursor-pointer"
+                >
+                  Book Appointment
+                </button>
+              </div>
+            </div>
+
+          </div>
         </div>
       </section>
 
