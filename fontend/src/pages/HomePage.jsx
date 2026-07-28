@@ -14,6 +14,11 @@ const PLAYSTORE      = 'https://synergymedicalyoga.com/wp-content/uploads/2025/0
 const APPSTORE       = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Apple-store-e1747384344465.png';
 const DOCTOR         = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/doctor_1.png';
 
+const RBT_LEARN      = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Learn-from-Experts.png';
+const RBT_CURRIC     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Curriculum.png';
+const RBT_MONETIZE   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Monetize.png';
+const RBT_CAREER     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Build-Career.png';
+
 const PLAY_QR       = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/WhatsApp-Image-2025-06-03-at-8.34.11-PM.jpeg';
 const APPLE_QR      = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/WhatsApp-Image-2025-07-07-at-1.34.20-PM-1024x1024.jpeg';
 
