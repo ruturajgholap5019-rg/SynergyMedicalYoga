@@ -1,17 +1,24 @@
 const nodemailer = require('nodemailer');
 
 const createTransporter = () => {
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    const isGmail = (process.env.SMTP_HOST && process.env.SMTP_HOST.includes('gmail')) || process.env.SMTP_USER.includes('@gmail.com');
-    const cleanPass = process.env.SMTP_PASS.replace(/\s+/g, '');
+  const smtpUser = process.env.SMTP_USER || 'ruturajgholap5019@gmail.com';
+  const smtpPass = process.env.SMTP_PASS || 'otqghxgzqdczjjof';
+  
+  if (smtpUser && smtpPass) {
+    const cleanPass = smtpPass.replace(/\s+/g, '');
+    const isGmail = (process.env.SMTP_HOST && process.env.SMTP_HOST.includes('gmail')) || smtpUser.includes('@gmail.com');
     
     if (isGmail) {
       return nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: process.env.SMTP_USER.trim(),
+          user: smtpUser.trim(),
           pass: cleanPass,
         },
+        // Prevent hanging socket connection
+        connectionTimeout: 8000,
+        greetingTimeout: 5000,
+        socketTimeout: 8000,
       });
     }
 
@@ -20,9 +27,12 @@ const createTransporter = () => {
       port: Number(process.env.SMTP_PORT) || 587,
       secure: process.env.SMTP_PORT === '465',
       auth: {
-        user: process.env.SMTP_USER.trim(),
+        user: smtpUser.trim(),
         pass: cleanPass,
       },
+      connectionTimeout: 8000,
+      greetingTimeout: 5000,
+      socketTimeout: 8000,
     });
   }
   return null;
@@ -32,7 +42,12 @@ const sendEmail = async (mailOptions) => {
   try {
     const transporter = createTransporter();
     if (transporter) {
-      const info = await transporter.sendMail(mailOptions);
+      // 8 second timeout wrapper so Node never hangs on network latency
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('SMTP email send timeout after 8000ms')), 8000)
+      );
+
+      const info = await Promise.race([transporter.sendMail(mailOptions), timeoutPromise]);
       console.log('📧 Email sent successfully via SMTP:', info.messageId);
       return { success: true, messageId: info.messageId };
     } else {
@@ -45,7 +60,7 @@ const sendEmail = async (mailOptions) => {
       return { success: true, simulated: true };
     }
   } catch (err) {
-    console.error('❌ Error dispatching email via SMTP:', err);
+    console.error('❌ Error dispatching email via SMTP:', err.message);
     return { success: false, error: err.message };
   }
 };
