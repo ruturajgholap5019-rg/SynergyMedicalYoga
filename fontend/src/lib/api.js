@@ -159,7 +159,11 @@ export const api = {
   }),
   getUserOrders: () => request('/orders/my-orders'),
 
-  // Patient Appointments
+  // Patient Appointments & Contact
+  submitContactForm: (payload) => request('/contact', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }),
   createAppointment: (payload) => request('/appointments', {
     method: 'POST',
     body: JSON.stringify(payload),

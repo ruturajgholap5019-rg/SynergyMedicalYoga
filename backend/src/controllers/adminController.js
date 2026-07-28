@@ -5,6 +5,7 @@ const Carousel = require('../models/Carousel');
 const Service = require('../models/Service');
 const Setting = require('../models/Setting');
 const Appointment = require('../models/Appointment');
+const ContactMessage = require('../models/ContactMessage');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 const fs = require('fs');
@@ -410,6 +411,27 @@ exports.uploadImages = catchAsync(async (req, res, next) => {
     status: 'success',
     urls: urls,
     filenames: req.files.map((file) => file.filename),
+  });
+});
+
+// --- CONTACT MESSAGES MANAGEMENT ---
+exports.getAllContactMessages = catchAsync(async (req, res, next) => {
+  const messages = await ContactMessage.find().sort({ createdAt: -1 });
+  res.status(200).json({
+    status: 'success',
+    results: messages.length,
+    data: messages,
+  });
+});
+
+exports.deleteContactMessage = catchAsync(async (req, res, next) => {
+  const message = await ContactMessage.findByIdAndDelete(req.params.id);
+  if (!message) {
+    return next(new AppError('No contact message found with that ID', 404));
+  }
+  res.status(204).json({
+    status: 'success',
+    data: null,
   });
 });
 

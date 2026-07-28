@@ -17,6 +17,7 @@ const orderRoutes = require('./routes/orderRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const publicRoutes = require('./routes/publicRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
+const contactRoutes = require('./routes/contactRoutes');
 const { stripeWebhook } = require('./controllers/orderController');
 
 const app = express();
@@ -86,6 +87,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/appointments', appointmentRoutes);
+app.use('/api/contact', contactRoutes);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

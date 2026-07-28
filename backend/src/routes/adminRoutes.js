@@ -74,6 +74,10 @@ router.get('/appointments', adminController.getAllAppointments);
 router.put('/appointments/:id/status', adminController.updateAppointmentStatus);
 router.delete('/appointments/:id', adminController.deleteAppointment);
 
+// Contact Messages Management
+router.get('/contact-messages', adminController.getAllContactMessages);
+router.delete('/contact-messages/:id', adminController.deleteContactMessage);
+
 // Image Upload Routes (Multer)
 router.post('/upload', upload.single('image'), adminController.uploadImage);
 router.post('/upload-multiple', upload.array('images', 5), adminController.uploadImages);

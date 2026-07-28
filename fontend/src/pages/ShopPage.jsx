@@ -54,11 +54,8 @@ export default function ShopPage({ onAddToCart, onQuickView, onViewDetails, onBu
       <section className="bg-[#005550] py-16 px-4 text-center text-white">
         <div className="max-w-4xl mx-auto space-y-3">
           <h1 className="font-poppins text-4xl sm:text-5xl font-bold tracking-tight text-white">
-            Shop Orthopaedic Pain Relief &amp; Posture Belts
+            Shop 
           </h1>
-          <p className="text-white/90 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Clinically designed products combining medical yoga alignment with ergonomic joint stabilization.
-          </p>
         </div>
       </section>
 
