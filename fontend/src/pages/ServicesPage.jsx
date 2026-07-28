@@ -499,11 +499,11 @@ export default function ServicesPage({ setActivePage, currentUser }) {
           ────────────────────────────────────────────── */}
       <section className="py-16 sm:py-20 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
             
-            {/* Left Column: Vector India Map with Glowing Teal Pins */}
-            <div className="lg:col-span-6 flex justify-center items-center relative py-4">
-              <div className="w-full max-w-lg relative drop-shadow-sm">
+            {/* Left Column (50%): Vector India Map with Glowing Teal Pins */}
+            <div className="w-full lg:w-1/2 flex justify-center items-center relative py-2">
+              <div className="w-full max-w-xl relative drop-shadow-sm">
                 <svg
                   viewBox="0 0 500 550"
                   className="w-full h-auto"
@@ -513,33 +513,33 @@ export default function ServicesPage({ setActivePage, currentUser }) {
                   {/* Outer Map Contour / State Silhouette */}
                   <g className="transition-all">
                     {/* Jammu & Kashmir / North */}
-                    <path d="M 200,100 L 220,50 L 245,30 L 270,40 L 285,70 L 270,100 L 255,130 L 230,135 Z" fill="#90D5CE" stroke="#FFFFFF" strokeWidth="1.5" />
-                    <path d="M 230,135 L 255,130 L 275,150 L 260,180 L 230,175 L 210,150 Z" fill="#A8E0D9" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <path d="M 200,100 L 220,50 L 245,30 L 270,40 L 285,70 L 270,100 L 255,130 L 230,135 Z" fill="#99d8c9" stroke="#005550" strokeWidth="1.2" />
+                    <path d="M 230,135 L 255,130 L 275,150 L 260,180 L 230,175 L 210,150 Z" fill="#b2e2d8" stroke="#005550" strokeWidth="1.2" />
                     {/* Rajasthan / West */}
-                    <path d="M 165,190 L 230,175 L 225,235 L 180,260 L 150,230 Z" fill="#BCE8E2" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <path d="M 165,190 L 230,175 L 225,235 L 180,260 L 150,230 Z" fill="#ccece6" stroke="#005550" strokeWidth="1.2" />
                     {/* Gujarat */}
-                    <path d="M 150,230 L 180,260 L 205,300 L 160,315 L 150,280 L 170,270 Z" fill="#8FD5CD" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <path d="M 150,230 L 180,260 L 205,300 L 160,315 L 150,280 L 170,270 Z" fill="#88cebf" stroke="#005550" strokeWidth="1.2" />
                     {/* Maharashtra / Central West */}
-                    <path d="M 180,310 L 245,300 L 285,335 L 240,390 L 195,365 L 190,325 Z" fill="#69C8BE" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <path d="M 180,310 L 245,300 L 285,335 L 240,390 L 195,365 L 190,325 Z" fill="#66c2a4" stroke="#005550" strokeWidth="1.5" />
                     {/* Madhya Pradesh */}
-                    <path d="M 225,235 L 305,245 L 315,310 L 245,300 L 210,260 Z" fill="#A4DFD8" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <path d="M 225,235 L 305,245 L 315,310 L 245,300 L 210,260 Z" fill="#b2e2d8" stroke="#005550" strokeWidth="1.2" />
                     {/* Uttar Pradesh / Bihar / North Central */}
-                    <path d="M 255,130 L 335,175 L 365,225 L 305,245 L 260,180 Z" fill="#BCE8E2" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <path d="M 255,130 L 335,175 L 365,225 L 305,245 L 260,180 Z" fill="#ccece6" stroke="#005550" strokeWidth="1.2" />
                     {/* Odisha / East */}
-                    <path d="M 315,310 L 375,305 L 390,365 L 340,380 L 285,335 Z" fill="#7FD0C6" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <path d="M 315,310 L 375,305 L 390,365 L 340,380 L 285,335 Z" fill="#77c8b7" stroke="#005550" strokeWidth="1.2" />
                     {/* Karnataka / Telangana / Andhra / South */}
-                    <path d="M 195,365 L 240,390 L 285,335 L 305,400 L 275,475 L 235,465 Z" fill="#65C6BC" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <path d="M 195,365 L 240,390 L 285,335 L 305,400 L 275,475 L 235,465 Z" fill="#66c2a4" stroke="#005550" strokeWidth="1.2" />
                     {/* Tamil Nadu / Kerala / Far South */}
-                    <path d="M 235,465 L 275,475 L 285,530 L 250,540 Z" fill="#A0DFD8" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <path d="M 235,465 L 275,475 L 285,530 L 250,540 Z" fill="#99d8c9" stroke="#005550" strokeWidth="1.2" />
                     {/* Northeast */}
-                    <path d="M 365,225 L 425,205 L 470,230 L 440,280 L 375,260 Z" fill="#BCE8E2" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <path d="M 365,225 L 425,205 L 470,230 L 440,280 L 375,260 Z" fill="#ccece6" stroke="#005550" strokeWidth="1.2" />
                   </g>
 
                   {/* Location Pins (Teal Glowing Circles matching screenshot) */}
                   {/* 1. Pune (Flagship Live Center) */}
                   <g className="cursor-pointer group">
-                    <circle cx="225" cy="365" r="14" fill="#007A73" fillOpacity="0.3" className="animate-ping" />
-                    <circle cx="225" cy="365" r="9" fill="#005550" stroke="#FFFFFF" strokeWidth="2" />
+                    <circle cx="225" cy="365" r="15" fill="#007A73" fillOpacity="0.3" className="animate-ping" />
+                    <circle cx="225" cy="365" r="9.5" fill="#005550" stroke="#FFFFFF" strokeWidth="2.5" />
                     <circle cx="225" cy="365" r="3.5" fill="#50E3C2" />
                   </g>
 
@@ -575,8 +575,8 @@ export default function ServicesPage({ setActivePage, currentUser }) {
               </div>
             </div>
 
-            {/* Right Column: Exact Typography Matching synergymedicalyoga.com */}
-            <div className="lg:col-span-6 space-y-6">
+            {/* Right Column (50%): Exact Typography Matching synergymedicalyoga.com */}
+            <div className="w-full lg:w-1/2 space-y-6">
               <h2 className="font-poppins text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-[#005550] leading-[1.15] tracking-tight">
                 Medical yoga centres <br />
                 across India <br />
