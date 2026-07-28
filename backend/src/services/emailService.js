@@ -1,14 +1,27 @@
 const nodemailer = require('nodemailer');
 
 const createTransporter = () => {
-  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+    const isGmail = (process.env.SMTP_HOST && process.env.SMTP_HOST.includes('gmail')) || process.env.SMTP_USER.includes('@gmail.com');
+    const cleanPass = process.env.SMTP_PASS.replace(/\s+/g, '');
+    
+    if (isGmail) {
+      return nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.SMTP_USER.trim(),
+          pass: cleanPass,
+        },
+      });
+    }
+
     return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: Number(process.env.SMTP_PORT) || 587,
       secure: process.env.SMTP_PORT === '465',
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: process.env.SMTP_USER.trim(),
+        pass: cleanPass,
       },
     });
   }
@@ -32,14 +45,14 @@ const sendEmail = async (mailOptions) => {
       return { success: true, simulated: true };
     }
   } catch (err) {
-    console.error('❌ Error dispatching email:', err.message);
+    console.error('❌ Error dispatching email via SMTP:', err);
     return { success: false, error: err.message };
   }
 };
 
 exports.sendOrderConfirmation = async (order) => {
   const mailOptions = {
-    from: `"Synergy Medical Yoga" <${process.env.SMTP_USER || 'no-reply@synergymedicalyoga.com'}>`,
+    from: `"Synergy Medical Yoga" <${process.env.SMTP_USER || 'ruturajgholap5019@gmail.com'}>`,
     to: order.user.email,
     subject: `Order Confirmation #${order._id}`,
     html: `
@@ -57,9 +70,10 @@ exports.sendOrderConfirmation = async (order) => {
 
 exports.sendContactEmail = async (data) => {
   const targetEmail = process.env.CONTACT_RECEIVER_EMAIL || 'ruturajgholap5019@gmail.com';
+  const senderEmail = process.env.SMTP_USER || 'ruturajgholap5019@gmail.com';
   
   const mailOptions = {
-    from: `"Synergy Website Contact" <${process.env.SMTP_USER || 'contact@synergymedicalyoga.com'}>`,
+    from: `"Synergy Contact Form" <${senderEmail}>`,
     to: targetEmail,
     replyTo: data.email,
     subject: `📩 [Website Inquiry] ${data.subject || 'New Contact Message'} - ${data.name}`,
