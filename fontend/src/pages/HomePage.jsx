@@ -14,10 +14,35 @@ const PLAYSTORE      = 'https://synergymedicalyoga.com/wp-content/uploads/2025/0
 const APPSTORE       = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Apple-store-e1747384344465.png';
 const DOCTOR         = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/doctor_1.png';
 
-const RBT_LEARN      = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Learn-from-Experts.png';
-const RBT_CURRIC     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Curriculum.png';
-const RBT_MONETIZE   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Monetize.png';
-const RBT_CAREER     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Build-Career.png';
+const PLAY_QR       = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/WhatsApp-Image-2025-06-03-at-8.34.11-PM.jpeg';
+const APPLE_QR      = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/WhatsApp-Image-2025-07-07-at-1.34.20-PM-1024x1024.jpeg';
+
+const DEFAULT_BLOGS = [
+  {
+    _id: 'b1',
+    category: 'Knee Therapy',
+    title: 'Understanding Knee Pain: Causes, Prevention & RBT Therapy',
+    date: 'May 15, 2025',
+    image: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner.jpg',
+    excerpt: 'Clinical insights on knee joint alignment, cartilage preservation, and non-surgical RBT protocols.',
+  },
+  {
+    _id: 'b2',
+    category: 'Cervical Therapy',
+    title: 'Neck Pain Relief Through Rope & Belt Therapy: A Clinical Guide',
+    date: 'Jun 2, 2025',
+    image: PRODUCT_NECK,
+    excerpt: 'Reversing tech-neck and forward head posture through gentle cervical traction and suboccipital release.',
+  },
+  {
+    _id: 'b3',
+    category: 'Back Therapy',
+    title: 'Back to Wellness: Lumbar Pain Management with Medical Yoga',
+    date: 'Jul 10, 2025',
+    image: DOCTOR,
+    excerpt: 'Targeted pelvic stabilization and decompression techniques for sciatica and slip disc recovery.',
+  },
+];
 
 const DEFAULT_HERO_SLIDES = [
   {
@@ -106,6 +131,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
     } catch (e) {}
     return [];
   });
+  const [blogs, setBlogs] = useState(DEFAULT_BLOGS);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [aboutVisible] = useState(true);
   const [orthVisible] = useState(true);
@@ -148,6 +174,14 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       } catch (err) {
         // Fallback silently
       }
+      try {
+        if (api.getBlogs) {
+          const bRes = await api.getBlogs();
+          if (bRes && bRes.data && bRes.data.length > 0) {
+            setBlogs(bRes.data);
+          }
+        }
+      } catch (err) {}
     };
     fetchData();
   }, []);
@@ -168,7 +202,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           1. HERO CAROUSEL SLIDER (Strictly Database Driven from MongoDB Atlas with Shimmer Loading)
           ────────────────────────────────────────────── */}
       {heroSlides.length === 0 ? (
-        <section className="relative w-full bg-slate-900 h-[70vh] min-h-[440px] sm:h-[80vh] lg:h-[calc(100vh-96px)] flex items-center justify-center overflow-hidden">
+        <section className="relative w-full bg-slate-900 h-screen min-h-[500px] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-[#003D39]/40 via-[#007A73]/20 to-[#003D39]/40 animate-shimmer" />
           <div className="z-10 text-center px-6 space-y-5 animate-pulse-soft">
             <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-full mx-auto flex items-center justify-center border border-white/20 shadow-2xl animate-float">
@@ -187,7 +221,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         <section
           onMouseEnter={() => setIsCarouselPaused(true)}
           onMouseLeave={() => setIsCarouselPaused(false)}
-          className="relative w-full overflow-hidden bg-gray-900 h-[70vh] min-h-[440px] sm:h-[80vh] lg:h-[calc(100vh-96px)] flex items-center group shadow-2xl"
+          className="relative w-full overflow-hidden bg-gray-900 h-screen min-h-[500px] flex items-center group shadow-2xl"
         >
           {heroSlides.map((s, i) => (
             <div
@@ -301,7 +335,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       {/* ──────────────────────────────────────────────
           3. WHY LEARN RBT WITH SYNERGY MEDICAL YOGA (Live WordPress Alternating Timeline Design)
           ────────────────────────────────────────────── */}
-      <section className="py-24 bg-gradient-to-b from-[#f8fdfe] to-[#f1fafe] relative overflow-hidden">
+      <section className="py-10 bg-gradient-to-b from-[#f8fdfe] to-[#f1fafe] relative overflow-hidden">
         {/* Decorative Botanical Timeline Wave connecting illustrations across columns */}
         <div className="absolute top-[52%] left-0 w-full -translate-y-1/2 pointer-events-none hidden lg:block overflow-hidden opacity-70 z-0">
           <svg viewBox="0 0 1400 200" className="w-full h-44 stroke-emerald-600/40 fill-none" strokeWidth="1.5">
@@ -436,12 +470,12 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
               </p>
             </div>
 
-            {/* Right image */}
+            {/* Right image - Enlarged width & height */}
             <div className="lg:col-span-6 flex justify-center">
               <img
                 src={PRODUCT_KNEE}
                 alt="Knee Stabilizer Belts"
-                className="max-w-md w-full object-contain drop-shadow-xl hover:scale-105 transition-transform duration-500"
+                className="w-full max-w-lg sm:max-w-xl max-h-[520px] object-cover sm:object-contain rounded-3xl drop-shadow-2xl hover:scale-105 transition-transform duration-500"
               />
             </div>
 
@@ -510,7 +544,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       {/* ──────────────────────────────────────────────
           6. DOWNLOAD OUR APP
           ────────────────────────────────────────────── */}
-      <section className="py-20 bg-linear-to-br from-[#ebf7f7] to-[#d6f0f0]">
+      <section className="py-10 bg-linear-to-br from-[#ebf7f7] to-[#d6f0f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
@@ -537,24 +571,28 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
               </h2>
 
               <p className="text-base sm:text-lg leading-relaxed text-gray-700">
-                Discover the transformative power of Medical Yoga Therapy with our all-in-one app! Whether you're seeking a qualified therapist nearby, who can come to your place for therapy service or a medical yoga therapy centre nearby who can take care of your pain management end to end, our app has you covered. Every therapist on the app is connected to a synergy doctor and hence is enabled to provide the comprehensive care. We believe in power of integraed approach of having a yoga therapist and doctor working together for better results.
+                Discover the transformative power of Medical Yoga Therapy with our all-in-one app! Whether you're seeking a qualified therapist nearby, who can come to your place for therapy service or a medical yoga therapy centre nearby who can take care of your pain management end to end, our app has you covered.
               </p>
 
-              {/* App badges & QR codes */}
-              <div className="flex flex-wrap gap-6 pt-4 items-center">
-                <div className="flex items-center gap-3 bg-white p-3 rounded-xl shadow-sm border border-teal-100">
-                  <QrCode className="w-10 h-10 text-[#005550]" />
+              {/* App badges & Actual QR code scanners */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100">
+                  <div className="w-16 h-16 bg-white p-1 rounded-xl border border-gray-200 shrink-0">
+                    <img src={getImageUrl(settings.playStoreQrImage || PLAY_QR)} alt="Google Play QR Code" className="w-full h-full object-cover rounded-lg" />
+                  </div>
                   <div>
-                    <img src={PLAYSTORE} alt="Google Play" className="h-8 object-contain" />
-                    <p className="text-[10px] text-gray-500 font-medium">Scan or tap to get app</p>
+                    <img src={PLAYSTORE} alt="Google Play" className="h-7 object-contain mb-1" />
+                    <p className="text-[10px] text-gray-500 font-bold">Scan QR code to install</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 bg-white p-3 rounded-xl shadow-sm border border-teal-100">
-                  <QrCode className="w-10 h-10 text-[#005550]" />
+                <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100">
+                  <div className="w-16 h-16 bg-white p-1 rounded-xl border border-gray-200 shrink-0">
+                    <img src={getImageUrl(settings.appStoreQrImage || APPLE_QR)} alt="App Store QR Code" className="w-full h-full object-cover rounded-lg" />
+                  </div>
                   <div>
-                    <img src={APPSTORE} alt="App Store" className="h-8 object-contain" />
-                    <p className="text-[10px] text-gray-500 font-medium">Scan or tap to get app</p>
+                    <img src={APPSTORE} alt="App Store" className="h-7 object-contain mb-1" />
+                    <p className="text-[10px] text-gray-500 font-bold">Scan QR code to install</p>
                   </div>
                 </div>
               </div>
@@ -642,7 +680,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       {/* ──────────────────────────────────────────────
           7. TESTIMONIALS
           ────────────────────────────────────────────── */}
-      <section className="py-20 bg-[#005550] text-white relative overflow-hidden">
+      <section className="py-12 bg-[#005550] text-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           
           <div className="text-center space-y-2 mb-14">
@@ -708,58 +746,27 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
-              <div className="h-48 overflow-hidden bg-gray-100">
-                <img
-                  src="https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner.jpg"
-                  alt="Knee Therapy Blog"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+            {blogs.map((b, i) => (
+              <div key={b._id || i} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group flex flex-col justify-between">
+                <div>
+                  <div className="h-48 overflow-hidden bg-gray-100">
+                    <img
+                      src={getImageUrl(b.image || b.imageUrl)}
+                      alt={b.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="p-6 space-y-3">
+                    <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">{b.category || 'Therapy Guide'}</span>
+                    <h3 className="font-poppins font-bold text-[#2C2D33] text-lg leading-snug group-hover:text-[#005550] transition-colors">
+                      {b.title}
+                    </h3>
+                    {b.excerpt && <p className="text-xs text-gray-600 line-clamp-2">{b.excerpt}</p>}
+                    <p className="text-xs text-gray-400">{b.date || 'Clinical Publication'}</p>
+                  </div>
+                </div>
               </div>
-              <div className="p-6 space-y-3">
-                <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">Knee Therapy</span>
-                <h3 className="font-poppins font-bold text-[#2C2D33] text-lg leading-snug group-hover:text-[#005550] transition-colors">
-                  Understanding Knee Pain: Causes, Prevention &amp; RBT Therapy
-                </h3>
-                <p className="text-xs text-gray-400">May 15, 2025</p>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
-              <div className="h-48 overflow-hidden bg-gray-100">
-                <img
-                  src={PRODUCT_NECK}
-                  alt="Cervical Therapy Blog"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-6 space-y-3">
-                <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">Cervical Therapy</span>
-                <h3 className="font-poppins font-bold text-[#2C2D33] text-lg leading-snug group-hover:text-[#005550] transition-colors">
-                  Neck Pain Relief Through Rope &amp; Belt Therapy: A Clinical Guide
-                </h3>
-                <p className="text-xs text-gray-400">Jun 2, 2025</p>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
-              <div className="h-48 overflow-hidden bg-gray-100">
-                <img
-                  src={DOCTOR}
-                  alt="Back Therapy Blog"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-6 space-y-3">
-                <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">Back Therapy</span>
-                <h3 className="font-poppins font-bold text-[#2C2D33] text-lg leading-snug group-hover:text-[#005550] transition-colors">
-                  Back to Wellness: Lumbar Pain Management with Medical Yoga
-                </h3>
-                <p className="text-xs text-gray-400">Jul 10, 2025</p>
-              </div>
-            </div>
-
+            ))}
           </div>
 
         </div>

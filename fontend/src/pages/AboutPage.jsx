@@ -60,9 +60,6 @@ export default function AboutPage() {
           <h1 className="font-poppins text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white">
             About Medical Yoga Therapy
           </h1>
-          <p className="text-white/90 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-            Building a comprehensive therapy care hub uniting certified practitioners, technology, and innovative pain solutions.
-          </p>
         </div>
       </section>
 
