@@ -79,7 +79,15 @@ export default function ServicesPage({ setActivePage, currentUser }) {
       if (cached) {
         const parsed = JSON.parse(cached);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((s) => ({ ...s, src: getImageUrl(s.src) }));
+          return parsed.map((s, idx) => {
+            const rawSrc = s.imageUrl || s.src || s.url || s.image;
+            const fallback = s.fallback || DEFAULT_SERVICE_SLIDES[idx % DEFAULT_SERVICE_SLIDES.length].src;
+            return {
+              ...s,
+              src: getImageUrl(rawSrc) || fallback,
+              fallback,
+            };
+          });
         }
       }
     } catch (e) {}
@@ -112,8 +120,9 @@ export default function ServicesPage({ setActivePage, currentUser }) {
           if (srvSlides.length > 0) {
             const mapped = srvSlides.map((c, idx) => {
               const fallback = DEFAULT_SERVICE_SLIDES[idx % DEFAULT_SERVICE_SLIDES.length].src;
+              const rawSrc = c.imageUrl || c.src || c.url || c.image;
               return {
-                src: getImageUrl(c.imageUrl) || fallback,
+                src: getImageUrl(rawSrc) || fallback,
                 fallback,
                 alt: c.title || 'Synergy Medical Yoga Therapy Service',
               };

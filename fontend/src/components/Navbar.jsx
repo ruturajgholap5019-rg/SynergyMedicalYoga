@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Menu, X, ShieldCheck, Phone, Mail, Home, Info, Stethoscope, ShoppingBag, PhoneCall, User } from 'lucide-react';
+import { ShoppingCart, Menu, X, ShieldCheck, Phone, Mail, Home, Info, Stethoscope, ShoppingBag, PhoneCall, User, GraduationCap } from 'lucide-react';
 
 const LOGO = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Synergy-Logo_png-02-scaled.png';
 
@@ -7,6 +7,7 @@ const BASE_NAV_ITEMS = [
   { id: 'home', label: 'Home', icon: Home },
   { id: 'about', label: 'About Us', icon: Info },
   { id: 'services', label: 'Services', icon: Stethoscope },
+  { id: 'rbt-course', label: 'RBT Course', icon: GraduationCap },
   { id: 'shop', label: 'Shop', icon: ShoppingBag },
   { id: 'contact', label: 'Contact Us', icon: PhoneCall },
   { id: 'account', label: 'Login/My account', icon: User },

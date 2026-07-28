@@ -68,10 +68,20 @@ async function request(path, options = {}, isRetry = false) {
 
 export function getImageUrl(path) {
   if (!path) return 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80';
+  if (typeof path === 'object') {
+    path = path.imageUrl || path.src || path.url || path.image || '';
+    if (!path) return 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80';
+  }
   path = String(path).trim();
+  if (path === 'undefined' || path === 'null' || path === '') {
+    return 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80';
+  }
   let fullUrl = path;
   if (!path.startsWith('http://') && !path.startsWith('https://') && !path.startsWith('data:')) {
-    const backendHost = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || 'https://synergymedicalyoga.onrender.com';
+    const defaultHost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:5000'
+      : 'https://synergymedicalyoga.onrender.com';
+    const backendHost = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || defaultHost;
     fullUrl = `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`;
   }
   // Automatically upgrade unencrypted http links to secure https (unless pointing to local dev servers) to prevent browser mixed-content blocking

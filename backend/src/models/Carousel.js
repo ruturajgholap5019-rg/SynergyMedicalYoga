@@ -5,6 +5,14 @@ const carouselSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  title: {
+    type: String,
+    default: '',
+  },
+  subtitle: {
+    type: String,
+    default: '',
+  },
   buttonText: {
     type: String,
     default: 'Explore Shop',

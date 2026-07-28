@@ -85,7 +85,15 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       if (cached) {
         const parsed = JSON.parse(cached);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((s) => ({ ...s, src: getImageUrl(s.src) }));
+          return parsed.map((s, idx) => {
+            const rawSrc = s.imageUrl || s.src || s.url || s.image;
+            const fallback = s.fallback || DEFAULT_HERO_SLIDES[idx % DEFAULT_HERO_SLIDES.length].src;
+            return {
+              ...s,
+              src: getImageUrl(rawSrc) || fallback,
+              fallback,
+            };
+          });
         }
       }
     } catch (e) {}
@@ -113,8 +121,9 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           if (homeSlides.length > 0) {
             const mapped = homeSlides.map((c, idx) => {
               const fallback = DEFAULT_HERO_SLIDES[idx % DEFAULT_HERO_SLIDES.length].src;
+              const rawSrc = c.imageUrl || c.src || c.url || c.image;
               return {
-                src: getImageUrl(c.imageUrl) || fallback,
+                src: getImageUrl(rawSrc) || fallback,
                 fallback,
                 alt: c.title || 'Synergy Medical Yoga Banner',
                 heading: c.title,
@@ -394,6 +403,17 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
               <div className="hidden lg:block h-8"></div>
             </div>
 
+          </div>
+
+          {/* CTA to Full Course Page */}
+          <div className="mt-12 text-center">
+            <button
+              onClick={() => { setActivePage('rbt-course'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="bg-[#005550] hover:bg-[#003d39] text-white font-extrabold text-sm px-8 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center gap-2 cursor-pointer"
+            >
+              <span>Explore RBT Course Syllabus &amp; Register for 5th Sept Batch (₹19,999/-)</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </section>

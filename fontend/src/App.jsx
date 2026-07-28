@@ -18,6 +18,7 @@ import AccountPage from './pages/AccountPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import AdminDashboard from './admin/AdminDashboard';
 import CheckoutPage from './pages/CheckoutPage';
+import CoursePage from './pages/CoursePage';
 import { api } from './lib/api';
 
 // Route mapping configuration
@@ -28,6 +29,7 @@ const PAGE_TO_ROUTE = {
   'find-centres': '/find-centres',
   shop: '/shop',
   contact: '/contact',
+  'rbt-course': '/rbt-course',
   account: '/my-account',
   checkout: '/checkout',
   admin: '/admin',
@@ -41,6 +43,8 @@ const ROUTE_TO_PAGE = {
   '/find-centres': 'find-centres',
   '/shop': 'shop',
   '/contact': 'contact',
+  '/rbt-course': 'rbt-course',
+  '/training-course': 'rbt-course',
   '/my-account': 'account',
   '/my-account/': 'account',
   '/checkout': 'checkout',
@@ -518,6 +522,10 @@ export default function App() {
 
         {activePage === 'contact' && (
           <ContactPage />
+        )}
+
+        {activePage === 'rbt-course' && (
+          <CoursePage setActivePage={handleNavigate} />
         )}
 
         {activePage === 'account' && (
