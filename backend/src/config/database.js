@@ -35,7 +35,7 @@ const connectDB = async () => {
       if (count === 0) {
         await Carousel.insertMany([
           {
-            imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80',
+            imageUrl: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner.jpg',
             title: 'Guided Training Videos\nfor Therapeutic Exercises\nat Home',
             subtitle: 'Clinical medical yoga alignments for knee, spine, and neck strain rehabilitation.',
             buttonText: 'Explore Shop',
@@ -45,7 +45,7 @@ const connectDB = async () => {
             isActive: true,
           },
           {
-            imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1600&q=80',
+            imageUrl: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Website-Baners-04-992x1024.png',
             title: 'Professional Rope & Belt\nTherapy for Pain Management',
             subtitle: 'Doctor supervised posture realignment & joint friction elimination.',
             buttonText: 'Book Therapy',
@@ -55,7 +55,7 @@ const connectDB = async () => {
             isActive: true,
           },
           {
-            imageUrl: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=80',
+            imageUrl: 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png',
             title: 'Evidence-Based\nTherapy Programs\nfor Faster Recovery',
             subtitle: 'Integrated approach to pain relief with certified therapeutic instructors.',
             buttonText: 'Find Centers',
@@ -65,7 +65,7 @@ const connectDB = async () => {
             isActive: true,
           },
           {
-            imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=85',
+            imageUrl: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner.jpg',
             title: 'Cervical & Lumbar Traction Therapy',
             buttonText: 'Book Consultation',
             buttonLink: '/services',
@@ -74,7 +74,7 @@ const connectDB = async () => {
             isActive: true,
           },
           {
-            imageUrl: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=85',
+            imageUrl: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Website-Baners-04-992x1024.png',
             title: 'Clinical Medical Yoga & Rehabilitation',
             buttonText: 'Explore Programs',
             buttonLink: '/services',

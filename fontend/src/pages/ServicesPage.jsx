@@ -53,13 +53,13 @@ const THERAPY_ACCORDION = [
 
 const DEFAULT_SERVICE_SLIDES = [
   {
-    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=85',
-    fallback: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=85',
+    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner.jpg',
+    fallback: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner.jpg',
     alt: 'Cervical & Lumbar Traction Therapy',
   },
   {
-    src: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=85',
-    fallback: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=85',
+    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Website-Baners-04-992x1024.png',
+    fallback: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Website-Baners-04-992x1024.png',
     alt: 'Clinical Medical Yoga & Rehabilitation',
   },
 ];

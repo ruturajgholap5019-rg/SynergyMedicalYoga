@@ -21,8 +21,8 @@ const RBT_CAREER     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/1
 
 const DEFAULT_HERO_SLIDES = [
   {
-    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80',
-    fallback: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80',
+    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner.jpg',
+    fallback: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner.jpg',
     alt: 'Synergy Medical Yoga Banner',
     heading: 'Guided Training Videos\nfor Therapeutic Exercises at Home',
     subtitle: 'Doctor Supervised Non-Surgical Rehabilitation & Rope and Belt Therapy',
@@ -30,8 +30,8 @@ const DEFAULT_HERO_SLIDES = [
     buttonLink: '/shop',
   },
   {
-    src: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1600&q=80',
-    fallback: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1600&q=80',
+    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Website-Baners-04-992x1024.png',
+    fallback: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Website-Baners-04-992x1024.png',
     alt: 'Synergy Medical Yoga Banner',
     heading: 'Professional Rope & Belt\nTherapy for Pain Management',
     subtitle: 'Doctor supervised posture realignment & joint friction elimination.',
@@ -39,8 +39,8 @@ const DEFAULT_HERO_SLIDES = [
     buttonLink: '/services',
   },
   {
-    src: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=80',
-    fallback: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=80',
+    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png',
+    fallback: 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png',
     alt: 'Synergy Medical Yoga Banner',
     heading: 'Evidence-Based\nTherapy Programs for Faster Recovery',
     subtitle: 'Integrated approach to pain relief with certified therapeutic instructors.',
