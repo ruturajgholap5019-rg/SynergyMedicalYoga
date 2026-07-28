@@ -130,8 +130,9 @@ function EnquiriesManager({ enquiries, refresh, showToast }) {
   );
 }
 
-export default function AdminApp() {
-  const [currentUser, setCurrentUser] = useState(null);
+export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }) {
+  const [currentUser, setCurrentUser] = useState(initialUser?.role === 'admin' ? initialUser : null);
+  const [authChecked, setAuthChecked] = useState(Boolean(initialUser?.role === 'admin'));
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -196,9 +197,12 @@ export default function AdminApp() {
         const profile = await api.getProfile();
         if (profile?.user && profile.user.role === 'admin') {
           setCurrentUser(profile.user);
+          onAuthSuccess?.(profile.user);
         }
       } catch (err) {
         setCurrentUser(null);
+      } finally {
+        setAuthChecked(true);
       }
     };
     checkAuth();
@@ -233,7 +237,10 @@ export default function AdminApp() {
       const res = await api.getAdminContentItems();
       if (res.data) setContentItems(res.data);
     } catch (err) {
-      showToast(err.message || 'Failed to fetch CMS content');
+      if (!String(err.message || '').includes('/api/admin/content')) {
+        showToast(err.message || 'Failed to fetch CMS content');
+      }
+      setContentItems([]);
     } finally {
       setLoading(false);
     }
@@ -298,6 +305,7 @@ export default function AdminApp() {
         return;
       }
       setCurrentUser(res.user);
+      onAuthSuccess?.(res.user);
       showToast(`Welcome back, ${res.user.name}!`);
     } catch (err) {
       alert(err.message || 'Admin login failed');
@@ -314,6 +322,7 @@ export default function AdminApp() {
     } finally {
       setCurrentUser(null);
       showToast('Logged out of Admin Console');
+      onLogout?.();
     }
   };
 
@@ -499,6 +508,19 @@ export default function AdminApp() {
   };
 
   // IF NOT LOGGED IN AS ADMIN: DISPLAY LOGIN FORM
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-white grid place-items-center p-4">
+        <div className="text-center space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-[#005550] mx-auto grid place-items-center">
+            <ShieldCheck className="w-7 h-7 text-teal-200" />
+          </div>
+          <p className="text-sm font-bold text-slate-300">Checking admin session...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!currentUser) {
     return (
       <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center p-4">

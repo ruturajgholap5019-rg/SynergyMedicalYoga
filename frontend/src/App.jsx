@@ -151,14 +151,18 @@ export default function App() {
   });
 
   // Helper to safely update page state and push clean URL to browser address bar without reload
-  const handleNavigate = useCallback((page, scroll = true, customRoute = null) => {
+  const handleNavigate = useCallback((page, scroll = true, customRoute = null, replace = false) => {
     setActivePage(page);
     let route = customRoute || PAGE_TO_ROUTE[page] || '/';
     if (page === 'product-detail' && !customRoute && selectedProductId) {
       route = `/product/${selectedProductId}`;
     }
     if (window.location.pathname !== route) {
-      window.history.pushState({ page, customRoute }, '', route);
+      if (replace) {
+        window.history.replaceState({ page, customRoute }, '', route);
+      } else {
+        window.history.pushState({ page, customRoute }, '', route);
+      }
     }
     if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [selectedProductId]);
@@ -403,6 +407,17 @@ export default function App() {
     }
   };
 
+  const handleAdminLogout = () => {
+    setCurrentUser(null);
+    window.localStorage.removeItem('synergyUser');
+    window.localStorage.removeItem('synergy_access_token');
+    document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    setCart([]);
+    setPendingCheckout(false);
+    handleNavigate('home', true, '/', true);
+  };
+
   const displayCart = currentUser ? cart : guestCart;
   const cartCount = displayCart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = displayCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -510,7 +525,14 @@ export default function App() {
       {/* Dynamic Page Router Content with Strict Security & Zero Leak Route Guards */}
       <main className="flex-1">
         {activePage === 'admin' && (
-          <AdminPortalPage />
+          <AdminPortalPage
+            currentUser={currentUser}
+            onAuthSuccess={(user) => {
+              setCurrentUser(user);
+              window.localStorage.setItem('synergyUser', JSON.stringify(user));
+            }}
+            onLogout={handleAdminLogout}
+          />
         )}
 
         {activePage === 'home' && (
