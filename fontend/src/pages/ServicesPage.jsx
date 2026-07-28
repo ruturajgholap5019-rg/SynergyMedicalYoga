@@ -625,15 +625,15 @@ export default function ServicesPage({ setActivePage, currentUser }) {
       {/* ──────────────────────────────────────────────
           6.5 HOW TO GET STARTED 4-STEP PROCESS SECTION (Exact Match to synergymedicalyoga.com Screenshot)
           ────────────────────────────────────────────── */}
-      <section className="py-16 sm:py-20 bg-[#E8ECEB] border-t border-b border-gray-200/80">
+      <section className="py-16 sm:py-24 bg-[#EAEBEB] border-t border-b border-gray-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4 relative">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-2 items-center relative">
 
             {/* STEP 1 */}
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-4 relative pr-0 lg:pr-4">
-              {/* Graphic with Giant Number 1 + Image */}
-              <div className="relative w-full h-48 flex items-center justify-center lg:justify-start">
-                <span className="text-[140px] font-black text-[#005550] leading-none select-none font-sans tracking-tighter opacity-95">
+            <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-4 relative pr-0 lg:pr-3 min-h-[320px] justify-between">
+              {/* Graphic: Giant Number 1 + Transparent Cutout Image */}
+              <div className="relative w-full h-44 flex items-center justify-center lg:justify-start">
+                <span className="text-[130px] font-black text-[#005550] leading-none select-none tracking-tighter opacity-95">
                   1
                 </span>
                 <img
@@ -643,38 +643,38 @@ export default function ServicesPage({ setActivePage, currentUser }) {
                     e.target.onerror = null;
                     e.target.src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80";
                   }}
-                  className="h-36 object-contain absolute left-12 lg:left-16 bottom-2 drop-shadow-md transition-transform hover:scale-105 duration-300"
+                  className="h-36 object-contain absolute left-10 lg:left-14 bottom-0 drop-shadow-md mix-blend-multiply"
                 />
               </div>
-              <div className="space-y-1.5 pt-2">
-                <h3 className="font-poppins text-2xl font-extrabold text-[#005550]">
+              <div className="space-y-1 pt-1">
+                <h3 className="font-poppins text-2xl font-bold text-[#005550]">
                   Step 1
                 </h3>
-                <p className="text-sm font-medium text-gray-700 leading-relaxed max-w-xs">
+                <p className="text-sm font-medium text-gray-700 leading-relaxed max-w-[240px]">
                   Book an @home experience visit with nearest therapist or visit nearest center
                 </p>
               </div>
-              {/* Vertical Accent Divider with Diamond Starburst for Desktop */}
-              <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 h-4/5 items-center">
-                <div className="w-[1px] h-full bg-[#005550]/25 relative flex items-center justify-center">
-                  <span className="text-[#005550] text-xs bg-[#E8ECEB] py-1 font-bold">✦</span>
+              {/* Vertical Divider Line with Starburst Icon */}
+              <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 h-3/4 items-center">
+                <div className="w-[1px] h-full bg-[#005550]/20 relative flex items-center justify-center">
+                  <span className="text-[#005550] text-sm bg-[#EAEBEB] py-1 font-bold">✦</span>
                 </div>
               </div>
             </div>
 
             {/* STEP 2 */}
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-4 relative px-0 lg:px-4">
-              <div className="space-y-1.5 pb-2 order-2 lg:order-1">
-                <h3 className="font-poppins text-2xl font-extrabold text-[#005550]">
+            <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-4 relative px-0 lg:px-3 min-h-[320px] justify-between">
+              <div className="space-y-1 pt-1">
+                <h3 className="font-poppins text-2xl font-bold text-[#005550]">
                   Step 2
                 </h3>
-                <p className="text-sm font-medium text-gray-700 leading-relaxed max-w-xs">
+                <p className="text-sm font-medium text-gray-700 leading-relaxed max-w-[240px]">
                   Get the thorough assessment done for your pain condition
                 </p>
               </div>
-              {/* Graphic with Giant Number 2 + Image */}
-              <div className="relative w-full h-48 flex items-center justify-center lg:justify-start order-1 lg:order-2">
-                <span className="text-[140px] font-black text-[#005550] leading-none select-none font-sans tracking-tighter opacity-95">
+              {/* Graphic: Giant Number 2 + Transparent Cutout Image */}
+              <div className="relative w-full h-44 flex items-center justify-center lg:justify-start">
+                <span className="text-[130px] font-black text-[#005550] leading-none select-none tracking-tighter opacity-95">
                   2
                 </span>
                 <img
@@ -684,21 +684,21 @@ export default function ServicesPage({ setActivePage, currentUser }) {
                     e.target.onerror = null;
                     e.target.src = "https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=400&q=80";
                   }}
-                  className="h-36 object-contain absolute left-12 lg:left-16 bottom-2 drop-shadow-md transition-transform hover:scale-105 duration-300"
+                  className="h-36 object-contain absolute left-10 lg:left-14 bottom-0 drop-shadow-md mix-blend-multiply"
                 />
               </div>
-              {/* Vertical Accent Divider with Diamond Starburst for Desktop */}
-              <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 h-4/5 items-center">
-                <div className="w-[1px] h-full bg-[#005550]/25 relative flex items-center justify-center">
-                  <span className="text-[#005550] text-xs bg-[#E8ECEB] py-1 font-bold">✦</span>
+              {/* Vertical Divider Line with Starburst Icon */}
+              <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 h-3/4 items-center">
+                <div className="w-[1px] h-full bg-[#005550]/20 relative flex items-center justify-center">
+                  <span className="text-[#005550] text-sm bg-[#EAEBEB] py-1 font-bold">✦</span>
                 </div>
               </div>
             </div>
 
             {/* STEP 3 */}
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-4 relative px-0 lg:px-4">
-              {/* Graphic with Giant Number 3 + Image */}
-              <div className="relative w-full h-48 flex items-center justify-center lg:justify-start">
+            <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-4 relative px-0 lg:px-3 min-h-[320px] justify-between">
+              {/* Graphic: Transparent Cutout Image + Giant Number 3 */}
+              <div className="relative w-full h-44 flex items-center justify-center lg:justify-start">
                 <img
                   src="https://synergymedicalyoga.com/wp-content/uploads/2025/09/Step-3.png"
                   alt="Step 3 Recommendation"
@@ -706,41 +706,41 @@ export default function ServicesPage({ setActivePage, currentUser }) {
                     e.target.onerror = null;
                     e.target.src = "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=400&q=80";
                   }}
-                  className="h-36 object-contain absolute left-0 top-0 drop-shadow-md transition-transform hover:scale-105 duration-300"
+                  className="h-36 object-contain absolute left-0 top-0 drop-shadow-md mix-blend-multiply"
                 />
-                <span className="text-[140px] font-black text-[#005550] leading-none select-none font-sans tracking-tighter opacity-95 absolute right-4 lg:right-8 bottom-0">
+                <span className="text-[130px] font-black text-[#005550] leading-none select-none tracking-tighter opacity-95 absolute right-2 lg:right-6 bottom-0">
                   3
                 </span>
               </div>
-              <div className="space-y-1.5 pt-2">
-                <h3 className="font-poppins text-2xl font-extrabold text-[#005550]">
+              <div className="space-y-1 pt-1">
+                <h3 className="font-poppins text-2xl font-bold text-[#005550]">
                   Step 3
                 </h3>
-                <p className="text-sm font-medium text-gray-700 leading-relaxed max-w-xs">
+                <p className="text-sm font-medium text-gray-700 leading-relaxed max-w-[240px]">
                   Get recommendation for therapy plan
                 </p>
               </div>
-              {/* Vertical Accent Divider with Diamond Starburst for Desktop */}
-              <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 h-4/5 items-center">
-                <div className="w-[1px] h-full bg-[#005550]/25 relative flex items-center justify-center">
-                  <span className="text-[#005550] text-xs bg-[#E8ECEB] py-1 font-bold">✦</span>
+              {/* Vertical Divider Line with Starburst Icon */}
+              <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 h-3/4 items-center">
+                <div className="w-[1px] h-full bg-[#005550]/20 relative flex items-center justify-center">
+                  <span className="text-[#005550] text-sm bg-[#EAEBEB] py-1 font-bold">✦</span>
                 </div>
               </div>
             </div>
 
             {/* STEP 4 */}
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-4 relative pl-0 lg:pl-4">
-              <div className="space-y-1.5 pb-2 order-2 lg:order-1">
-                <h3 className="font-poppins text-2xl font-extrabold text-[#005550]">
+            <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-4 relative pl-0 lg:pl-3 min-h-[320px] justify-between">
+              <div className="space-y-1 pt-1">
+                <h3 className="font-poppins text-2xl font-bold text-[#005550]">
                   Step 4
                 </h3>
-                <p className="text-sm font-medium text-gray-700 leading-relaxed max-w-xs">
+                <p className="text-sm font-medium text-gray-700 leading-relaxed max-w-[240px]">
                   Purchase the therapy sessions and get started from the comfort of your home
                 </p>
               </div>
-              {/* Graphic with Giant Number 4 + Image */}
-              <div className="relative w-full h-48 flex items-center justify-center lg:justify-start order-1 lg:order-2">
-                <span className="text-[140px] font-black text-[#005550] leading-none select-none font-sans tracking-tighter opacity-95">
+              {/* Graphic: Giant Number 4 + Transparent Cutout Image */}
+              <div className="relative w-full h-44 flex items-center justify-center lg:justify-start">
+                <span className="text-[130px] font-black text-[#005550] leading-none select-none tracking-tighter opacity-95">
                   4
                 </span>
                 <img
@@ -750,7 +750,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
                     e.target.onerror = null;
                     e.target.src = "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=400&q=80";
                   }}
-                  className="h-36 object-contain absolute left-12 lg:left-16 bottom-2 drop-shadow-md transition-transform hover:scale-105 duration-300"
+                  className="h-36 object-contain absolute left-10 lg:left-14 bottom-0 drop-shadow-md mix-blend-multiply"
                 />
               </div>
             </div>
