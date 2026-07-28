@@ -43,6 +43,10 @@ export default function ProductCard({ product, onAddToCart, onQuickView, onViewD
           <img
             src={getImageUrl(product.images?.[0] || product.image) || 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80'}
             alt={product.name}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80';
+            }}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
           />
 

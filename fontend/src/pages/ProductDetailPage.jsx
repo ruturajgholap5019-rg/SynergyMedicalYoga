@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Star, ShoppingBag, Check, Shield, Truck, RefreshCw } from 'lucide-react';
-import { api } from '../lib/api';
+import { api, getImageUrl } from '../lib/api';
 
 export default function ProductDetailPage({ productId, onAddToCart, onBuyNow, goBack }) {
   const [product, setProduct] = useState(null);
@@ -42,7 +42,8 @@ export default function ProductDetailPage({ productId, onAddToCart, onBuyNow, go
     );
   }
 
-  const images = product.images?.length > 0 ? product.images : [product.image];
+  const rawImages = product.images?.length > 0 ? product.images : [product.image];
+  const images = rawImages.map(img => getImageUrl(img) || 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80');
 
   const handleAdd = () => {
     onAddToCart(product, selectedSize, quantity);
@@ -66,6 +67,7 @@ export default function ProductDetailPage({ productId, onAddToCart, onBuyNow, go
               <img
                 src={images[0]}
                 alt={product.name}
+                onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80'; }}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -76,6 +78,7 @@ export default function ProductDetailPage({ productId, onAddToCart, onBuyNow, go
                     key={idx}
                     src={src}
                     alt={`${product.name} view ${idx + 1}`}
+                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80'; }}
                     className="w-full h-28 object-cover rounded-3xl border border-slate-200"
                   />
                 ))}

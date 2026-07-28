@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, ShieldCheck } from 'lucide-react';
+import { getImageUrl } from '../lib/api';
 
 export default function CartDrawer({ isOpen, onClose, cart, onUpdateQuantity, onRemoveItem, onProceedToCheckout, onNavigateToShop }) {
   if (!isOpen) return null;
@@ -85,8 +86,9 @@ export default function CartDrawer({ isOpen, onClose, cart, onUpdateQuantity, on
               cart.map((item) => (
                 <div key={`${item.id}-${item.selectedSize}`} className="pt-4 first:pt-0 flex gap-4">
                   <img
-                    src={item.image}
+                    src={getImageUrl(item.image) || 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80'}
                     alt={item.name}
+                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80'; }}
                     className="w-20 h-20 rounded-xl object-cover border border-slate-200 shrink-0"
                   />
                   <div className="flex-1 flex flex-col justify-between">

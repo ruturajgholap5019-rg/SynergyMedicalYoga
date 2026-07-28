@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Star, ShoppingBag, Check, Shield, Truck, RefreshCw } from 'lucide-react';
+import { getImageUrl } from '../lib/api';
 
 export default function ProductDetailModal({ product, onClose, onAddToCart, onBuyNow }) {
   if (!product) return null;
@@ -10,7 +11,8 @@ export default function ProductDetailModal({ product, onClose, onAddToCart, onBu
   const [activeTab, setActiveTab] = useState('description');
   const [isAdded, setIsAdded] = useState(false);
 
-  const images = product.images || [product.image];
+  const rawImages = product.images || [product.image];
+  const images = rawImages.map(img => getImageUrl(img) || 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80');
 
   const handleAdd = () => {
     onAddToCart(product, selectedSize, quantity);
@@ -36,6 +38,7 @@ export default function ProductDetailModal({ product, onClose, onAddToCart, onBu
               <img
                 src={images[activeImageIndex]}
                 alt={product.name}
+                onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80'; }}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -49,7 +52,7 @@ export default function ProductDetailModal({ product, onClose, onAddToCart, onBu
                       activeImageIndex === idx ? 'border-[#065750] ring-2 ring-teal-100' : 'border-slate-200 opacity-70'
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
+                    <img src={img} alt="" onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80'; }} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>

@@ -67,14 +67,18 @@ async function request(path, options = {}, isRetry = false) {
 }
 
 export function getImageUrl(path) {
-  if (!path) return '';
+  if (!path) return 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80';
   path = String(path).trim();
-  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
-    // Automatically upgrade unencrypted http cloud domain links to https to prevent browser mixed-content blocking on Vercel
-    return path.replace(/^http:\/\/(.*\.onrender\.com)/i, 'https://$1');
+  let fullUrl = path;
+  if (!path.startsWith('http://') && !path.startsWith('https://') && !path.startsWith('data:')) {
+    const backendHost = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || 'https://synergymedicalyoga.onrender.com';
+    fullUrl = `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`;
   }
-  const backendHost = (import.meta.env.VITE_API_URL || '/api').replace(/\/api$/, '');
-  return `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`;
+  // Automatically upgrade unencrypted http links to secure https on Vercel/cloud domains to prevent browser mixed-content blocking
+  if (fullUrl.startsWith('http://') && (fullUrl.includes('.onrender.com') || (typeof window !== 'undefined' && window.location.protocol === 'https:'))) {
+    fullUrl = fullUrl.replace(/^http:\/\//i, 'https://');
+  }
+  return fullUrl;
 }
 
 export const api = {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Plus, CheckCircle, X, Edit2, Trash2 } from 'lucide-react';
+import { getImageUrl } from '../../lib/api';
 
 export default function ProductsTab({
   products,
@@ -79,8 +80,9 @@ export default function ProductsTab({
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <img
-                          src={product.images?.[0] || 'https://images.unsplash.com/photo-1599447421416-3414500d18a5'}
+                          src={getImageUrl(product.images?.[0] || product.image) || 'https://images.unsplash.com/photo-1599447421416-3414500d18a5'}
                           alt={product.name}
+                          onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1599447421416-3414500d18a5'; }}
                           className="w-12 h-12 rounded-xl object-cover border border-gray-200"
                         />
                         <div>
