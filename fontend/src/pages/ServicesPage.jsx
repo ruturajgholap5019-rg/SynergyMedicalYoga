@@ -505,70 +505,82 @@ export default function ServicesPage({ setActivePage, currentUser }) {
             <div className="w-full lg:w-1/2 flex justify-center items-center relative py-2">
               <div className="w-full max-w-xl relative drop-shadow-sm">
                 <svg
-                  viewBox="0 0 500 550"
+                  viewBox="0 0 545 425"
                   className="w-full h-auto"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  {/* Outer Map Contour / State Silhouette */}
+                  {/* Map Background Base */}
                   <g className="transition-all">
-                    {/* Jammu & Kashmir / North */}
-                    <path d="M 200,100 L 220,50 L 245,30 L 270,40 L 285,70 L 270,100 L 255,130 L 230,135 Z" fill="#99d8c9" stroke="#005550" strokeWidth="1.2" />
-                    <path d="M 230,135 L 255,130 L 275,150 L 260,180 L 230,175 L 210,150 Z" fill="#b2e2d8" stroke="#005550" strokeWidth="1.2" />
-                    {/* Rajasthan / West */}
-                    <path d="M 165,190 L 230,175 L 225,235 L 180,260 L 150,230 Z" fill="#ccece6" stroke="#005550" strokeWidth="1.2" />
-                    {/* Gujarat */}
-                    <path d="M 150,230 L 180,260 L 205,300 L 160,315 L 150,280 L 170,270 Z" fill="#88cebf" stroke="#005550" strokeWidth="1.2" />
-                    {/* Maharashtra / Central West */}
-                    <path d="M 180,310 L 245,300 L 285,335 L 240,390 L 195,365 L 190,325 Z" fill="#66c2a4" stroke="#005550" strokeWidth="1.5" />
-                    {/* Madhya Pradesh */}
-                    <path d="M 225,235 L 305,245 L 315,310 L 245,300 L 210,260 Z" fill="#b2e2d8" stroke="#005550" strokeWidth="1.2" />
-                    {/* Uttar Pradesh / Bihar / North Central */}
-                    <path d="M 255,130 L 335,175 L 365,225 L 305,245 L 260,180 Z" fill="#ccece6" stroke="#005550" strokeWidth="1.2" />
-                    {/* Odisha / East */}
-                    <path d="M 315,310 L 375,305 L 390,365 L 340,380 L 285,335 Z" fill="#77c8b7" stroke="#005550" strokeWidth="1.2" />
-                    {/* Karnataka / Telangana / Andhra / South */}
-                    <path d="M 195,365 L 240,390 L 285,335 L 305,400 L 275,475 L 235,465 Z" fill="#66c2a4" stroke="#005550" strokeWidth="1.2" />
-                    {/* Tamil Nadu / Kerala / Far South */}
-                    <path d="M 235,465 L 275,475 L 285,530 L 250,540 Z" fill="#99d8c9" stroke="#005550" strokeWidth="1.2" />
+                    {/* Non-Live States / Kashmir & Far North */}
+                    <path d="M 200,60 L 225,20 L 255,10 L 285,25 L 295,50 L 275,80 L 250,105 L 225,110 Z" fill="#e0e0e0" stroke="#ffffff" strokeWidth="1.5" />
+                    <path d="M 225,110 L 250,105 L 275,120 L 260,145 L 225,140 L 205,120 Z" fill="#e0e0e0" stroke="#ffffff" strokeWidth="1.5" />
+
+                    {/* Live State: Punjab & Haryana & Delhi */}
+                    <path d="M 210,120 L 250,115 L 245,160 L 210,165 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+
+                    {/* Live State: Rajasthan */}
+                    <path d="M 160,155 L 225,140 L 220,195 L 175,215 L 145,190 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+
+                    {/* Live State: Gujarat */}
+                    <path d="M 145,190 L 175,215 L 195,250 L 155,265 L 145,235 L 165,225 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+
+                    {/* Live State: Maharashtra (Pune Flagship Hub) */}
+                    <path d="M 175,255 L 240,245 L 275,275 L 235,325 L 190,305 L 185,270 Z" fill="#66c2a4" stroke="#ffffff" strokeWidth="2" />
+
+                    {/* Non-Live State: Madhya Pradesh */}
+                    <path d="M 220,195 L 295,205 L 305,255 L 240,245 L 205,215 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+
+                    {/* Non-Live State: Uttar Pradesh & Bihar */}
+                    <path d="M 250,105 L 325,140 L 355,180 L 295,205 L 250,145 Z" fill="#e0e0e0" stroke="#ffffff" strokeWidth="1.5" />
+
+                    {/* Live State: Odisha */}
+                    <path d="M 305,255 L 360,250 L 375,300 L 325,315 L 275,275 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+
+                    {/* Live State: Karnataka & Telangana & Andhra */}
+                    <path d="M 190,305 L 235,325 L 275,275 L 295,335 L 265,395 L 225,385 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+
+                    {/* Live State: Tamil Nadu & Kerala */}
+                    <path d="M 225,385 L 265,395 L 270,420 L 240,425 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+
                     {/* Northeast */}
-                    <path d="M 365,225 L 425,205 L 470,230 L 440,280 L 375,260 Z" fill="#ccece6" stroke="#005550" strokeWidth="1.2" />
+                    <path d="M 355,180 L 415,165 L 455,185 L 425,225 L 365,210 Z" fill="#e0e0e0" stroke="#ffffff" strokeWidth="1.5" />
                   </g>
 
-                  {/* Location Pins (Teal Glowing Circles matching screenshot) */}
-                  {/* 1. Pune (Flagship Live Center) */}
+                  {/* Location Pins (Matching Teal Pins from Screenshot) */}
+                  {/* 1. Pune Flagship Live Center */}
                   <g className="cursor-pointer group">
-                    <circle cx="225" cy="365" r="15" fill="#007A73" fillOpacity="0.3" className="animate-ping" />
-                    <circle cx="225" cy="365" r="9.5" fill="#005550" stroke="#FFFFFF" strokeWidth="2.5" />
-                    <circle cx="225" cy="365" r="3.5" fill="#50E3C2" />
+                    <circle cx="218" cy="302" r="14" fill="#007A73" fillOpacity="0.35" className="animate-ping" />
+                    <circle cx="218" cy="302" r="9" fill="#005550" stroke="#FFFFFF" strokeWidth="2" />
+                    <circle cx="218" cy="302" r="3.5" fill="#50E3C2" />
                   </g>
 
                   {/* 2. Mumbai */}
-                  <circle cx="198" cy="350" r="7.5" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="192" cy="288" r="7.5" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
                   {/* 3. Delhi / NCR */}
-                  <circle cx="235" cy="195" r="7.5" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="230" cy="155" r="7.5" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
                   {/* 4. Ahmedabad / Gujarat */}
-                  <circle cx="178" cy="275" r="7.5" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="172" cy="225" r="7.5" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
                   {/* 5. Surat */}
-                  <circle cx="188" cy="315" r="7" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="182" cy="258" r="7" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
                   {/* 6. Bangalore */}
-                  <circle cx="235" cy="460" r="7.5" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="230" cy="378" r="7.5" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
                   {/* 7. Hyderabad */}
-                  <circle cx="270" cy="390" r="7.5" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="260" cy="320" r="7.5" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
                   {/* 8. Chennai */}
-                  <circle cx="280" cy="475" r="7" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="268" cy="392" r="7" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
                   {/* 9. Odisha / Bhubaneswar */}
-                  <circle cx="375" cy="355" r="7" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="360" cy="292" r="7" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
                   {/* 10. Kolkata */}
-                  <circle cx="385" cy="305" r="7" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="370" cy="252" r="7" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
                   {/* 11. Jaipur */}
-                  <circle cx="205" cy="225" r="7" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="198" cy="180" r="7" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
                   {/* 12. Chandigarh */}
-                  <circle cx="235" cy="155" r="7" fill="#007A73" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="228" cy="122" r="7" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
                 </svg>
 
                 {/* Floating Pune Badge */}
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl shadow-lg border border-teal-100 flex items-center gap-2">
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md px-4 py-1.5 rounded-2xl shadow-lg border border-teal-100 flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#005550] animate-pulse" />
                   <span className="text-xs font-extrabold text-[#005550]">Pune Flagship Center (Live)</span>
                 </div>
