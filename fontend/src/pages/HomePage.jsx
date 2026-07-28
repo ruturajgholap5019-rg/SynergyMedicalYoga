@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight, Star, QrCode } from 'lucide-react';
 import { PRODUCTS } from '../data/mockData';
-import { api, getImageUrl } from '../lib/api';
+import { api } from '../lib/api';
 import ProductCard from '../components/ProductCard';
 import { useSiteSettings } from '../lib/useSiteSettings';
 
@@ -73,15 +73,15 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
     const fetchData = async () => {
       try {
         const res = await api.getPublicCarousels();
-        if (res?.data && Array.isArray(res.data)) {
+        if (res.data && res.data.length > 0) {
           const homeSlides = res.data.filter((c) => !c.page || c.page === 'home');
           if (homeSlides.length > 0) {
             const mapped = homeSlides.map((c) => ({
               src: getImageUrl(c.imageUrl),
               alt: c.title || 'Synergy Medical Yoga Banner',
-              heading: c.title || '',
-              subtitle: c.subtitle || '',
-              buttonText: c.buttonText !== undefined ? c.buttonText : 'Explore Shop',
+              heading: c.title,
+              subtitle: c.subtitle,
+              buttonText: c.buttonText || 'Explore Shop',
               buttonLink: c.buttonLink || '/shop',
             }));
             setHeroSlides(mapped);
@@ -151,31 +151,20 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
                 alt={s.alt}
                 className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === slide ? 'scale-105' : 'scale-100'}`}
               />
-              {/* Optional Slide Heading/Button Overlay */}
-              {(s.heading || s.subtitle || s.buttonText) && (
+              {/* Optional Slide Heading Overlay (only shown if title/subtitle exists) */}
+              {(s.heading || s.subtitle) && (
                 <>
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent pointer-events-none" />
-                  <div className="absolute left-6 sm:left-12 md:left-20 right-6 top-1/2 -translate-y-1/2 max-w-xl text-white z-20 space-y-4 sm:space-y-6 pointer-events-none">
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent pointer-events-none" />
+                  <div className="absolute left-4 sm:left-10 md:left-16 right-4 top-1/2 -translate-y-1/2 max-w-xl text-white z-20 space-y-3 sm:space-y-4 pointer-events-none">
                     {s.heading && (
-                      <h1 className="font-sansita text-3xl sm:text-5xl lg:text-6xl font-bold leading-tight drop-shadow-lg whitespace-pre-line animate-fade-in">
+                      <h1 className="font-sansita text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight drop-shadow-md whitespace-pre-line">
                         {s.heading}
                       </h1>
                     )}
                     {s.subtitle && (
-                      <p className="text-sm sm:text-lg text-gray-100 font-medium max-w-md drop-shadow-md line-clamp-3">
+                      <p className="text-xs sm:text-base text-gray-200 font-medium max-w-md drop-shadow line-clamp-3">
                         {s.subtitle}
                       </p>
-                    )}
-                    {s.buttonText && (
-                      <div className="pt-2 pointer-events-auto">
-                        <button
-                          onClick={() => setActivePage?.(s.buttonLink ? s.buttonLink.replace('/', '') : 'shop')}
-                          className="px-8 py-3.5 bg-gradient-to-r from-teal-400 to-[#007A73] hover:from-teal-300 hover:to-teal-600 text-[#003B37] hover:text-white font-extrabold rounded-2xl shadow-lg hover:shadow-teal-400/30 hover:scale-105 transition-all duration-300 flex items-center gap-2.5 cursor-pointer"
-                        >
-                          <span>{s.buttonText}</span>
-                          <ArrowRight className="w-5 h-5" />
-                        </button>
-                      </div>
                     )}
                   </div>
                 </>

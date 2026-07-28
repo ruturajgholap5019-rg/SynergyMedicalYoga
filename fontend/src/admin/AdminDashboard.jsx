@@ -965,48 +965,15 @@ export default function AdminDashboard({ showToast, currentUser }) {
                 </select>
               </div>
 
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Slide Heading / Title (Optional)</label>
-                <textarea
-                  rows={2}
-                  placeholder="e.g. Guided Training Videos&#10;for Therapeutic Exercises"
-                  value={carouselFormData.title || ''}
-                  onChange={(e) => setCarouselFormData({ ...carouselFormData, title: e.target.value })}
-                  className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Subtitle / Description (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="Clinical medical yoga alignments for rehabilitation..."
-                  value={carouselFormData.subtitle || ''}
-                  onChange={(e) => setCarouselFormData({ ...carouselFormData, subtitle: e.target.value })}
-                  className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
-                />
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block font-bold text-gray-700 mb-1">Button Text</label>
                   <input
                     type="text"
                     placeholder="Explore Shop"
-                    value={carouselFormData.buttonText || ''}
+                    value={carouselFormData.buttonText}
                     onChange={(e) => setCarouselFormData({ ...carouselFormData, buttonText: e.target.value })}
-                    className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Button Link</label>
-                  <input
-                    type="text"
-                    placeholder="/shop or /services"
-                    value={carouselFormData.buttonLink || '/shop'}
-                    onChange={(e) => setCarouselFormData({ ...carouselFormData, buttonLink: e.target.value })}
-                    className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
+                    className="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
                   />
                 </div>
 
@@ -1015,9 +982,9 @@ export default function AdminDashboard({ showToast, currentUser }) {
                   <input
                     type="number"
                     min="1"
-                    value={carouselFormData.order || 1}
+                    value={carouselFormData.order}
                     onChange={(e) => setCarouselFormData({ ...carouselFormData, order: Number(e.target.value) })}
-                    className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
+                    className="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
                   />
                 </div>
               </div>

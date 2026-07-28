@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Plus, Edit2, Trash2, Image, CheckCircle, X, Layers, Home, Sparkles } from 'lucide-react';
-import { getImageUrl } from '../../lib/api';
 
 export default function CarouselsTab({
   carousels,
@@ -76,7 +75,7 @@ export default function CarouselsTab({
             <div key={slide._id} className="bg-white rounded-3xl border border-gray-200 shadow-xs overflow-hidden flex flex-col justify-between">
               <div className="relative h-48 bg-slate-900">
                 <img
-                  src={getImageUrl(slide.imageUrl)}
+                  src={slide.imageUrl}
                   alt={slide.title || 'Promotional Slide'}
                   className="w-full h-full object-cover opacity-80"
                 />

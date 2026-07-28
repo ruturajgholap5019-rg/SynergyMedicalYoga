@@ -159,7 +159,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
                   <div>
                     <div className="h-48 overflow-hidden relative">
                       <img
-                        src={getImageUrl(srv.imageUrl) || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b'}
+                        src={srv.imageUrl || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b'}
                         alt={srv.title}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                       />
