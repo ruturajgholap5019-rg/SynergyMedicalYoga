@@ -19,6 +19,36 @@ const RBT_CURRIC     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/1
 const RBT_MONETIZE   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Monetize.png';
 const RBT_CAREER     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Build-Career.png';
 
+const DEFAULT_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80',
+    fallback: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80',
+    alt: 'Synergy Medical Yoga Banner',
+    heading: 'Guided Training Videos\nfor Therapeutic Exercises at Home',
+    subtitle: 'Doctor Supervised Non-Surgical Rehabilitation & Rope and Belt Therapy',
+    buttonText: 'Explore Shop',
+    buttonLink: '/shop',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1600&q=80',
+    fallback: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1600&q=80',
+    alt: 'Synergy Medical Yoga Banner',
+    heading: 'Professional Rope & Belt\nTherapy for Pain Management',
+    subtitle: 'Doctor supervised posture realignment & joint friction elimination.',
+    buttonText: 'Book Therapy',
+    buttonLink: '/services',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=80',
+    fallback: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=80',
+    alt: 'Synergy Medical Yoga Banner',
+    heading: 'Evidence-Based\nTherapy Programs for Faster Recovery',
+    subtitle: 'Integrated approach to pain relief with certified therapeutic instructors.',
+    buttonText: 'Find Centers',
+    buttonLink: '/services',
+  },
+];
+
 /* Animated counter */
 function Counter({ end, suffix = '' }) {
   const [val, setVal] = useState(0);
@@ -54,10 +84,12 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       const cached = localStorage.getItem('synergy_cached_home_carousels');
       if (cached) {
         const parsed = JSON.parse(cached);
-        return Array.isArray(parsed) ? parsed.map((s) => ({ ...s, src: getImageUrl(s.src) })) : [];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((s) => ({ ...s, src: getImageUrl(s.src) }));
+        }
       }
     } catch (e) {}
-    return [];
+    return DEFAULT_HERO_SLIDES;
   });
   const [featuredProducts, setFeaturedProducts] = useState(() => {
     try {
@@ -79,14 +111,18 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         if (res.data && res.data.length > 0) {
           const homeSlides = res.data.filter((c) => !c.page || c.page === 'home');
           if (homeSlides.length > 0) {
-            const mapped = homeSlides.map((c) => ({
-              src: getImageUrl(c.imageUrl),
-              alt: c.title || 'Synergy Medical Yoga Banner',
-              heading: c.title,
-              subtitle: c.subtitle,
-              buttonText: c.buttonText || 'Explore Shop',
-              buttonLink: c.buttonLink || '/shop',
-            }));
+            const mapped = homeSlides.map((c, idx) => {
+              const fallback = DEFAULT_HERO_SLIDES[idx % DEFAULT_HERO_SLIDES.length].src;
+              return {
+                src: getImageUrl(c.imageUrl) || fallback,
+                fallback,
+                alt: c.title || 'Synergy Medical Yoga Banner',
+                heading: c.title,
+                subtitle: c.subtitle,
+                buttonText: c.buttonText || 'Explore Shop',
+                buttonLink: c.buttonLink || '/shop',
+              };
+            });
             setHeroSlides(mapped);
             try { localStorage.setItem('synergy_cached_home_carousels', JSON.stringify(mapped)); } catch (e) {}
           }
@@ -152,6 +188,10 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
               <img
                 src={getImageUrl(s.src)}
                 alt={s.alt}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = s.fallback || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80';
+                }}
                 className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === slide ? 'scale-105' : 'scale-100'}`}
               />
               {/* Optional Slide Heading Overlay (only shown if title/subtitle exists) */}

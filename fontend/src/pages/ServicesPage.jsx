@@ -51,6 +51,19 @@ const THERAPY_ACCORDION = [
   },
 ];
 
+const DEFAULT_SERVICE_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=85',
+    fallback: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=85',
+    alt: 'Cervical & Lumbar Traction Therapy',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=85',
+    fallback: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=85',
+    alt: 'Clinical Medical Yoga & Rehabilitation',
+  },
+];
+
 export default function ServicesPage({ setActivePage, currentUser }) {
   const { settings } = useSiteSettings();
   const [openTab, setOpenTab] = useState('knee');
@@ -65,10 +78,12 @@ export default function ServicesPage({ setActivePage, currentUser }) {
       const cached = localStorage.getItem('synergy_cached_services_carousels');
       if (cached) {
         const parsed = JSON.parse(cached);
-        return Array.isArray(parsed) ? parsed.map((s) => ({ ...s, src: getImageUrl(s.src) })) : [];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((s) => ({ ...s, src: getImageUrl(s.src) }));
+        }
       }
     } catch (e) {}
-    return [];
+    return DEFAULT_SERVICE_SLIDES;
   });
   const [slide, setSlide] = useState(0);
   const [isSlidePaused, setIsSlidePaused] = useState(false);
@@ -95,10 +110,14 @@ export default function ServicesPage({ setActivePage, currentUser }) {
         if (res.data && res.data.length > 0) {
           const srvSlides = res.data.filter((c) => c.page === 'services');
           if (srvSlides.length > 0) {
-            const mapped = srvSlides.map((c) => ({
-              src: getImageUrl(c.imageUrl),
-              alt: c.title || 'Synergy Medical Yoga Therapy Service',
-            }));
+            const mapped = srvSlides.map((c, idx) => {
+              const fallback = DEFAULT_SERVICE_SLIDES[idx % DEFAULT_SERVICE_SLIDES.length].src;
+              return {
+                src: getImageUrl(c.imageUrl) || fallback,
+                fallback,
+                alt: c.title || 'Synergy Medical Yoga Therapy Service',
+              };
+            });
             setServiceSlides(mapped);
             try { localStorage.setItem('synergy_cached_services_carousels', JSON.stringify(mapped)); } catch (e) {}
           }
@@ -300,6 +319,10 @@ export default function ServicesPage({ setActivePage, currentUser }) {
               <img
                 src={getImageUrl(s.src)}
                 alt={s.alt}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = s.fallback || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=85';
+                }}
                 className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === slide ? 'scale-105' : 'scale-100'}`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />

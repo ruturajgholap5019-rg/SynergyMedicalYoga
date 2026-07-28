@@ -78,6 +78,10 @@ export default function CarouselsTab({
                 <img
                   src={getImageUrl(slide.imageUrl)}
                   alt={slide.title || 'Promotional Slide'}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80';
+                  }}
                   className="w-full h-full object-cover opacity-80"
                 />
                 <div className="absolute top-3 left-3 flex items-center gap-2">

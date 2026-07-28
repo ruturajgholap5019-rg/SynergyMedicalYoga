@@ -7,6 +7,8 @@ const Setting = require('../models/Setting');
 const Appointment = require('../models/Appointment');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
+const fs = require('fs');
+const { uploadToCloudinary } = require('../utils/cloudinary');
 
 // --- USER CRUD ---
 exports.getAllUsers = catchAsync(async (req, res, next) => {
@@ -347,13 +349,30 @@ exports.getDashboardStats = catchAsync(async (req, res, next) => {
   });
 });
 
-// --- IMAGE UPLOADS (MULTER) ---
+// --- IMAGE UPLOADS (MULTER + CLOUDINARY) ---
 exports.uploadImage = catchAsync(async (req, res, next) => {
   if (!req.file) {
     return next(new AppError('No image file provided for upload.', 400));
   }
-  const baseUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
-  const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+
+  let imageUrl;
+  // If Cloudinary environment variables are configured, upload to Cloudinary for permanent HTTPS storage
+  if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+    try {
+      imageUrl = await uploadToCloudinary(req.file);
+      if (req.file.path && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+    } catch (cloudinaryErr) {
+      console.error('Cloudinary upload warning:', cloudinaryErr.message);
+    }
+  }
+
+  // Fallback to local server static URL if Cloudinary is unconfigured or fails
+  if (!imageUrl) {
+    const baseUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
+    imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+  }
 
   res.status(200).json({
     status: 'success',
@@ -366,8 +385,26 @@ exports.uploadImages = catchAsync(async (req, res, next) => {
   if (!req.files || req.files.length === 0) {
     return next(new AppError('No image files provided for upload.', 400));
   }
-  const baseUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
-  const urls = req.files.map((file) => `${baseUrl}/uploads/${file.filename}`);
+
+  const urls = [];
+  for (const file of req.files) {
+    let url;
+    if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+      try {
+        url = await uploadToCloudinary(file);
+        if (file.path && fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+        }
+      } catch (cloudinaryErr) {
+        console.error('Cloudinary upload warning:', cloudinaryErr.message);
+      }
+    }
+    if (!url) {
+      const baseUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
+      url = `${baseUrl}/uploads/${file.filename}`;
+    }
+    urls.push(url);
+  }
 
   res.status(200).json({
     status: 'success',
