@@ -331,16 +331,16 @@ export default function ServicesPage({ setActivePage, currentUser }) {
           {serviceSlides.map((s, i) => (
             <div
               key={i}
-              className={`absolute inset-0 transition-opacity duration-1000 ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+              className={`absolute inset-0 transition-opacity duration-1000 ${i === serviceSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
             >
               <img
                 src={getImageUrl(s.src)}
                 alt={s.alt}
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = s.fallback || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=85';
+                  e.target.src = s.fallback || 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner.jpg';
                 }}
-                className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === slide ? 'scale-105' : 'scale-100'}`}
+                className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === serviceSlide ? 'scale-105' : 'scale-100'}`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
             </div>
@@ -348,14 +348,14 @@ export default function ServicesPage({ setActivePage, currentUser }) {
 
           {/* Carousel Arrow Controls */}
           <button
-            onClick={() => setSlide((slide - 1 + serviceSlides.length) % serviceSlides.length)}
+            onClick={() => setServiceSlide((serviceSlide - 1 + serviceSlides.length) % serviceSlides.length)}
             className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-black/40 hover:bg-black/70 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer opacity-80 hover:opacity-100"
             aria-label="Previous Slide"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
           <button
-            onClick={() => setSlide((slide + 1) % serviceSlides.length)}
+            onClick={() => setServiceSlide((serviceSlide + 1) % serviceSlides.length)}
             className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-black/40 hover:bg-black/70 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer opacity-80 hover:opacity-100"
             aria-label="Next Slide"
           >
@@ -367,8 +367,8 @@ export default function ServicesPage({ setActivePage, currentUser }) {
             {serviceSlides.map((_, i) => (
               <button
                 key={i}
-                onClick={() => setSlide(i)}
-                className={`w-3 h-3 rounded-full transition-all cursor-pointer ${i === slide ? 'bg-white scale-125 shadow-sm' : 'bg-white/50 hover:bg-white/80'}`}
+                onClick={() => setServiceSlide(i)}
+                className={`w-3 h-3 rounded-full transition-all cursor-pointer ${i === serviceSlide ? 'bg-white scale-125 shadow-sm' : 'bg-white/50 hover:bg-white/80'}`}
                 aria-label={`Go to service slide ${i + 1}`}
               />
             ))}
