@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
 const FALLBACK_IMAGE = '/favicon.svg';
 
 let isRefreshing = false;
@@ -85,16 +85,14 @@ export function getImageUrl(path) {
   }
   let fullUrl = path;
   if (!path.startsWith('http://') && !path.startsWith('https://') && !path.startsWith('data:')) {
-    const defaultHost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? 'http://localhost:5000'
-      : 'https://synergymedicalyoga.onrender.com';
-    const backendHost = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || defaultHost;
-    fullUrl = `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`;
+    const configuredApiUrl = import.meta.env.VITE_API_URL || '';
+    const backendHost = configuredApiUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
+    fullUrl = backendHost
+      ? `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`
+      : `${path.startsWith('/') ? '' : '/'}${path}`;
   }
-  // Automatically upgrade unencrypted http links to secure https (unless pointing to local dev servers) to prevent browser mixed-content blocking
-  if (fullUrl.startsWith('http://') && !fullUrl.match(/^http:\/\/(localhost|127\.0\.0\.1|192\.168\.)/i)) {
-    fullUrl = fullUrl.replace(/^http:\/\//i, 'https://');
-  } else if (fullUrl.startsWith('http://') && typeof window !== 'undefined' && window.location.protocol === 'https:') {
+  // Automatically upgrade unencrypted links on secure pages to prevent mixed-content blocking.
+  if (fullUrl.startsWith('http://') && typeof window !== 'undefined' && window.location.protocol === 'https:') {
     fullUrl = fullUrl.replace(/^http:\/\//i, 'https://');
   }
   return fullUrl;

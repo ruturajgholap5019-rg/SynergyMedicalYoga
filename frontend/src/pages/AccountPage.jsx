@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, Lock, Mail, Phone, LogOut, Package, ShieldCheck, Calendar, Clock, MapPin, CheckCircle2, Download, Home, Edit3, Trash2, Key, ChevronRight, FileText } from 'lucide-react';
 import { api } from '../lib/api';
+import { getAdminConsoleUrl } from '../lib/urls';
 import { toast } from 'react-toastify';
 
 export default function AccountPage({ setActivePage, currentUser, onAuthSuccess, onLogout }) {
@@ -192,7 +193,14 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
               {user?.role === 'admin' && (
                 <div className="mb-4 pb-3 border-b border-slate-200">
                   <button
-                    onClick={() => { window.location.href = import.meta.env.VITE_ADMIN_URL || 'http://localhost:5174'; }}
+                    onClick={() => {
+                      const adminUrl = getAdminConsoleUrl();
+                      if (adminUrl) {
+                        window.location.href = adminUrl;
+                      } else {
+                        toast.error('Admin portal URL is not configured.');
+                      }
+                    }}
                     className="w-full bg-purple-900 hover:bg-purple-950 text-white font-bold py-3.5 px-5 rounded-2xl text-sm flex items-center justify-between shadow-md transition-all cursor-pointer"
                   >
                     <span className="flex items-center gap-2">

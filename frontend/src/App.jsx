@@ -20,6 +20,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import CoursePage from './pages/CoursePage';
 import { CmsListingPage, PolicyPage } from './pages/ContentPages';
 import { api } from './lib/api';
+import { getAdminConsoleUrl } from './lib/urls';
 
 // Route mapping configuration
 const PAGE_TO_ROUTE = {
@@ -374,7 +375,12 @@ export default function App() {
       setPendingCheckout(false);
       handleNavigate('checkout');
     } else if (user.role === 'admin') {
-      window.location.href = import.meta.env.VITE_ADMIN_URL || 'http://localhost:5174';
+      const adminUrl = getAdminConsoleUrl();
+      if (adminUrl) {
+        window.location.href = adminUrl;
+      } else {
+        toast.error('Admin portal URL is not configured.');
+      }
     } else {
       handleNavigate('account');
     }

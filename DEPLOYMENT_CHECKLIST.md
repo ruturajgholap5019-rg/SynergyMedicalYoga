@@ -10,6 +10,13 @@
 - Run `npm run build`.
 - Run backend startup check with production-like env.
 
+## Vercel Environment Variables
+
+- Frontend project: set `VITE_API_URL` to the deployed backend `/api` URL, set `VITE_ADMIN_URL` to the deployed admin portal URL, and set `VITE_SITE_URL` to the frontend URL.
+- Admin project: set `VITE_API_URL` to the same deployed backend `/api` URL and set `VITE_SITE_URL` to the frontend URL.
+- Backend host: set `CLIENT_URL`, `ADMIN_URL`, `BACKEND_URL`, and `ALLOWED_ORIGINS` with the exact frontend/admin/backend deployed URLs.
+- Redeploy both Vercel projects after changing env vars; Vite embeds `VITE_*` values at build time.
+
 ## Before Production
 
 - Rotate any credentials that were ever committed or shared.

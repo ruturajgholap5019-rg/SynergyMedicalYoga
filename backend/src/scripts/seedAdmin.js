@@ -22,11 +22,14 @@ const seedAdmin = async () => {
   const mongoUri =
     process.env.MONGO_URI ||
     process.env.MONGODB_URI ||
-    process.env.MONGODB_URL ||
-    'mongodb://127.0.0.1:27017/synergy_yoga';
+    process.env.MONGODB_URL;
 
   if (!email || !password) {
     throw new Error('SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD are required.');
+  }
+
+  if (!mongoUri) {
+    throw new Error('MONGO_URI is required.');
   }
 
   if (!strongPassword(password)) {
