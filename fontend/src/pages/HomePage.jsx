@@ -5,25 +5,7 @@ import { api } from '../lib/api';
 import ProductCard from '../components/ProductCard';
 import { useSiteSettings } from '../lib/useSiteSettings';
 
-/* ── Exact Image URLs from Original Site ── */
-const HERO_SLIDES = [
-  {
-    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80',
-    alt: 'Synergy Medical Yoga Therapy',
-    heading: 'Guided Training Videos\nfor Therapeutic Exercises\nat Home',
-  },
-  {
-    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner-2.jpg',
-    alt: 'Synergy Medical Yoga Banner 2',
-    heading: 'Professional Rope & Belt\nTherapy for Pain Management',
-  },
-  {
-    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner-3.jpg',
-    alt: 'Synergy Medical Yoga Banner 3',
-    heading: 'Evidence-Based\nTherapy Programs\nfor Faster Recovery',
-  },
-];
-
+/* ── Image URLs from Original Site ── */
 const IMEDIYOG_LOGO  = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/I-Mediyog-Logo_PNG-06.png';
 const PRODUCT_KNEE   = 'https://synergymedicalyoga.com/wp-content/uploads/2026/06/HEaro-Image-300x300.png';
 const PRODUCT_NECK   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Neck-Pain-01-300x300.png';
@@ -68,7 +50,7 @@ function Counter({ end, suffix = '' }) {
 export default function HomePage({ setActivePage, onAddToCart, onQuickView, onViewDetails, onBuyNow }) {
   const { settings } = useSiteSettings();
   const [slide, setSlide] = useState(0);
-  const [heroSlides, setHeroSlides] = useState(HERO_SLIDES);
+  const [heroSlides, setHeroSlides] = useState([]);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [aboutVisible, setAboutVisible] = useState(false);
   const [orthVisible, setOrthVisible] = useState(false);
@@ -148,72 +130,74 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
     <div className="bg-white font-inter text-[#555555]">
 
       {/* ──────────────────────────────────────────────
-          1. HERO CAROUSEL SLIDER
+          1. HERO CAROUSEL SLIDER (Strictly Database Driven from MongoDB Atlas)
           ────────────────────────────────────────────── */}
-      <section
-        onMouseEnter={() => setIsCarouselPaused(true)}
-        onMouseLeave={() => setIsCarouselPaused(false)}
-        className="relative w-full overflow-hidden bg-gray-900 h-[70vh] min-h-[440px] sm:h-[80vh] lg:h-[calc(100vh-96px)] flex items-center group"
-      >
-        {heroSlides.map((s, i) => (
-          <div
-            key={i}
-            className={`absolute inset-0 transition-opacity duration-1000 ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-          >
-            <img
-              src={s.src}
-              alt={s.alt}
-              className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === slide ? 'scale-105' : 'scale-100'}`}
-            />
-            {/* Optional Slide Heading Overlay (only shown if title/subtitle exists) */}
-            {(s.heading || s.subtitle) && (
-              <>
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent pointer-events-none" />
-                <div className="absolute left-4 sm:left-10 md:left-16 right-4 top-1/2 -translate-y-1/2 max-w-xl text-white z-20 space-y-3 sm:space-y-4 pointer-events-none">
-                  {s.heading && (
-                    <h1 className="font-sansita text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight drop-shadow-md whitespace-pre-line">
-                      {s.heading}
-                    </h1>
-                  )}
-                  {s.subtitle && (
-                    <p className="text-xs sm:text-base text-gray-200 font-medium max-w-md drop-shadow line-clamp-3">
-                      {s.subtitle}
-                    </p>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        ))}
-
-        {/* Carousel Arrow Controls */}
-        <button
-          onClick={() => setSlide((slide - 1 + heroSlides.length) % heroSlides.length)}
-          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer"
-          aria-label="Previous Slide"
+      {heroSlides.length > 0 && (
+        <section
+          onMouseEnter={() => setIsCarouselPaused(true)}
+          onMouseLeave={() => setIsCarouselPaused(false)}
+          className="relative w-full overflow-hidden bg-gray-900 h-[70vh] min-h-[440px] sm:h-[80vh] lg:h-[calc(100vh-96px)] flex items-center group"
         >
-          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-        </button>
-        <button
-          onClick={() => setSlide((slide + 1) % heroSlides.length)}
-          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer"
-          aria-label="Next Slide"
-        >
-          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-        </button>
-
-        {/* Dots */}
-        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
-          {heroSlides.map((_, i) => (
-            <button
+          {heroSlides.map((s, i) => (
+            <div
               key={i}
-              onClick={() => setSlide(i)}
-              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all cursor-pointer ${i === slide ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}`}
-              aria-label={`Go to slide ${i + 1}`}
-            />
+              className={`absolute inset-0 transition-opacity duration-1000 ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+            >
+              <img
+                src={s.src}
+                alt={s.alt}
+                className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === slide ? 'scale-105' : 'scale-100'}`}
+              />
+              {/* Optional Slide Heading Overlay (only shown if title/subtitle exists) */}
+              {(s.heading || s.subtitle) && (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent pointer-events-none" />
+                  <div className="absolute left-4 sm:left-10 md:left-16 right-4 top-1/2 -translate-y-1/2 max-w-xl text-white z-20 space-y-3 sm:space-y-4 pointer-events-none">
+                    {s.heading && (
+                      <h1 className="font-sansita text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight drop-shadow-md whitespace-pre-line">
+                        {s.heading}
+                      </h1>
+                    )}
+                    {s.subtitle && (
+                      <p className="text-xs sm:text-base text-gray-200 font-medium max-w-md drop-shadow line-clamp-3">
+                        {s.subtitle}
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
           ))}
-        </div>
-      </section>
+
+          {/* Carousel Arrow Controls */}
+          <button
+            onClick={() => setSlide((slide - 1 + heroSlides.length) % heroSlides.length)}
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer"
+            aria-label="Previous Slide"
+          >
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+          <button
+            onClick={() => setSlide((slide + 1) % heroSlides.length)}
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer"
+            aria-label="Next Slide"
+          >
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+
+          {/* Dots */}
+          <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+            {heroSlides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setSlide(i)}
+                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all cursor-pointer ${i === slide ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}`}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
 
 

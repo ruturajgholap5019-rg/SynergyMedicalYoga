@@ -27,6 +27,67 @@ const connectDB = async () => {
     } catch (seedErr) {
       console.error('Admin auto-bootstrap notice:', seedErr.message);
     }
+
+    // Automatically seed initial carousels directly into MongoDB Atlas if collection is empty
+    try {
+      const Carousel = require('../models/Carousel');
+      const count = await Carousel.countDocuments();
+      if (count === 0) {
+        await Carousel.insertMany([
+          {
+            imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80',
+            title: 'Guided Training Videos\nfor Therapeutic Exercises\nat Home',
+            subtitle: 'Clinical medical yoga alignments for knee, spine, and neck strain rehabilitation.',
+            buttonText: 'Explore Shop',
+            buttonLink: '/shop',
+            page: 'home',
+            order: 1,
+            isActive: true,
+          },
+          {
+            imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1600&q=80',
+            title: 'Professional Rope & Belt\nTherapy for Pain Management',
+            subtitle: 'Doctor supervised posture realignment & joint friction elimination.',
+            buttonText: 'Book Therapy',
+            buttonLink: '/services',
+            page: 'home',
+            order: 2,
+            isActive: true,
+          },
+          {
+            imageUrl: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=80',
+            title: 'Evidence-Based\nTherapy Programs\nfor Faster Recovery',
+            subtitle: 'Integrated approach to pain relief with certified therapeutic instructors.',
+            buttonText: 'Find Centers',
+            buttonLink: '/find-centres',
+            page: 'home',
+            order: 3,
+            isActive: true,
+          },
+          {
+            imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=85',
+            title: 'Cervical & Lumbar Traction Therapy',
+            buttonText: 'Book Consultation',
+            buttonLink: '/services',
+            page: 'services',
+            order: 1,
+            isActive: true,
+          },
+          {
+            imageUrl: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=85',
+            title: 'Clinical Medical Yoga & Rehabilitation',
+            buttonText: 'Explore Programs',
+            buttonLink: '/services',
+            page: 'services',
+            order: 2,
+            isActive: true,
+          },
+        ]);
+        console.log('✅ Initial dynamic carousels automatically seeded into MongoDB Atlas');
+      }
+    } catch (carouselErr) {
+      console.error('Carousel auto-seed notice:', carouselErr.message);
+    }
   } catch (err) {
     console.error(`❌ MongoDB connection error: ${err.message}`);
     process.exit(1);
