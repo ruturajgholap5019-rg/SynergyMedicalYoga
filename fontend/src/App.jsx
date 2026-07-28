@@ -20,7 +20,7 @@ import AdminDashboard from './admin/AdminDashboard';
 import CheckoutPage from './pages/CheckoutPage';
 import { api } from './lib/api';
 
-// Route mapping configuration (Ensuring zero sensitive data in URL paths or parameters)
+// Route mapping configuration
 const PAGE_TO_ROUTE = {
   home: '/',
   about: '/about',
@@ -31,7 +31,7 @@ const PAGE_TO_ROUTE = {
   account: '/my-account',
   checkout: '/checkout',
   admin: '/admin',
-  'product-detail': '/shop', // product details fall back to clean shop url without exposing internal identifiers
+  'product-detail': '/shop',
 };
 
 const ROUTE_TO_PAGE = {
@@ -48,19 +48,37 @@ const ROUTE_TO_PAGE = {
   '/admin/': 'admin',
 };
 
+// Helper to parse route and extract page & parameters (handling trailing slashes and SEO product slugs)
+function parsePathname(pathname) {
+  const cleanPath = pathname.toLowerCase().replace(/\/+$/, '') || '/';
+  if (cleanPath.startsWith('/product/') || cleanPath.startsWith('/product') || cleanPath.startsWith('/products/') || cleanPath.startsWith('/products')) {
+    const parts = cleanPath.split('/').filter(Boolean);
+    return { page: 'product-detail', param: parts[1] || null };
+  }
+  if (cleanPath.includes('/my-account')) return { page: 'account', param: null };
+  if (cleanPath.includes('/admin')) return { page: 'admin', param: null };
+  if (cleanPath.includes('/checkout')) return { page: 'checkout', param: null };
+  if (cleanPath.includes('/shop')) return { page: 'shop', param: null };
+  if (cleanPath.includes('/services')) return { page: 'services', param: null };
+  if (cleanPath.includes('/about')) return { page: 'about', param: null };
+  if (cleanPath.includes('/contact')) return { page: 'contact', param: null };
+  if (cleanPath.includes('/find-centres')) return { page: 'find-centres', param: null };
+  return { page: ROUTE_TO_PAGE[cleanPath] || 'home', param: null };
+}
+
+// Helper to create SEO friendly URL slug from product name
+function generateProductSlug(product) {
+  if (!product) return '';
+  if (product.name) {
+    return product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  }
+  return product._id || product.id || 'therapy-product';
+}
+
 export default function App() {
   const [activePage, setActivePage] = useState(() => {
-    // 1. Synchronous URL routing initialization on load
-    const path = window.location.pathname.toLowerCase();
-    if (path.includes('/my-account')) return 'account';
-    if (path.includes('/admin')) return 'admin';
-    if (path.includes('/checkout')) return 'checkout';
-    if (path.includes('/shop')) return 'shop';
-    if (path.includes('/services')) return 'services';
-    if (path.includes('/about')) return 'about';
-    if (path.includes('/contact')) return 'contact';
-    if (path.includes('/find-centres')) return 'find-centres';
-    return ROUTE_TO_PAGE[path] || 'home';
+    // Synchronous URL routing initialization on load
+    return parsePathname(window.location.pathname).page;
   });
 
   const [cart, setCart] = useState([]);
@@ -75,7 +93,9 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [pendingCheckout, setPendingCheckout] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
-  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState(() => {
+    return parsePathname(window.location.pathname).param;
+  });
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const savedUser = window.localStorage.getItem('synergyUser');
@@ -86,21 +106,26 @@ export default function App() {
   });
 
   // Helper to safely update page state and push clean URL to browser address bar without reload
-  const handleNavigate = useCallback((page, scroll = true) => {
+  const handleNavigate = useCallback((page, scroll = true, customRoute = null) => {
     setActivePage(page);
-    const route = PAGE_TO_ROUTE[page] || '/';
+    let route = customRoute || PAGE_TO_ROUTE[page] || '/';
+    if (page === 'product-detail' && !customRoute && selectedProductId) {
+      route = `/product/${selectedProductId}`;
+    }
     if (window.location.pathname !== route) {
-      window.history.pushState({ page }, '', route);
+      window.history.pushState({ page, customRoute }, '', route);
     }
     if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
+  }, [selectedProductId]);
 
   // Listen for browser Back/Forward navigation buttons
   useEffect(() => {
     const handlePopState = () => {
-      const path = window.location.pathname.toLowerCase();
-      const matchedPage = ROUTE_TO_PAGE[path] || 'home';
-      setActivePage(matchedPage);
+      const parsed = parsePathname(window.location.pathname);
+      setActivePage(parsed.page);
+      if (parsed.param) {
+        setSelectedProductId(parsed.param);
+      }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -415,8 +440,9 @@ export default function App() {
             onAddToCart={handleAddToCart}
             onQuickView={(p) => setQuickViewProduct(p)}
             onViewDetails={(product) => {
-              setSelectedProductId(product._id || product.id);
-              handleNavigate('product-detail');
+              const slug = generateProductSlug(product) || product._id || product.id;
+              setSelectedProductId(slug);
+              handleNavigate('product-detail', true, `/product/${slug}`);
             }}
             onBuyNow={async (product, selectedSize) => {
               const success = await handleAddToCart(product, selectedSize, 1);
@@ -465,8 +491,9 @@ export default function App() {
               }
             }}
             onViewDetails={(product) => {
-              setSelectedProductId(product._id || product.id);
-              handleNavigate('product-detail');
+              const slug = generateProductSlug(product) || product._id || product.id;
+              setSelectedProductId(slug);
+              handleNavigate('product-detail', true, `/product/${slug}`);
             }}
           />
         )}

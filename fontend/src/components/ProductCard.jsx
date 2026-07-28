@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Star, Eye, Check, ShoppingBag, Zap } from 'lucide-react';
+import { getImageUrl } from '../lib/api';
 
 export default function ProductCard({ product, onAddToCart, onQuickView, onViewDetails, onBuyNow }) {
   const defaultSize = product.sizes ? product.sizes[0] : 'Standard';
@@ -40,7 +41,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView, onViewD
           className="relative bg-[#f5f7f8] rounded-2xl flex justify-center items-center h-56 sm:h-64 mb-4 overflow-hidden cursor-pointer w-full"
         >
           <img
-            src={product.images?.[0] || product.image || 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80'}
+            src={getImageUrl(product.images?.[0] || product.image) || 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=800&q=80'}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />

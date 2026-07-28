@@ -66,6 +66,15 @@ async function request(path, options = {}, isRetry = false) {
   return data;
 }
 
+export function getImageUrl(path) {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
+    return path;
+  }
+  const backendHost = (import.meta.env.VITE_API_URL || '/api').replace(/\/api$/, '');
+  return `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`;
+}
+
 export const api = {
   // Public & User APIs
   getProducts: () => request('/products'),

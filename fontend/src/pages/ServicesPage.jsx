@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronDown, ChevronUp, MapPin, CheckCircle2, QrCode, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
-import { api } from '../lib/api';
+import { api, getImageUrl } from '../lib/api';
 import AppointmentModal from '../components/AppointmentModal';
 import { useSiteSettings } from '../lib/useSiteSettings';
 
@@ -99,7 +99,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
           const srvSlides = res.data.filter((c) => c.page === 'services');
           if (srvSlides.length > 0) {
             const mapped = srvSlides.map((c) => ({
-              src: c.imageUrl,
+              src: getImageUrl(c.imageUrl),
               alt: c.title || 'Synergy Medical Yoga Therapy Service',
             }));
             setServiceSlides(mapped);

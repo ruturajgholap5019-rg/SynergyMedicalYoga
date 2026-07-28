@@ -8,8 +8,8 @@ import { useSiteSettings } from '../lib/useSiteSettings';
 /* ── Exact Image URLs from Original Site ── */
 const HERO_SLIDES = [
   {
-    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner.jpg',
-    alt: 'Synergy Medical Yoga Banner',
+    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80',
+    alt: 'Synergy Medical Yoga Therapy',
     heading: 'Guided Training Videos\nfor Therapeutic Exercises\nat Home',
   },
   {
@@ -83,7 +83,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           const homeSlides = res.data.filter((c) => !c.page || c.page === 'home');
           if (homeSlides.length > 0) {
             const mapped = homeSlides.map((c) => ({
-              src: c.imageUrl,
+              src: getImageUrl(c.imageUrl),
               alt: c.title || 'Synergy Medical Yoga Banner',
               heading: c.title,
               subtitle: c.subtitle,
