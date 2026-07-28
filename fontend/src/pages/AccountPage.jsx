@@ -78,7 +78,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await api.login({ email: loginEmail, password: loginPassword });
+      const response = await api.login({ email: loginEmail.trim().toLowerCase(), password: loginPassword });
       toast.success('Successfully logged in!');
       onAuthSuccess?.(response.user);
     } catch (error) {
@@ -93,9 +93,9 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     setLoading(true);
     try {
       const response = await api.register({
-        name: signUpName,
-        email: signUpEmail,
-        phone: signUpPhone,
+        name: signUpName.trim(),
+        email: signUpEmail.trim().toLowerCase(),
+        phone: signUpPhone.trim(),
         password: signUpPassword,
       });
       toast.success('Account created successfully!');
