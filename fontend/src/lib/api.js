@@ -15,6 +15,12 @@ function onRefreshed() {
 async function request(path, options = {}, isRetry = false) {
   const isFormData = options.body instanceof FormData;
   const token = localStorage.getItem('synergy_access_token');
+  
+  // If guest user checking profile without token, return null silently without firing 401
+  if (path === '/auth/profile' && !token) {
+    return null;
+  }
+
   const headers = {
     ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
