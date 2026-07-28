@@ -198,7 +198,7 @@ export default function ContactPage() {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Sending Email to ruturrajgholap5019@gmail.com...</span>
+                      <span>Sending Email to ruturajgholap5019@gmail.com...</span>
                     </>
                   ) : (
                     <>

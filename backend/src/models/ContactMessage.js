@@ -26,7 +26,7 @@ const contactMessageSchema = new mongoose.Schema({
   },
   recipientEmail: {
     type: String,
-    default: 'ruturrajgholap5019@gmail.com',
+    default: 'ruturajgholap5019@gmail.com',
   },
   status: {
     type: String,

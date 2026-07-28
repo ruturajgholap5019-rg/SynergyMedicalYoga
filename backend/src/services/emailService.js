@@ -56,7 +56,7 @@ exports.sendOrderConfirmation = async (order) => {
 };
 
 exports.sendContactEmail = async (data) => {
-  const targetEmail = process.env.CONTACT_RECEIVER_EMAIL || 'ruturrajgholap5019@gmail.com';
+  const targetEmail = process.env.CONTACT_RECEIVER_EMAIL || 'ruturajgholap5019@gmail.com';
   
   const mailOptions = {
     from: `"Synergy Website Contact" <${process.env.SMTP_USER || 'contact@synergymedicalyoga.com'}>`,

@@ -14,7 +14,7 @@ router.post('/', catchAsync(async (req, res, next) => {
     return next(new AppError('Please provide all required fields: name, phone, email, and message.', 400));
   }
 
-  const recipientEmail = process.env.CONTACT_RECEIVER_EMAIL || 'ruturrajgholap5019@gmail.com';
+  const recipientEmail = process.env.CONTACT_RECEIVER_EMAIL || 'ruturajgholap5019@gmail.com';
 
   // 1. Save message to MongoDB
   const contactEntry = await ContactMessage.create({
@@ -26,7 +26,7 @@ router.post('/', catchAsync(async (req, res, next) => {
     recipientEmail,
   });
 
-  // 2. Dispatch email notification to ruturrajgholap5019@gmail.com
+  // 2. Dispatch email notification to ruturajgholap5019@gmail.com
   const emailResult = await emailService.sendContactEmail({
     name,
     phone,
