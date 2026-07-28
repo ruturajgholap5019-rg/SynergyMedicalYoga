@@ -315,7 +315,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
       const res = await api.uploadAdminImage(formData);
       if (res && res.url) {
         setCarouselFormData((prev) => ({ ...prev, imageUrl: res.url }));
-        showToast?.('Image uploaded successfully via Multer!');
+        showToast?.('Image uploaded successfully to Cloudinary!');
       }
     } catch (err) {
       alert(err.message || 'Failed to upload image file');
@@ -883,7 +883,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
                     }`}
                   >
                     <Upload className="w-3.5 h-3.5" />
-                    <span>Upload File (Multer)</span>
+                    <span>Upload File (Cloudinary)</span>
                   </button>
                   <button
                     type="button"
@@ -905,7 +905,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
                       {uploadingCarouselImage ? (
                         <div className="flex flex-col items-center gap-2 text-gray-500">
                           <Loader2 className="w-6 h-6 animate-spin text-[#005550]" />
-                          <span className="text-xs font-semibold">Uploading to Multer server...</span>
+                          <span className="text-xs font-semibold">Uploading to Cloudinary cloud storage...</span>
                         </div>
                       ) : (
                         <>
