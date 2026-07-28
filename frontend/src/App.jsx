@@ -398,6 +398,8 @@ export default function App() {
     } finally {
       setCurrentUser(null);
       window.localStorage.removeItem('synergyUser');
+      window.localStorage.removeItem('synergy_access_token');
+      window.localStorage.setItem('synergyAuthEvent', JSON.stringify({ type: 'logout', at: Date.now() }));
       document.cookie = 'synergyGuestCart=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       setCart([]);
       saveGuestCart([]);
@@ -411,6 +413,7 @@ export default function App() {
     setCurrentUser(null);
     window.localStorage.removeItem('synergyUser');
     window.localStorage.removeItem('synergy_access_token');
+    window.localStorage.setItem('synergyAuthEvent', JSON.stringify({ type: 'logout', at: Date.now() }));
     document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     setCart([]);
@@ -422,6 +425,30 @@ export default function App() {
   const cartCount = displayCart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = displayCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const isAdminPage = activePage === 'admin';
+
+  useEffect(() => {
+    const handleStorage = (event) => {
+      if (event.key !== 'synergyAuthEvent' || !event.newValue) return;
+      try {
+        const payload = JSON.parse(event.newValue);
+        if (payload.type !== 'logout') return;
+      } catch {
+        return;
+      }
+
+      setCurrentUser(null);
+      window.localStorage.removeItem('synergyUser');
+      window.localStorage.removeItem('synergy_access_token');
+      setCart([]);
+      setPendingCheckout(false);
+      if (['admin', 'account', 'checkout'].includes(activePage)) {
+        handleNavigate('home', true, '/', true);
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, [activePage, handleNavigate]);
 
   useEffect(() => {
     const loadSession = async () => {
