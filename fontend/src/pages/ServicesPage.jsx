@@ -93,8 +93,16 @@ export default function ServicesPage({ setActivePage, currentUser }) {
     } catch (e) {}
     return DEFAULT_SERVICE_SLIDES;
   });
-  const [slide, setSlide] = useState(0);
+  const [serviceSlide, setServiceSlide] = useState(0);
   const [isSlidePaused, setIsSlidePaused] = useState(false);
+
+  useEffect(() => {
+    if (isSlidePaused || serviceSlides.length === 0) return;
+    const timer = setInterval(() => {
+      setServiceSlide((prev) => (prev + 1) % serviceSlides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [serviceSlides, isSlidePaused]);
 
   useEffect(() => {
     const fetchServices = async () => {
