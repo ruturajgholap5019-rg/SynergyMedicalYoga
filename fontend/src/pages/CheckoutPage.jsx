@@ -70,7 +70,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
           }
         }
       } catch (err) {
-        console.error('Failed to load payment config:', err);
+        // Fallback silently if public settings error
       }
     };
     fetchSettings();
@@ -189,7 +189,6 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
       toast.success('🎉 Your order has been submitted successfully!');
 
     } catch (err) {
-      console.error('Checkout error:', err);
       toast.error(err.message || 'Failed to process checkout. Please verify your details and try again.');
     } finally {
       setIsSubmitting(false);
@@ -282,7 +281,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="gholapruturaj79@gmail.com"
+                    placeholder="your.email@example.com"
                     className="w-full px-4 py-3.5 bg-[#f5f8f8] border border-transparent focus:border-[#005550] focus:bg-white rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#005550]/10 transition-all font-medium"
                   />
                 </div>
@@ -298,7 +297,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
                       required
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      placeholder="Ruturaj"
+                      placeholder="First name"
                       className="w-full px-4 py-3.5 bg-[#f5f8f8] border border-transparent focus:border-[#005550] focus:bg-white rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#005550]/10 transition-all font-medium"
                     />
                   </div>
@@ -311,7 +310,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
                       required
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      placeholder="Gholap"
+                      placeholder="Last name"
                       className="w-full px-4 py-3.5 bg-[#f5f8f8] border border-transparent focus:border-[#005550] focus:bg-white rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#005550]/10 transition-all font-medium"
                     />
                   </div>
@@ -346,14 +345,14 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
                     required
                     value={streetAddress1}
                     onChange={(e) => setStreetAddress1(e.target.value)}
-                    placeholder="At.Post - Mankarwadi"
+                    placeholder="House number, street name, building"
                     className="w-full px-4 py-3.5 bg-[#f5f8f8] border border-transparent focus:border-[#005550] focus:bg-white rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#005550]/10 transition-all font-medium"
                   />
                   <input
                     type="text"
                     value={streetAddress2}
                     onChange={(e) => setStreetAddress2(e.target.value)}
-                    placeholder="Indapur (Optional apartment, suite, landmark)"
+                    placeholder="Apartment, suite, unit, landmark (optional)"
                     className="w-full px-4 py-3.5 bg-[#f5f8f8] border border-transparent focus:border-[#005550] focus:bg-white rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#005550]/10 transition-all font-medium"
                   />
                 </div>
@@ -368,7 +367,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
                     required
                     value={townCity}
                     onChange={(e) => setTownCity(e.target.value)}
-                    placeholder="Baramati / Pune"
+                    placeholder="City or Town"
                     className="w-full px-4 py-3.5 bg-[#f5f8f8] border border-transparent focus:border-[#005550] focus:bg-white rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#005550]/10 transition-all font-medium"
                   />
                 </div>
@@ -407,7 +406,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
                       required
                       value={pinCode}
                       onChange={(e) => setPinCode(e.target.value)}
-                      placeholder="413102"
+                      placeholder="6-digit PIN code"
                       maxLength={6}
                       className="w-full px-4 py-3.5 bg-[#f5f8f8] border border-transparent focus:border-[#005550] focus:bg-white rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#005550]/10 transition-all font-medium font-mono"
                     />
@@ -420,7 +419,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 93596 58196"
+                      placeholder="10-digit mobile number"
                       className="w-full px-4 py-3.5 bg-[#f5f8f8] border border-transparent focus:border-[#005550] focus:bg-white rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#005550]/10 transition-all font-medium"
                     />
                   </div>

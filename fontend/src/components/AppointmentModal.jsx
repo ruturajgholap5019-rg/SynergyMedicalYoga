@@ -169,7 +169,7 @@ export default function AppointmentModal({ isOpen, onClose, selectedService, cur
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Ruturaj Gholap"
+                    placeholder="e.g. Rahul Sharma"
                     value={formData.patientName}
                     onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
                     className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"

@@ -4,18 +4,29 @@ import { ShieldCheck, Truck, RotateCcw, Award, SlidersHorizontal } from 'lucide-
 import { api } from '../lib/api';
 
 export default function ShopPage({ onAddToCart, onQuickView, onViewDetails, onBuyNow }) {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(() => {
+    try {
+      const cached = localStorage.getItem('synergy_cached_products_shop');
+      if (cached) return JSON.parse(cached);
+    } catch (e) {}
+    return [];
+  });
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('default');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => {
+    try { return !localStorage.getItem('synergy_cached_products_shop'); } catch(e) { return true; }
+  });
 
   useEffect(() => {
     const loadProducts = async () => {
       try {
         const response = await api.getProducts();
-        setProducts(response.data || []);
+        if (response.data) {
+          setProducts(response.data || []);
+          try { localStorage.setItem('synergy_cached_products_shop', JSON.stringify(response.data || [])); } catch (e) {}
+        }
       } catch (error) {
-        console.error('Failed to load products', error);
+        // Fallback silently if API unreachable
       } finally {
         setLoading(false);
       }
@@ -96,9 +107,27 @@ export default function ShopPage({ onAddToCart, onQuickView, onViewDetails, onBu
       {/* Products Grid */}
       <section id="products-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         {loading ? (
-          <div className="text-center py-12 text-gray-600 font-medium">Loading products...</div>
+          <div className="space-y-6">
+            <div className="flex items-center justify-center gap-2 text-sm text-teal-800 font-bold animate-pulse-soft">
+              <div className="w-2.5 h-2.5 rounded-full bg-teal-600 animate-ping" />
+              <span>Fetching latest orthopaedic products &amp; stock...</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                <div key={n} className="bg-white rounded-3xl p-5 border border-slate-100 shadow-md flex flex-col space-y-4 animate-pulse-soft">
+                  <div className="w-full h-56 bg-slate-200/80 rounded-2xl animate-shimmer" />
+                  <div className="h-4 bg-slate-200/80 rounded-lg w-3/4 animate-shimmer" />
+                  <div className="h-3 bg-slate-200/80 rounded-lg w-1/2 animate-shimmer" />
+                  <div className="flex justify-between pt-2 border-t border-slate-100">
+                    <div className="h-9 bg-teal-50 rounded-xl w-24 animate-shimmer" />
+                    <div className="h-9 bg-teal-800/20 rounded-xl w-24 animate-shimmer" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-500">
             {filtered.map((product) => (
               <ProductCard
                 key={product._id || product.id}

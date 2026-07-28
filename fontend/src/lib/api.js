@@ -68,8 +68,10 @@ async function request(path, options = {}, isRetry = false) {
 
 export function getImageUrl(path) {
   if (!path) return '';
+  path = String(path).trim();
   if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
-    return path;
+    // Automatically upgrade unencrypted http cloud domain links to https to prevent browser mixed-content blocking on Vercel
+    return path.replace(/^http:\/\/(.*\.onrender\.com)/i, 'https://$1');
   }
   const backendHost = (import.meta.env.VITE_API_URL || '/api').replace(/\/api$/, '');
   return `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`;

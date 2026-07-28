@@ -17,7 +17,7 @@ export default function ProductDetailPage({ productId, onAddToCart, onBuyNow, go
         setProduct(response.data);
         setSelectedSize(response.data.sizes?.[0] || 'Standard');
       } catch (error) {
-        console.error('Failed to load product', error);
+        // Handle failure silently
       } finally {
         setLoading(false);
       }

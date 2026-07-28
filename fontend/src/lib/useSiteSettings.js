@@ -67,8 +67,8 @@ export function useSiteSettings() {
             notifyListeners();
           }
         })
-        .catch((err) => {
-          console.warn('Using default site settings, public API error:', err?.message);
+        .catch(() => {
+          // Use default settings without warning in console
         })
         .finally(() => {
           if (isMounted) setLoading(false);

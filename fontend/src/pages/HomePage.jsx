@@ -49,7 +49,20 @@ function Counter({ end, suffix = '' }) {
 export default function HomePage({ setActivePage, onAddToCart, onQuickView, onViewDetails, onBuyNow }) {
   const { settings } = useSiteSettings();
   const [slide, setSlide] = useState(0);
-  const [heroSlides, setHeroSlides] = useState([]);
+  const [heroSlides, setHeroSlides] = useState(() => {
+    try {
+      const cached = localStorage.getItem('synergy_cached_home_carousels');
+      if (cached) return JSON.parse(cached);
+    } catch (e) {}
+    return [];
+  });
+  const [featuredProducts, setFeaturedProducts] = useState(() => {
+    try {
+      const cached = localStorage.getItem('synergy_cached_home_products');
+      if (cached) return JSON.parse(cached);
+    } catch (e) {}
+    return [];
+  });
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [aboutVisible] = useState(true);
   const [orthVisible] = useState(true);
@@ -57,7 +70,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
   const orthRef = useRef(null);
 
   useEffect(() => {
-    const fetchCarousels = async () => {
+    const fetchData = async () => {
       try {
         const res = await api.getPublicCarousels();
         if (res.data && res.data.length > 0) {
@@ -72,13 +85,23 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
               buttonLink: c.buttonLink || '/shop',
             }));
             setHeroSlides(mapped);
+            try { localStorage.setItem('synergy_cached_home_carousels', JSON.stringify(mapped)); } catch (e) {}
           }
         }
       } catch (err) {
-        console.error('Failed to load hero carousels:', err);
+        // Fallback silently
+      }
+      try {
+        const pRes = await api.getProducts();
+        if (pRes.data && pRes.data.length > 0) {
+          setFeaturedProducts(pRes.data.slice(0, 4));
+          try { localStorage.setItem('synergy_cached_home_products', JSON.stringify(pRes.data.slice(0, 4))); } catch (e) {}
+        }
+      } catch (err) {
+        // Fallback silently
       }
     };
-    fetchCarousels();
+    fetchData();
   }, []);
 
   // Auto advance slides every 5000ms (5s) with pause on hover/interaction
@@ -94,13 +117,29 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
     <div className="bg-white font-inter text-[#555555]">
 
       {/* ──────────────────────────────────────────────
-          1. HERO CAROUSEL SLIDER (Strictly Database Driven from MongoDB Atlas)
+          1. HERO CAROUSEL SLIDER (Strictly Database Driven from MongoDB Atlas with Shimmer Loading)
           ────────────────────────────────────────────── */}
-      {heroSlides.length > 0 && (
+      {heroSlides.length === 0 ? (
+        <section className="relative w-full bg-slate-900 h-[70vh] min-h-[440px] sm:h-[80vh] lg:h-[calc(100vh-96px)] flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#003D39]/40 via-[#007A73]/20 to-[#003D39]/40 animate-shimmer" />
+          <div className="z-10 text-center px-6 space-y-5 animate-pulse-soft">
+            <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-full mx-auto flex items-center justify-center border border-white/20 shadow-2xl animate-float">
+              <span className="text-3xl">🌿</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-sansita font-bold text-white tracking-wide drop-shadow-md">
+              Synergy Medical Yoga Therapy
+            </h2>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-xs sm:text-sm text-teal-200/90 border border-teal-500/30">
+              <div className="w-2 h-2 rounded-full bg-teal-400 animate-ping" />
+              <span>Connecting to cloud therapy server &amp; loading live banners...</span>
+            </div>
+          </div>
+        </section>
+      ) : (
         <section
           onMouseEnter={() => setIsCarouselPaused(true)}
           onMouseLeave={() => setIsCarouselPaused(false)}
-          className="relative w-full overflow-hidden bg-gray-900 h-[70vh] min-h-[440px] sm:h-[80vh] lg:h-[calc(100vh-96px)] flex items-center group"
+          className="relative w-full overflow-hidden bg-gray-900 h-[70vh] min-h-[440px] sm:h-[80vh] lg:h-[calc(100vh-96px)] flex items-center group shadow-2xl"
         >
           {heroSlides.map((s, i) => (
             <div
@@ -170,8 +209,8 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            {/* Text column - Immediately visible to eliminate hidden text bug */}
-            <div ref={aboutRef} className="lg:col-span-7 space-y-6 animate-fade-in-left-lg opacity-100 translate-x-0">
+            {/* Text column - Immediately visible to eliminate hidden text bug with gentle hover elevation */}
+            <div ref={aboutRef} className="lg:col-span-7 space-y-6 opacity-100 transition-all duration-300 hover:translate-x-1">
               <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
                 About iMediYog Healthcare LLP
               </h2>
@@ -365,7 +404,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {PRODUCTS.slice(0, 4).map((p) => (
+            {(featuredProducts.length > 0 ? featuredProducts : PRODUCTS.slice(0, 4)).map((p) => (
               <ProductCard
                 key={p._id || p.id}
                 product={p}

@@ -139,7 +139,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
       const res = await api.getAdminDashboard();
       if (res.data) setStats(res.data);
     } catch (err) {
-      console.error('Failed to load database stats:', err);
+      // Ignore silently
     }
   };
 
@@ -220,7 +220,7 @@ export default function AdminDashboard({ showToast, currentUser }) {
       const res = await api.getAdminPaymentSettings();
       if (res.data) setSettings(res.data);
     } catch (err) {
-      console.error(err);
+      // Ignore silently
     }
   };
 

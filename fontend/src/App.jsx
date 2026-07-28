@@ -157,7 +157,7 @@ export default function App() {
       window.localStorage.setItem('synergyGuestCart', JSON.stringify(nextCart));
       document.cookie = `synergyGuestCart=${encodeURIComponent(JSON.stringify(nextCart))}; path=/; max-age=604800`;
     } catch (e) {
-      console.error('Failed to write cart cookie:', e);
+      // Ignore storage error
     }
   };
 
@@ -208,7 +208,7 @@ export default function App() {
       toast.success(`Added "${product.name}" (${payload.selectedSize}) to cart!`);
       return true;
     } catch (error) {
-      console.error('addToCart error:', error);
+      // Fallback to guest cart without browser error spam
       setCurrentUser(null);
       window.localStorage.removeItem('synergyUser');
       saveToGuestCartLocal();
@@ -237,7 +237,6 @@ export default function App() {
       const cartItems = formatCartItems(response.data?.items);
       setCart(cartItems);
     } catch (error) {
-      console.error(error);
       toast.error('Unable to update cart quantity.');
     }
   };
@@ -258,7 +257,6 @@ export default function App() {
       setCart(cartItems);
       toast.success('Item removed from cart.');
     } catch (error) {
-      console.error(error);
       toast.error('Unable to remove item from cart.');
     }
   };
@@ -300,7 +298,7 @@ export default function App() {
         toast.success(`Logged in as ${user.name}`);
       }
     } catch (error) {
-      console.error('Error merging cart:', error);
+      // Ignore cart merge errors silently
     }
 
     if (pendingCheckout) {
@@ -317,7 +315,7 @@ export default function App() {
     try {
       await api.logout();
     } catch (error) {
-      console.error(error);
+      // Continue logout cleanup
     } finally {
       setCurrentUser(null);
       window.localStorage.removeItem('synergyUser');

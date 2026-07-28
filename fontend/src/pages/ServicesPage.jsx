@@ -60,7 +60,13 @@ export default function ServicesPage({ setActivePage, currentUser }) {
   const [selectedService, setSelectedService] = useState(null);
 
   // Carousel State
-  const [serviceSlides, setServiceSlides] = useState([]);
+  const [serviceSlides, setServiceSlides] = useState(() => {
+    try {
+      const cached = localStorage.getItem('synergy_cached_services_carousels');
+      if (cached) return JSON.parse(cached);
+    } catch (e) {}
+    return [];
+  });
   const [slide, setSlide] = useState(0);
   const [isSlidePaused, setIsSlidePaused] = useState(false);
 
@@ -69,9 +75,12 @@ export default function ServicesPage({ setActivePage, currentUser }) {
       setLoadingServices(true);
       try {
         const res = await api.getPublicServices();
-        if (res.data) setServices(res.data);
+        if (res.data) {
+          setServices(res.data);
+          try { localStorage.setItem('synergy_cached_public_services', JSON.stringify(res.data)); } catch (e) {}
+        }
       } catch (err) {
-        console.error('Failed to load public services:', err);
+        // Fallback silently if offline
       } finally {
         setLoadingServices(false);
       }
@@ -88,10 +97,11 @@ export default function ServicesPage({ setActivePage, currentUser }) {
               alt: c.title || 'Synergy Medical Yoga Therapy Service',
             }));
             setServiceSlides(mapped);
+            try { localStorage.setItem('synergy_cached_services_carousels', JSON.stringify(mapped)); } catch (e) {}
           }
         }
       } catch (err) {
-        console.error('Failed to load services carousels:', err);
+        // Fallback silently if offline
       }
     };
 
@@ -258,11 +268,26 @@ export default function ServicesPage({ setActivePage, currentUser }) {
       {/* ──────────────────────────────────────────────
           4. FULL-WIDTH SERVICE PROMOTIONAL SLIDER (Strictly Database Driven from MongoDB Atlas)
           ────────────────────────────────────────────── */}
-      {serviceSlides.length > 0 && (
+      {serviceSlides.length === 0 ? (
+        <section className="relative w-full bg-slate-900 h-[400px] sm:h-[450px] lg:h-[500px] flex items-center justify-center overflow-hidden shadow-md">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#003D39]/30 via-[#007A73]/20 to-[#003D39]/30 animate-shimmer" />
+          <div className="z-10 text-center px-6 space-y-4 animate-pulse-soft">
+            <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full mx-auto flex items-center justify-center border border-white/20 shadow-xl animate-float">
+              <span className="text-2xl">🧘‍♀️</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-sansita font-bold text-white tracking-wide drop-shadow">
+              Synergy Clinical Therapy Programs
+            </h3>
+            <p className="text-xs sm:text-sm text-teal-200/80">
+              Loading service banners from live database...
+            </p>
+          </div>
+        </section>
+      ) : (
         <section
           onMouseEnter={() => setIsSlidePaused(true)}
           onMouseLeave={() => setIsSlidePaused(false)}
-          className="relative w-full overflow-hidden bg-slate-900 h-[450px] sm:h-[550px] lg:h-[600px] flex items-center group shadow-md"
+          className="relative w-full overflow-hidden bg-slate-900 h-[450px] sm:h-[550px] lg:h-[600px] flex items-center group shadow-xl"
         >
           {serviceSlides.map((s, i) => (
             <div

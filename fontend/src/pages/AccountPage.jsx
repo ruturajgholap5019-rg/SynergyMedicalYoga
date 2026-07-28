@@ -18,15 +18,15 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   const [signUpPhone, setSignUpPhone] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
 
-  // Address tab states (mocked for demo/user persistence)
+  // Address tab states
   const [shippingAddress, setShippingAddress] = useState({
-    firstName: 'Ruturaj',
-    lastName: 'Gholap',
+    firstName: '',
+    lastName: '',
     company: '',
-    address1: 'Greens Center, Chinchwad',
-    city: 'Pune',
+    address1: '',
+    city: '',
     state: 'Maharashtra',
-    pincode: '411033',
+    pincode: '',
     country: 'India',
   });
 
@@ -61,7 +61,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
       const res = await api.getUserOrders();
       if (res.data) setMyOrders(res.data);
     } catch (err) {
-      console.error('Failed fetching orders:', err);
+      // Ignore silently
     }
   };
 
@@ -70,7 +70,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
       const res = await api.getMyAppointments();
       if (res.data) setMyAppointments(res.data);
     } catch (err) {
-      console.error('Failed fetching appointments:', err);
+      // Ignore silently
     }
   };
 
@@ -111,7 +111,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     try {
       await api.logout();
     } catch (err) {
-      console.error(err);
+      // Ignore silently
     } finally {
       toast.success('You have been logged out.');
       onLogout?.();
