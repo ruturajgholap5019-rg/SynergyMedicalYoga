@@ -5,6 +5,11 @@ const carouselSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  imageAlt: {
+    type: String,
+    default: '',
+    trim: true,
+  },
   title: {
     type: String,
     default: '',

@@ -101,7 +101,7 @@ const settingSchema = new mongoose.Schema({
   // Mobile App Download Promotional Content
   appPromoHeading: {
     type: String,
-    default: 'Download Our App\nto Book an Appoiment',
+    default: 'Download Our App\nto Book an Appointment',
   },
   playStoreUrl: {
     type: String,
@@ -127,15 +127,15 @@ const settingSchema = new mongoose.Schema({
   // Contact Information & Social Links
   contactPhone: {
     type: String,
-    default: '+91 98230 45678',
+    default: '+91 97303 21042',
   },
   contactEmail: {
     type: String,
-    default: 'contact@synergymedicalyoga.com',
+    default: 'support@synergymedicalyoga.com',
   },
   contactAddress: {
     type: String,
-    default: 'Pune, Maharashtra, India',
+    default: 'Greens Center, Chinchwad, Pune 411033',
   },
   socialLinkedIn: {
     type: String,

@@ -3,9 +3,11 @@ require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }
 const mongoose = require('mongoose');
 const app = require('./app');
 const connectDB = require('./config/database');
+const { validateEnv } = require('./config/env');
 
 const PORT = process.env.PORT || 5000;
 
+validateEnv();
 connectDB();
 
 const server = app.listen(PORT, () => {

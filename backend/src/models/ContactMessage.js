@@ -26,11 +26,11 @@ const contactMessageSchema = new mongoose.Schema({
   },
   recipientEmail: {
     type: String,
-    default: 'ruturajgholap5019@gmail.com',
+    default: '',
   },
   status: {
     type: String,
-    enum: ['new', 'read', 'replied'],
+    enum: ['new', 'read', 'replied', 'archived'],
     default: 'new',
   },
   createdAt: {

@@ -79,7 +79,7 @@ export default function ProductsTab({
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <img
-                          src={product.images?.[0] || 'https://images.unsplash.com/photo-1599447421416-3414500d18a5'}
+                          src={product.images?.[0] || '/favicon.svg'}
                           alt={product.name}
                           className="w-12 h-12 rounded-xl object-cover border border-gray-200"
                         />

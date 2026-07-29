@@ -92,7 +92,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     },
     paymentMethod: paymentMethod || 'upi',
     upiId: upiId || undefined,
-    paymentStatus: paymentMethod === 'cod' ? 'pending' : 'paid',
+    paymentStatus: 'pending',
     orderStatus: 'processing',
   });
 
@@ -143,9 +143,12 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
   // 1. Handle Cashfree Payments (Primary Gateway)
   if (paymentMethod === 'cashfree') {
     try {
-      const clientUrl = process.env.CLIENT_URL || req.headers.origin || 'http://localhost:5173';
+      const clientUrl = process.env.CLIENT_URL || req.headers.origin;
+      if (!clientUrl || !process.env.BACKEND_URL) {
+        return next(new AppError('Payment redirect URLs are not configured.', 503));
+      }
       const returnUrl = `${clientUrl}/order-success?order_id={order_id}&session_id={order_token}`;
-      const notifyUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/orders/cashfree-webhook`;
+      const notifyUrl = `${process.env.BACKEND_URL}/api/orders/cashfree-webhook`;
 
       const cfSession = await cashfreeService.createCashfreeOrderSession({
         orderId: order._id.toString(),
@@ -195,13 +198,22 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
       data: {
         orderId: order._id,
         order: order,
-        message: `Order placed successfully with ${paymentMethod.toUpperCase()}`,
+        message: `Order received with ${paymentMethod.toUpperCase()} and pending confirmation.`,
       },
     });
   }
 
   // 3. Attempt Stripe Gateway Checkout Session for Cards
+  if (!stripe) {
+    return next(new AppError('Payment integration is under review. Please contact Synergy Medical Yoga to confirm this order.', 503));
+  }
+
   try {
+    const clientUrl = process.env.CLIENT_URL || req.headers.origin;
+    if (!clientUrl) {
+      return next(new AppError('Payment redirect URL is not configured.', 503));
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: items.map((item) => ({
@@ -215,8 +227,8 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
         quantity: item.quantity,
       })),
       mode: 'payment',
-      success_url: `${process.env.CLIENT_URL || req.headers.origin || 'http://localhost:5173'}/order-success?order_id=${order._id}&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.CLIENT_URL || req.headers.origin || 'http://localhost:5173'}/`,
+      success_url: `${clientUrl}/order-success?order_id=${order._id}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${clientUrl}/`,
       metadata: {
         orderId: order._id.toString(),
       },
