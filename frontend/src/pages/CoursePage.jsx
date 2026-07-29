@@ -23,8 +23,8 @@ import {
 } from 'lucide-react';
 import { getImageUrl } from '../lib/api';
 
-const CEO = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/MD.jpeg';
-const CMO = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/Poonam-Deshmukh-with-apron.jpeg';
+const CEO = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/MD.jpeg';
+const CMO = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/Poonam-Deshmukh-with-apron.jpeg';
 const PLAYSTORE = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/PLaystore-Icon-e1747384325874.webp';
 const APPSTORE = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Apple-store-e1747384344465.png';
 const APP_MOCKUP = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-२-1-scaled.png';

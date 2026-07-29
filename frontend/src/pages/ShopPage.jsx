@@ -201,7 +201,7 @@ export default function ShopPage({ onAddToCart, onQuickView, onViewDetails, onBu
               </div>
               <div className="h-36 sm:h-40 flex items-center justify-center relative my-1 transform hover:scale-105 transition-transform duration-500">
                 <img
-                  src="https://synergymedicalyoga.com/wp-content/uploads/2026/06/HEaro-Image-300x300.png"
+                  src="https://synergymedicalyoga.com/wp-content/uploads/2025/06/HEaro-Image-300x300.png"
                   alt="At Home MYT Kit"
                   className="max-h-full object-contain filter drop-shadow-md"
                 />

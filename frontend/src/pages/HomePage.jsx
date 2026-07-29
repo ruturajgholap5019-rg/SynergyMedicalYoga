@@ -5,11 +5,11 @@ import { api, getImageUrl } from '../lib/api';
 import ProductCard from '../components/ProductCard';
 import { useSiteSettings } from '../lib/useSiteSettings';
 
-const IMEDIYOG_LOGO  = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/I-Mediyog-Logo_PNG-06.png';
-const PRODUCT_KNEE   = 'https://synergymedicalyoga.com/wp-content/uploads/2026/06/HEaro-Image-300x300.png';
+const IMEDIYOG_LOGO  = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/I-Mediyog-Logo_PNG-06.png';
+const PRODUCT_KNEE   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/06/HEaro-Image-300x300.png';
 const PRODUCT_NECK   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Neck-Pain-01-300x300.png';
 const PRODUCT_CORP   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Product-2-300x300.png';
-const APP_MOCKUP     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-२-1-scaled.png';
+const APP_MOCKUP     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-%E0%A5%A8-1-scaled.png';
 const PLAYSTORE      = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/PLaystore-Icon-e1747384325874.webp';
 const APPSTORE       = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Apple-store-e1747384344465.png';
 const DOCTOR         = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/doctor_1.png';
@@ -145,7 +145,13 @@ function Counter({ end, suffix = '' }) {
 export default function HomePage({ setActivePage, onAddToCart, onQuickView, onViewDetails, onBuyNow }) {
   const { settings } = useSiteSettings();
   const [slide, setSlide] = useState(0);
-  const heroSlides = DEFAULT_HERO_SLIDES;
+  const [heroSlides, setHeroSlides] = useState(() => {
+    try {
+      const cached = localStorage.getItem('synergy_cached_home_carousels');
+      if (cached) return JSON.parse(cached);
+    } catch (e) {}
+    return DEFAULT_HERO_SLIDES;
+  });
   const [featuredProducts, setFeaturedProducts] = useState(() => {
     try {
       const cached = localStorage.getItem('synergy_cached_home_products');
@@ -163,14 +169,37 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (api.getPublicCarousels) {
+          const cRes = await api.getPublicCarousels();
+          if (cRes?.data && cRes.data.length > 0) {
+            const homeSlides = cRes.data.filter((c) => !c.page || c.page === 'home' || c.page === 'all');
+            if (homeSlides.length > 0) {
+              const mapped = homeSlides.map((c, idx) => {
+                const fallback = DEFAULT_HERO_SLIDES[idx % DEFAULT_HERO_SLIDES.length].src;
+                const rawSrc = c.imageUrl || c.src || c.url || c.image;
+                return {
+                  src: rawSrc ? getImageUrl(rawSrc) : fallback,
+                  fallback,
+                  alt: c.title || c.alt || 'Synergy Medical Yoga Banner',
+                  heading: c.heading || c.title || '',
+                  subtitle: c.subtitle || c.description || '',
+                  buttonText: c.buttonText || 'Explore Shop',
+                  buttonLink: c.buttonLink || '/shop',
+                };
+              });
+              setHeroSlides(mapped);
+              try { localStorage.setItem('synergy_cached_home_carousels', JSON.stringify(mapped)); } catch (e) {}
+            }
+          }
+        }
+      } catch (err) {}
+      try {
         const pRes = await api.getProducts();
         if (pRes.data && pRes.data.length > 0) {
           setFeaturedProducts(pRes.data.slice(0, 4));
           try { localStorage.setItem('synergy_cached_home_products', JSON.stringify(pRes.data.slice(0, 4))); } catch (e) {}
         }
-      } catch (err) {
-        // Fallback silently
-      }
+      } catch (err) {}
       try {
         if (api.getBlogs) {
           const bRes = await api.getBlogs();

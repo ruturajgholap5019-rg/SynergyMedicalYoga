@@ -3,12 +3,12 @@ import { Target, Eye, Award } from 'lucide-react';
 import { useSiteSettings } from '../lib/useSiteSettings';
 import { getImageUrl } from '../lib/api';
 
-const CEO  = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/MD.jpeg';
-const CMO  = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/Poonam-Deshmukh-with-apron.jpeg';
-const CSCO = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/WhatsApp-Image-2025-07-21-at-11.36.32-AM.jpeg';
-const CTO  = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/Deepali.jpeg';
+const CEO  = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/MD.jpeg';
+const CMO  = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/Poonam-Deshmukh-with-apron.jpeg';
+const CSCO = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/WhatsApp-Image-2025-07-21-at-11.36.32-AM.jpeg';
+const CTO  = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/Deepali.jpeg';
 
-const IMEDIYOG_LOGO = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/I-Mediyog-Logo_PNG-06.png';
+const IMEDIYOG_LOGO = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/I-Mediyog-Logo_PNG-06.png';
 const PLAYSTORE     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/PLaystore-Icon-e1747384325874.webp';
 const APPSTORE      = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Apple-store-e1747384344465.png';
 const PLAY_QR       = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/WhatsApp-Image-2025-06-03-at-8.34.11-PM.jpeg';
