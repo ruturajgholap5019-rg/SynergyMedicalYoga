@@ -13,7 +13,7 @@ import {
   LogOut,
   Lock
 } from 'lucide-react';
-import { api } from './lib/api';
+import { api, clearClientLogoutMarker, wasClientLoggedOut } from './lib/api';
 
 import OverviewTab from './components/OverviewTab';
 import ProductsTab from './components/ProductsTab';
@@ -131,8 +131,9 @@ function EnquiriesManager({ enquiries, refresh, showToast }) {
 }
 
 export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }) {
-  const [currentUser, setCurrentUser] = useState(initialUser?.role === 'admin' ? initialUser : null);
-  const [authChecked, setAuthChecked] = useState(Boolean(initialUser?.role === 'admin'));
+  const shouldUseInitialUser = initialUser?.role === 'admin' && !wasClientLoggedOut();
+  const [currentUser, setCurrentUser] = useState(shouldUseInitialUser ? initialUser : null);
+  const [authChecked, setAuthChecked] = useState(Boolean(shouldUseInitialUser));
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -193,6 +194,12 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   // Check auth session
   useEffect(() => {
     const checkAuth = async () => {
+      if (wasClientLoggedOut()) {
+        setCurrentUser(null);
+        setAuthChecked(true);
+        return;
+      }
+
       try {
         const profile = await api.getProfile();
         if (profile?.user && profile.user.role === 'admin') {
@@ -305,6 +312,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
         return;
       }
       setCurrentUser(res.user);
+      clearClientLogoutMarker();
       onAuthSuccess?.(res.user);
       showToast(`Welcome back, ${res.user.name}!`);
     } catch (err) {

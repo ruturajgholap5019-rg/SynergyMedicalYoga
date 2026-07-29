@@ -1,8 +1,29 @@
 const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
 const FALLBACK_IMAGE = '/favicon.svg';
+const ACCESS_TOKEN_KEY = 'synergy_access_token';
+const USER_KEY = 'synergyUser';
+const LOGOUT_MARKER_KEY = 'synergyLoggedOutAt';
+const AUTH_EVENT_KEY = 'synergyAuthEvent';
 
 let isRefreshing = false;
 let refreshSubscribers = [];
+
+export function markClientLoggedOut(broadcast = true) {
+  localStorage.removeItem(ACCESS_TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+  localStorage.setItem(LOGOUT_MARKER_KEY, String(Date.now()));
+  if (broadcast) {
+    localStorage.setItem(AUTH_EVENT_KEY, JSON.stringify({ type: 'logout', at: Date.now() }));
+  }
+}
+
+export function clearClientLogoutMarker() {
+  localStorage.removeItem(LOGOUT_MARKER_KEY);
+}
+
+export function wasClientLoggedOut() {
+  return Boolean(localStorage.getItem(LOGOUT_MARKER_KEY));
+}
 
 function subscribeTokenRefresh(cb) {
   refreshSubscribers.push(cb);
@@ -15,10 +36,10 @@ function onRefreshed() {
 
 async function request(path, options = {}, isRetry = false) {
   const isFormData = options.body instanceof FormData;
-  const token = localStorage.getItem('synergy_access_token');
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
   
-  // If guest user checking profile without token, return null silently without firing 401
-  if (path === '/auth/profile' && !token) {
+  // If the user explicitly logged out, never resurrect a session from leftover cookies.
+  if (path === '/auth/profile' && (!token || wasClientLoggedOut())) {
     return null;
   }
 
@@ -45,8 +66,9 @@ async function request(path, options = {}, isRetry = false) {
         if (refreshRes.ok) {
           const refreshData = await refreshRes.json();
           if (refreshData?.token) {
-            localStorage.setItem('synergy_access_token', refreshData.token);
+            localStorage.setItem(ACCESS_TOKEN_KEY, refreshData.token);
           }
+          clearClientLogoutMarker();
           onRefreshed();
           return request(path, options, true);
         }
@@ -67,6 +89,9 @@ async function request(path, options = {}, isRetry = false) {
   const data = isJson ? await response.json() : await response.text();
 
   if (!response.ok) {
+    if (response.status === 401 && !path.includes('/auth/login')) {
+      markClientLoggedOut();
+    }
     throw new Error(data?.message || 'Request failed');
   }
 
@@ -113,7 +138,8 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(payload),
     });
-    if (res?.token) localStorage.setItem('synergy_access_token', res.token);
+    clearClientLogoutMarker();
+    if (res?.token) localStorage.setItem(ACCESS_TOKEN_KEY, res.token);
     return res;
   },
   register: async (payload) => {
@@ -121,7 +147,8 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(payload),
     });
-    if (res?.token) localStorage.setItem('synergy_access_token', res.token);
+    clearClientLogoutMarker();
+    if (res?.token) localStorage.setItem(ACCESS_TOKEN_KEY, res.token);
     return res;
   },
   logout: async () => {
@@ -130,7 +157,7 @@ export const api = {
         method: 'POST',
       });
     } finally {
-      localStorage.removeItem('synergy_access_token');
+      markClientLoggedOut();
     }
   },
   refreshToken: () => request('/auth/refresh', {

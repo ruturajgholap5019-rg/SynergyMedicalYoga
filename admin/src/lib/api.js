@@ -1,7 +1,28 @@
 const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+const ACCESS_TOKEN_KEY = 'synergy_access_token';
+const USER_KEY = 'synergyUser';
+const LOGOUT_MARKER_KEY = 'synergyLoggedOutAt';
+const AUTH_EVENT_KEY = 'synergyAuthEvent';
 
 let isRefreshing = false;
 let refreshSubscribers = [];
+
+export function markClientLoggedOut(broadcast = true) {
+  localStorage.removeItem(ACCESS_TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+  localStorage.setItem(LOGOUT_MARKER_KEY, String(Date.now()));
+  if (broadcast) {
+    localStorage.setItem(AUTH_EVENT_KEY, JSON.stringify({ type: 'logout', at: Date.now() }));
+  }
+}
+
+export function clearClientLogoutMarker() {
+  localStorage.removeItem(LOGOUT_MARKER_KEY);
+}
+
+export function wasClientLoggedOut() {
+  return Boolean(localStorage.getItem(LOGOUT_MARKER_KEY));
+}
 
 function subscribeTokenRefresh(cb) {
   refreshSubscribers.push(cb);
@@ -13,7 +34,11 @@ function onRefreshed() {
 }
 
 async function request(path, options = {}, isRetry = false) {
-  const token = localStorage.getItem('synergy_access_token');
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  if (path === '/auth/profile' && (!token || wasClientLoggedOut())) {
+    return null;
+  }
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     credentials: 'include',
     headers: {
@@ -36,8 +61,9 @@ async function request(path, options = {}, isRetry = false) {
         if (refreshRes.ok) {
           const refreshData = await refreshRes.json();
           if (refreshData?.token) {
-            localStorage.setItem('synergy_access_token', refreshData.token);
+            localStorage.setItem(ACCESS_TOKEN_KEY, refreshData.token);
           }
+          clearClientLogoutMarker();
           onRefreshed();
           return request(path, options, true);
         }
@@ -58,6 +84,9 @@ async function request(path, options = {}, isRetry = false) {
   const data = isJson ? await response.json() : await response.text();
 
   if (!response.ok) {
+    if (response.status === 401 && !path.includes('/auth/login')) {
+      markClientLoggedOut();
+    }
     throw new Error(data?.message || 'Request failed');
   }
 
@@ -71,7 +100,8 @@ export const api = {
       body: JSON.stringify(payload),
     });
     if (res?.token) {
-      localStorage.setItem('synergy_access_token', res.token);
+      clearClientLogoutMarker();
+      localStorage.setItem(ACCESS_TOKEN_KEY, res.token);
     }
     return res;
   },
@@ -81,7 +111,7 @@ export const api = {
         method: 'POST',
       });
     } finally {
-      localStorage.removeItem('synergy_access_token');
+      markClientLoggedOut();
     }
   },
   getProfile: () => request('/auth/profile'),

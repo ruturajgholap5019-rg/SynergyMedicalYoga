@@ -20,7 +20,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import CoursePage from './pages/CoursePage';
 import AdminPortalPage from './pages/AdminPortalPage';
 import { CmsListingPage, PolicyPage } from './pages/ContentPages';
-import { api } from './lib/api';
+import { api, clearClientLogoutMarker, markClientLoggedOut, wasClientLoggedOut } from './lib/api';
 
 // Route mapping configuration
 const PAGE_TO_ROUTE = {
@@ -143,6 +143,7 @@ export default function App() {
   });
   const [currentUser, setCurrentUser] = useState(() => {
     try {
+      if (wasClientLoggedOut()) return null;
       const savedUser = window.localStorage.getItem('synergyUser');
       return savedUser ? JSON.parse(savedUser) : null;
     } catch {
@@ -349,6 +350,7 @@ export default function App() {
   };
 
   const handleAuthSuccess = async (user) => {
+    clearClientLogoutMarker();
     setCurrentUser(user);
     window.localStorage.setItem('synergyUser', JSON.stringify(user));
 
@@ -397,9 +399,7 @@ export default function App() {
       // Continue logout cleanup
     } finally {
       setCurrentUser(null);
-      window.localStorage.removeItem('synergyUser');
-      window.localStorage.removeItem('synergy_access_token');
-      window.localStorage.setItem('synergyAuthEvent', JSON.stringify({ type: 'logout', at: Date.now() }));
+      markClientLoggedOut();
       document.cookie = 'synergyGuestCart=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       setCart([]);
       saveGuestCart([]);
@@ -411,9 +411,7 @@ export default function App() {
 
   const handleAdminLogout = () => {
     setCurrentUser(null);
-    window.localStorage.removeItem('synergyUser');
-    window.localStorage.removeItem('synergy_access_token');
-    window.localStorage.setItem('synergyAuthEvent', JSON.stringify({ type: 'logout', at: Date.now() }));
+    markClientLoggedOut();
     document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     setCart([]);
@@ -437,8 +435,7 @@ export default function App() {
       }
 
       setCurrentUser(null);
-      window.localStorage.removeItem('synergyUser');
-      window.localStorage.removeItem('synergy_access_token');
+      markClientLoggedOut(false);
       setCart([]);
       setPendingCheckout(false);
       if (['admin', 'account', 'checkout'].includes(activePage)) {
@@ -456,6 +453,12 @@ export default function App() {
         const storedGuestCart = window.localStorage.getItem('synergyGuestCart');
         if (storedGuestCart) {
           setGuestCart(JSON.parse(storedGuestCart));
+        }
+
+        if (wasClientLoggedOut()) {
+          setCurrentUser(null);
+          window.localStorage.removeItem('synergyUser');
+          return;
         }
 
         const profile = await api.getProfile();
