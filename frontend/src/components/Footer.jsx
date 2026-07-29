@@ -79,7 +79,7 @@ export default function Footer({ setActivePage }) {
             <ul className="space-y-2.5 text-sm">
               {[
                 { label: 'About us', id: 'about' },
-                { label: 'RBT Training Course', id: 'rbt-course' },
+                { label: 'Education', id: 'education' },
                 { label: 'Shop', id: 'shop' },
                 { label: 'Our Team', id: 'team' },
                 { label: 'Contact Us', id: 'contact' },

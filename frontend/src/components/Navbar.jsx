@@ -7,7 +7,7 @@ const BASE_NAV_ITEMS = [
   { id: 'home', label: 'Home', icon: Home },
   { id: 'about', label: 'About Us', icon: Info },
   { id: 'services', label: 'Services', icon: Stethoscope },
-  { id: 'rbt-course', label: 'RBT Course', icon: GraduationCap },
+  { id: 'education', label: 'Education', icon: GraduationCap },
   { id: 'shop', label: 'Shop', icon: ShoppingBag },
   { id: 'contact', label: 'Contact Us', icon: PhoneCall },
   { id: 'account', label: 'Login/My account', icon: User },

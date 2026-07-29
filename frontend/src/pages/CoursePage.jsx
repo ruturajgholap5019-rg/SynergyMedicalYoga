@@ -129,8 +129,8 @@ export default function CoursePage({ setActivePage }) {
               </div>
 
               <h1 className="font-sansita text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight drop-shadow-md">
-                Rope &amp; Belt Therapy<br />
-                <span className="text-teal-200 italic font-normal">Training Course</span>
+                Education<br />
+                <span className="text-teal-200 italic font-normal">Rope &amp; Belt Therapy Training</span>
               </h1>
 
               <p className="text-base sm:text-lg text-teal-100/90 max-w-2xl leading-relaxed">
@@ -709,7 +709,7 @@ export default function CoursePage({ setActivePage }) {
 
             <div className="space-y-1">
               <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">OFFICIAL REGISTRATION FORM</span>
-              <h3 className="font-sansita text-2xl font-bold text-gray-900">RBT Course Enrollment</h3>
+              <h3 className="font-sansita text-2xl font-bold text-gray-900">Education Enrollment</h3>
               <p className="text-xs text-gray-500">Batch Starting: <strong>5th Sept 2026</strong> | Fee: <strong>₹19,999/-</strong></p>
             </div>
 
