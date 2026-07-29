@@ -142,13 +142,8 @@ export const api = {
     if (res?.token) localStorage.setItem(ACCESS_TOKEN_KEY, res.token);
     return res;
   },
-  sendOtp: (payload) =>
-    request('/auth/send-otp', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    }),
-  verifyOtp: async (payload) => {
-    const res = await request('/auth/verify-otp', {
+  register: async (payload) => {
+    const res = await request('/auth/register', {
       method: 'POST',
       body: JSON.stringify(payload),
     });
