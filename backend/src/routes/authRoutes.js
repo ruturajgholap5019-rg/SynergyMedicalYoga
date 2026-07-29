@@ -1,13 +1,17 @@
 const express = require('express');
-const { register, login, refresh, logout, getProfile } = require('../controllers/authController');
+const { sendOtp, verifyOtp, login, refresh, logout, getProfile } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
-const { authLimiter } = require('../middleware/rateLimiter');
+const { authLimiter, otpLimiter } = require('../middleware/rateLimiter');
 const { validate } = require('../middleware/validate');
 const { auth } = require('../validators/schemas');
 
 const router = express.Router();
 
-router.post('/register', authLimiter, validate(auth.register), register);
+// OTP-based registration (2 steps)
+router.post('/send-otp', otpLimiter, sendOtp);
+router.post('/verify-otp', authLimiter, verifyOtp);
+
+// Standard auth
 router.post('/login', authLimiter, validate(auth.login), login);
 router.post('/refresh', refresh);
 router.post('/logout', logout);

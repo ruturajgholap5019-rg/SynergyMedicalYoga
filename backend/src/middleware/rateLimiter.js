@@ -36,8 +36,21 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+/**
+ * 4. OTP / Email Verification Limiter
+ * Protects OTP send endpoints — max 6 requests per hour per IP.
+ */
+const otpLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 6,
+  message: 'Too many OTP requests. Please wait before requesting a new code.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 module.exports = {
   authLimiter,
   formSpamLimiter,
   apiLimiter,
+  otpLimiter,
 };
