@@ -49,8 +49,6 @@ const DEFAULT_BLOGS = [
   },
 ];
 
-const HOME_CAROUSEL_CACHE_KEY = 'synergy_cached_home_carousels_v2';
-
 const DEFAULT_HERO_SLIDES = [
   {
     src: '/images/carousel/home/Website-Banner-4.webp',
@@ -147,26 +145,7 @@ function Counter({ end, suffix = '' }) {
 export default function HomePage({ setActivePage, onAddToCart, onQuickView, onViewDetails, onBuyNow }) {
   const { settings } = useSiteSettings();
   const [slide, setSlide] = useState(0);
-  const [heroSlides, setHeroSlides] = useState(() => {
-    try {
-      const cached = localStorage.getItem(HOME_CAROUSEL_CACHE_KEY);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((s, idx) => {
-            const rawSrc = s.imageUrl || s.src || s.url || s.image;
-            const fallback = s.fallback || DEFAULT_HERO_SLIDES[idx % DEFAULT_HERO_SLIDES.length].src;
-            return {
-              ...s,
-              src: getImageUrl(rawSrc) || fallback,
-              fallback,
-            };
-          });
-        }
-      }
-    } catch (e) {}
-    return DEFAULT_HERO_SLIDES;
-  });
+  const heroSlides = DEFAULT_HERO_SLIDES;
   const [featuredProducts, setFeaturedProducts] = useState(() => {
     try {
       const cached = localStorage.getItem('synergy_cached_home_products');
@@ -183,31 +162,6 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const res = await api.getPublicCarousels();
-        if (res.data && res.data.length > 0) {
-          const homeSlides = res.data.filter((c) => !c.page || c.page === 'home');
-          if (homeSlides.length > 0) {
-            const mapped = homeSlides.map((c, idx) => {
-              const fallback = DEFAULT_HERO_SLIDES[idx % DEFAULT_HERO_SLIDES.length].src;
-              const rawSrc = c.imageUrl || c.src || c.url || c.image;
-              return {
-                src: getImageUrl(rawSrc) || fallback,
-                fallback,
-                alt: c.title || 'Synergy Medical Yoga Banner',
-                heading: c.title,
-                subtitle: c.subtitle,
-                buttonText: c.buttonText || 'Explore Shop',
-                buttonLink: c.buttonLink || '/shop',
-              };
-            });
-            setHeroSlides(mapped);
-            try { localStorage.setItem(HOME_CAROUSEL_CACHE_KEY, JSON.stringify(mapped)); } catch (e) {}
-          }
-        }
-      } catch (err) {
-        // Fallback silently
-      }
       try {
         const pRes = await api.getProducts();
         if (pRes.data && pRes.data.length > 0) {
