@@ -218,21 +218,23 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         <section
           onMouseEnter={() => setIsCarouselPaused(true)}
           onMouseLeave={() => setIsCarouselPaused(false)}
-          className="relative w-full overflow-hidden bg-white aspect-[16/9] max-h-[780px] flex items-center group shadow-2xl"
+          className="relative w-full overflow-hidden bg-[#f8fbfb] h-[220px] xs:h-[280px] sm:h-[420px] md:h-[540px] lg:h-[650px] flex items-center group shadow-xl"
         >
           {heroSlides.map((s, i) => (
             <div
               key={i}
-              className={`absolute inset-0 transition-opacity duration-1000 ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}
             >
               <img
                 src={getImageUrl(s.src)}
-                alt={s.alt}
+                alt={s.alt || 'Synergy Medical Yoga Banner'}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = s.fallback || '/favicon.svg';
+                  e.target.src = s.fallback ? getImageUrl(s.fallback) : '/favicon.svg';
                 }}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain bg-[#f8fbfb]"
               />
               {/* Optional Slide Heading Overlay (only shown if title/subtitle exists) */}
               {(s.heading || s.subtitle) && (
@@ -258,26 +260,26 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           {/* Carousel Arrow Controls */}
           <button
             onClick={() => setSlide((slide - 1 + heroSlides.length) % heroSlides.length)}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 bg-black/40 hover:bg-[#005550] text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer shadow-lg active:scale-95"
             aria-label="Previous Slide"
           >
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
           <button
             onClick={() => setSlide((slide + 1) % heroSlides.length)}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 bg-black/40 hover:bg-[#005550] text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer shadow-lg active:scale-95"
             aria-label="Next Slide"
           >
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
 
-          {/* Dots */}
-          <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+          {/* Dots Indicator */}
+          <div className="absolute bottom-2.5 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 flex gap-1.5 sm:gap-2 bg-black/20 backdrop-blur-xs px-3 py-1.5 rounded-full border border-white/10">
             {heroSlides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setSlide(i)}
-                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all cursor-pointer ${i === slide ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}`}
+                className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all cursor-pointer ${i === slide ? 'bg-white scale-125 shadow-md' : 'bg-white/50 hover:bg-white/80'}`}
                 aria-label={`Go to slide ${i + 1}`}
               />
             ))}

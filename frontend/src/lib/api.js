@@ -105,16 +105,30 @@ export function getImageUrl(path) {
     if (!path) return FALLBACK_IMAGE;
   }
   path = String(path).trim();
-  if (path === 'undefined' || path === 'null' || path === '') {
+  if (path === 'undefined' || path === 'null' || path === '' || path === '[object Object]') {
     return FALLBACK_IMAGE;
   }
   let fullUrl = path;
   if (!path.startsWith('http://') && !path.startsWith('https://') && !path.startsWith('data:')) {
-    const configuredApiUrl = import.meta.env.VITE_API_URL || '';
-    const backendHost = configuredApiUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
-    fullUrl = backendHost
-      ? `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`
-      : `${path.startsWith('/') ? '' : '/'}${path}`;
+    const isFrontendStatic =
+      path.startsWith('/images/') ||
+      path.startsWith('images/') ||
+      path.startsWith('/favicon') ||
+      path.startsWith('favicon') ||
+      path.startsWith('/assets/') ||
+      path.startsWith('assets/') ||
+      path.startsWith('/icons') ||
+      path.startsWith('icons');
+
+    if (isFrontendStatic) {
+      fullUrl = path.startsWith('/') ? path : `/${path}`;
+    } else {
+      const configuredApiUrl = import.meta.env.VITE_API_URL || '';
+      const backendHost = configuredApiUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
+      fullUrl = backendHost
+        ? `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`
+        : `${path.startsWith('/') ? '' : '/'}${path}`;
+    }
   }
   // Automatically upgrade unencrypted links on secure pages to prevent mixed-content blocking.
   if (fullUrl.startsWith('http://') && typeof window !== 'undefined' && window.location.protocol === 'https:') {
