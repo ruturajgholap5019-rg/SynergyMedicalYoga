@@ -49,33 +49,71 @@ const DEFAULT_BLOGS = [
   },
 ];
 
+const HOME_CAROUSEL_CACHE_KEY = 'synergy_cached_home_carousels_v2';
+
 const DEFAULT_HERO_SLIDES = [
   {
-    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner.jpg',
-    fallback: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Banner.jpg',
-    alt: 'Synergy Medical Yoga Banner',
-    heading: 'Guided Training Videos\nfor Therapeutic Exercises at Home',
-    subtitle: 'Doctor Supervised Non-Surgical Rehabilitation & Rope and Belt Therapy',
+    src: '/images/carousel/home/Website-Banner-4.webp',
+    fallback: '/images/carousel/home/Website-Banner-4.webp',
+    alt: 'Synergy Medical Yoga knee pain prevention kit banner',
+    heading: '',
+    subtitle: '',
     buttonText: 'Explore Shop',
     buttonLink: '/shop',
   },
   {
-    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Website-Baners-04-992x1024.png',
-    fallback: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Website-Baners-04-992x1024.png',
-    alt: 'Synergy Medical Yoga Banner',
-    heading: 'Professional Rope & Belt\nTherapy for Pain Management',
-    subtitle: 'Doctor supervised posture realignment & joint friction elimination.',
-    buttonText: 'Book Therapy',
+    src: '/images/carousel/home/Products-Banner-scaled.webp',
+    fallback: '/images/carousel/home/Products-Banner-scaled.webp',
+    alt: 'Synergy Medical Yoga therapy products banner',
+    heading: '',
+    subtitle: '',
+    buttonText: 'Explore Products',
+    buttonLink: '/shop',
+  },
+  {
+    src: '/images/carousel/home/Synergy-website-2.0-05-scaled.webp',
+    fallback: '/images/carousel/home/Synergy-website-2.0-05-scaled.webp',
+    alt: 'Synergy Medical Yoga therapy education banner',
+    heading: '',
+    subtitle: '',
+    buttonText: 'View Services',
     buttonLink: '/services',
   },
   {
-    src: 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png',
-    fallback: 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png',
-    alt: 'Synergy Medical Yoga Banner',
-    heading: 'Evidence-Based\nTherapy Programs for Faster Recovery',
-    subtitle: 'Integrated approach to pain relief with certified therapeutic instructors.',
-    buttonText: 'Find Centers',
+    src: '/images/carousel/home/Synergy-website-2.0-09-scaled.webp',
+    fallback: '/images/carousel/home/Synergy-website-2.0-09-scaled.webp',
+    alt: 'Synergy Medical Yoga rope and belt therapy banner',
+    heading: '',
+    subtitle: '',
+    buttonText: 'Book Appointment',
     buttonLink: '/services',
+  },
+  {
+    src: '/images/carousel/home/Practicals-Teaching-Image.webp',
+    fallback: '/images/carousel/home/Practicals-Teaching-Image.webp',
+    alt: 'Synergy Medical Yoga practical teaching banner',
+    heading: '',
+    subtitle: '',
+    buttonText: 'View Course',
+    buttonLink: '/rbt-course',
+  },
+  {
+    src: '/images/carousel/home/Theory-Teaching-Image.webp',
+    fallback: '/images/carousel/home/Theory-Teaching-Image.webp',
+    alt: 'Synergy Medical Yoga theory teaching banner',
+    heading: '',
+    subtitle: '',
+    buttonText: 'View Course',
+    buttonLink: '/rbt-course',
+  },
+  {
+    src: '/images/carousel/home/WhatsApp-Image-2025-08-29-at-3.31.12-PM-1.webp',
+    fallback: '/images/carousel/home/WhatsApp-Image-2025-08-29-at-3.31.12-PM-1.webp',
+    alt: 'Synergy Medical Yoga therapy care banner',
+    heading: '',
+    subtitle: '',
+    buttonText: 'Contact Us',
+    buttonLink: '/contact',
   },
 ];
 
@@ -111,7 +149,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
   const [slide, setSlide] = useState(0);
   const [heroSlides, setHeroSlides] = useState(() => {
     try {
-      const cached = localStorage.getItem('synergy_cached_home_carousels');
+      const cached = localStorage.getItem(HOME_CAROUSEL_CACHE_KEY);
       if (cached) {
         const parsed = JSON.parse(cached);
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -164,7 +202,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
               };
             });
             setHeroSlides(mapped);
-            try { localStorage.setItem('synergy_cached_home_carousels', JSON.stringify(mapped)); } catch (e) {}
+            try { localStorage.setItem(HOME_CAROUSEL_CACHE_KEY, JSON.stringify(mapped)); } catch (e) {}
           }
         }
       } catch (err) {
