@@ -171,8 +171,11 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       try {
         if (api.getPublicCarousels) {
           const cRes = await api.getPublicCarousels();
-          if (cRes?.data && cRes.data.length > 0) {
-            const homeSlides = cRes.data.filter((c) => !c.page || c.page === 'home' || c.page === 'all');
+          if (cRes?.data && Array.isArray(cRes.data) && cRes.data.length > 0) {
+            const homeSlides = cRes.data.filter((c) => {
+              const raw = c.imageUrl || c.src || c.url || c.image;
+              return raw && typeof raw === 'string' && raw.trim().length > 0 && (!c.page || c.page === 'home' || c.page === 'all');
+            });
             if (homeSlides.length > 0) {
               const mapped = homeSlides.map((c, idx) => {
                 const fallback = DEFAULT_HERO_SLIDES[idx % DEFAULT_HERO_SLIDES.length].src;
@@ -260,10 +263,21 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
                 loading={i === 0 ? 'eager' : 'lazy'}
                 decoding="async"
                 onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = s.fallback ? getImageUrl(s.fallback) : '/favicon.svg';
+                  const localFallback = DEFAULT_HERO_SLIDES[i % DEFAULT_HERO_SLIDES.length]?.src || '/images/carousel/home/Website-Banner-4.webp';
+                  if (e.target.src !== localFallback && !e.target.src.endsWith(localFallback)) {
+                    e.target.src = localFallback;
+                  } else {
+                    e.target.onerror = null;
+                    e.target.src = '/images/carousel/home/Website-Banner-4.webp';
+                  }
                 }}
-                className="w-full h-full object-contain bg-[#f8fbfb]"
+                onClick={() => {
+                  if (s.buttonLink) {
+                    const target = s.buttonLink.replace(/^\//, '') || 'home';
+                    setActivePage(target);
+                  }
+                }}
+                className="w-full h-full object-contain bg-[#f8fbfb] cursor-pointer"
               />
               {/* Optional Slide Heading Overlay (only shown if title/subtitle exists) */}
               {(s.heading || s.subtitle) && (
