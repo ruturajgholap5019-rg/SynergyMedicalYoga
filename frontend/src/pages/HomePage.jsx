@@ -93,7 +93,7 @@ const DEFAULT_HERO_SLIDES = [
     heading: '',
     subtitle: '',
     buttonText: 'View Course',
-    buttonLink: '/rbt-course',
+    buttonLink: '/education',
   },
   {
     src: '/images/carousel/home/Theory-Teaching-Image.webp',
@@ -102,7 +102,7 @@ const DEFAULT_HERO_SLIDES = [
     heading: '',
     subtitle: '',
     buttonText: 'View Course',
-    buttonLink: '/rbt-course',
+    buttonLink: '/education',
   },
   {
     src: '/images/carousel/home/WhatsApp-Image-2025-08-29-at-3.31.12-PM-1.webp',
@@ -193,7 +193,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
   }, [heroSlides, isCarouselPaused]);
 
   return (
-    <div className="bg-white font-inter text-[#555555]">
+    <div className="bg-white font-inter text-sm sm:text-[15px] text-[#555555]">
 
       {/* ──────────────────────────────────────────────
           1. HERO CAROUSEL SLIDER (Strictly Database Driven from MongoDB Atlas with Shimmer Loading)
@@ -218,7 +218,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         <section
           onMouseEnter={() => setIsCarouselPaused(true)}
           onMouseLeave={() => setIsCarouselPaused(false)}
-          className="relative w-full overflow-hidden bg-gray-900 h-screen min-h-[500px] flex items-center group shadow-2xl"
+          className="relative w-full overflow-hidden bg-white aspect-[16/9] max-h-[780px] flex items-center group shadow-2xl"
         >
           {heroSlides.map((s, i) => (
             <div
@@ -232,7 +232,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
                   e.target.onerror = null;
                   e.target.src = s.fallback || '/favicon.svg';
                 }}
-                className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${i === slide ? 'scale-105' : 'scale-100'}`}
+                className="w-full h-full object-contain"
               />
               {/* Optional Slide Heading Overlay (only shown if title/subtitle exists) */}
               {(s.heading || s.subtitle) && (
@@ -332,7 +332,16 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       {/* ──────────────────────────────────────────────
           3. WHY LEARN RBT WITH SYNERGY MEDICAL YOGA (Live WordPress Alternating Timeline Design)
           ────────────────────────────────────────────── */}
-      <section className="py-6 bg-gradient-to-b from-[#f8fdfe] to-[#f1fafe] relative overflow-hidden">
+      <section className="py-8 sm:py-12 bg-[#f8fdfe]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <img
+            src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
+            alt="Why learn RBT with Synergy Medical Yoga"
+            className="w-full h-auto object-contain rounded-xl sm:rounded-2xl"
+          />
+        </div>
+      </section>
+      <section className="hidden">
         {/* Decorative Botanical Timeline Wave connecting illustrations across columns */}
         <div className="absolute top-[52%] left-0 w-full -translate-y-1/2 pointer-events-none hidden lg:block overflow-hidden opacity-70 z-0">
           <svg viewBox="0 0 1400 200" className="w-full h-44 stroke-emerald-600/40 fill-none" strokeWidth="1.5">
@@ -439,10 +448,10 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           {/* CTA to Full Course Page */}
           <div className="mt-12 text-center">
             <button
-              onClick={() => { setActivePage('rbt-course'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              onClick={() => { setActivePage('education'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               className="bg-[#005550] hover:bg-[#003d39] text-white font-extrabold text-sm px-8 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center gap-2 cursor-pointer"
             >
-              <span>Explore RBT Course Syllabus &amp; Register for 5th Sept Batch (₹19,999/-)</span>
+              <span>Explore Education Syllabus &amp; Register for 5th Sept Batch (₹19,999/-)</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -472,7 +481,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
               <img
                 src={PRODUCT_KNEE}
                 alt="Knee Stabilizer Belts"
-                className="w-full sm:h-[480px] object-cover rounded-3xl drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+                className="w-full sm:h-[480px] object-contain rounded-3xl drop-shadow-2xl hover:scale-105 transition-transform duration-500"
               />
             </div>
 
@@ -517,7 +526,16 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       {/* ──────────────────────────────────────────────
           5.5 BECAUSE SHE DESERVES TO WALK FREE FROM PAIN
           ────────────────────────────────────────────── */}
-      <section className="py-16 bg-[#e0f5f3] overflow-hidden">
+      <section className="py-8 sm:py-12 bg-[#e0f5f3] overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <img
+            src="/images/others/Website-Banner-5.webp"
+            alt="Because she deserves to walk free from pain"
+            className="w-full h-auto object-contain rounded-xl sm:rounded-2xl"
+          />
+        </div>
+      </section>
+      <section className="hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-6 space-y-4">
@@ -575,7 +593,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100">
                   <div className="w-16 h-16 bg-white p-1 rounded-xl border border-gray-200 shrink-0">
-                    <img src={getImageUrl(settings.playStoreQrImage || PLAY_QR)} alt="Google Play QR Code" className="w-full h-full object-cover rounded-lg" />
+                    <img src={getImageUrl(settings.playStoreQrImage || PLAY_QR)} alt="Google Play QR Code" className="w-full h-full object-contain rounded-lg" />
                   </div>
                   <div>
                     <img src={PLAYSTORE} alt="Google Play" className="h-7 object-contain mb-1" />
@@ -585,7 +603,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
 
                 <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100">
                   <div className="w-16 h-16 bg-white p-1 rounded-xl border border-gray-200 shrink-0">
-                    <img src={getImageUrl(settings.appStoreQrImage || APPLE_QR)} alt="App Store QR Code" className="w-full h-full object-cover rounded-lg" />
+                    <img src={getImageUrl(settings.appStoreQrImage || APPLE_QR)} alt="App Store QR Code" className="w-full h-full object-contain rounded-lg" />
                   </div>
                   <div>
                     <img src={APPSTORE} alt="App Store" className="h-7 object-contain mb-1" />
@@ -626,7 +644,16 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       {/* ──────────────────────────────────────────────
           6.5 DOWNLOAD OUR APP TO BOOK AN APPOINTMENT
           ────────────────────────────────────────────── */}
-      <section className="py-16 bg-[#eaf6f6]">
+      <section className="py-8 sm:py-12 bg-[#eaf6f6]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <img
+            src="/images/others/Download-the-app-Synergy-MYT-3-scaled.webp"
+            alt="Download the Synergy MYT app"
+            className="w-full h-auto object-contain rounded-xl sm:rounded-2xl"
+          />
+        </div>
+      </section>
+      <section className="hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-3xl p-8 sm:p-12 border border-teal-100 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-6 space-y-6">
@@ -731,7 +758,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       {/* ──────────────────────────────────────────────
           8. EXPERT BLOGS (Dynamic from Backend API / Admin Panel)
           ────────────────────────────────────────────── */}
-      <section className="py-8 bg-[#f4f7f8]">
+      <section className="hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           
           <div className="text-center space-y-2">

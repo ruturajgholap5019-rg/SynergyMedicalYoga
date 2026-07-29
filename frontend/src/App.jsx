@@ -30,7 +30,7 @@ const PAGE_TO_ROUTE = {
   'find-centres': '/find-centres',
   shop: '/shop',
   contact: '/contact',
-  'rbt-course': '/rbt-course',
+  'rbt-course': '/education',
   faq: '/faq',
   blogs: '/blogs',
   team: '/team',
@@ -54,8 +54,8 @@ const ROUTE_TO_PAGE = {
   '/find-centres': 'find-centres',
   '/shop': 'shop',
   '/contact': 'contact',
-  '/rbt-course': 'rbt-course',
-  '/training-course': 'rbt-course',
+  '/rbt-course': 'education',
+  '/training-course': 'education',
   '/faq': 'faq',
   '/blogs': 'blogs',
   '/blog': 'blogs',
@@ -653,12 +653,12 @@ export default function App() {
           <ContactPage />
         )}
 
-        {activePage === 'rbt-course' && (
+        {activePage === 'education' && (
           <CoursePage setActivePage={handleNavigate} />
         )}
 
-        {['faq', 'blogs', 'team', 'gallery', 'testimonials', 'education'].includes(activePage) && (
-          <CmsListingPage type={activePage === 'blogs' ? 'blog' : activePage === 'education' ? 'course' : activePage === 'testimonials' ? 'testimonial' : activePage} />
+        {['faq', 'blogs', 'team', 'gallery', 'testimonials'].includes(activePage) && (
+          <CmsListingPage type={activePage === 'blogs' ? 'blog' : activePage === 'testimonials' ? 'testimonial' : activePage} />
         )}
 
         {['privacy-policy', 'return-refund-policy', 'terms-and-conditions', 'shipping-policy'].includes(activePage) && (
