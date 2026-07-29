@@ -159,6 +159,8 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
   const [orthVisible] = useState(true);
   const aboutRef = useRef(null);
   const orthRef = useRef(null);
+  const previousSlide = heroSlides.length ? (slide - 1 + heroSlides.length) % heroSlides.length : 0;
+  const nextSlide = heroSlides.length ? (slide + 1) % heroSlides.length : 0;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -192,6 +194,13 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
     return () => clearInterval(timer);
   }, [heroSlides, isCarouselPaused]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined' || heroSlides.length === 0) return;
+    const preload = new Image();
+    preload.decoding = 'async';
+    preload.src = getImageUrl(heroSlides[nextSlide]?.src);
+  }, [heroSlides, nextSlide]);
+
   return (
     <div className="bg-white font-inter text-sm sm:text-[15px] text-[#555555]">
 
@@ -220,14 +229,22 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           onMouseLeave={() => setIsCarouselPaused(false)}
           className="relative w-full overflow-hidden bg-white aspect-[16/9] max-h-[780px] flex items-center group shadow-2xl"
         >
-          {heroSlides.map((s, i) => (
+          {heroSlides.map((s, i) => {
+            const isCurrent = i === slide;
+            const shouldRender = isCurrent || i === previousSlide || i === nextSlide;
+            if (!shouldRender) return null;
+
+            return (
             <div
               key={i}
-              className={`absolute inset-0 transition-opacity duration-1000 ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+              className={`absolute inset-0 transition-opacity duration-1000 ${isCurrent ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
             >
               <img
                 src={getImageUrl(s.src)}
                 alt={s.alt}
+                loading={isCurrent ? 'eager' : 'lazy'}
+                fetchPriority={isCurrent ? 'high' : 'low'}
+                decoding={isCurrent ? 'sync' : 'async'}
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = s.fallback || '/favicon.svg';
@@ -253,7 +270,8 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
                 </>
               )}
             </div>
-          ))}
+            );
+          })}
 
           {/* Carousel Arrow Controls */}
           <button
