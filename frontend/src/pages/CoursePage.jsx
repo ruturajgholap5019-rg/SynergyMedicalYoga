@@ -315,7 +315,7 @@ export default function CoursePage({ setActivePage }) {
           {/* 1. Ashwini Image placed above the banner */}
           <div className="flex justify-center">
             <img
-              src="/images/others/Ashwini Image.jpeg"
+              src="/images/others/ashwini-image.jpeg"
               alt="Dr. Ashwini Tapshalkar - Testimonial"
               className="w-full max-w-4xl h-auto rounded-3xl shadow-md border border-gray-200"
             />
@@ -539,7 +539,7 @@ export default function CoursePage({ setActivePage }) {
               </div>
               {/* NEW: synergy_certificate_image.jpeg added below */}
               <img
-                src="/images/others/synergy_certificate_image.jpeg"
+                src="/images/others/synergy-certificate-image.jpeg"
                 alt="Synergy Certificate Sample"
                 className="w-48 h-auto rounded-xl border border-teal-200 shadow-sm"
               />
