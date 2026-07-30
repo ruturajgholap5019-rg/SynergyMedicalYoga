@@ -309,14 +309,25 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ── REPLACED: Course Highlights with a single image ── */}
+      {/* ── COURSE HIGHLIGHTS – Now with TWO images ── */}
       <section className="py-16 bg-white border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <img
-            src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
-            alt="Why Learn RBT with Synergy - 4 Key Benefits"
-            className="w-full h-auto rounded-3xl shadow-md border border-gray-200"
-          />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          {/* 1. Ashwini Image placed above the banner */}
+          <div className="flex justify-center">
+            <img
+              src="/images/others/Ashwini Image.jpeg"
+              alt="Dr. Ashwini Tapshalkar - Testimonial"
+              className="w-full max-w-4xl h-auto rounded-3xl shadow-md border border-gray-200"
+            />
+          </div>
+          {/* 2. Existing banner image */}
+          <div className="flex justify-center">
+            <img
+              src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
+              alt="Why Learn RBT with Synergy - 4 Key Benefits"
+              className="w-full max-w-5xl h-auto rounded-3xl shadow-md border border-gray-200"
+            />
+          </div>
         </div>
       </section>
 
@@ -507,7 +518,8 @@ export default function CoursePage({ setActivePage }) {
               )}
             </div>
           </div>
-          {/* Exam & Certificate – exact from PDF */}
+
+          {/* ── EXAM & CERTIFICATION – with added certificate image ── */}
           <div className="bg-[#f0f9f8] rounded-3xl p-8 border border-teal-100 flex flex-col md:flex-row items-center gap-6 justify-between">
             <div className="space-y-2 text-center md:text-left">
               <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">ASSESSMENT &amp; CERTIFICATION</span>
@@ -518,10 +530,19 @@ export default function CoursePage({ setActivePage }) {
                 <em>Certificate will be issued only after qualifying in the practical exam . Being certified is a pre- requisite for registration Synergy app</em>
               </p>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-teal-100 text-center shadow-sm shrink-0">
-              <Award className="w-12 h-12 text-[#005550] mx-auto mb-2" />
-              <span className="text-xs font-bold text-gray-800 block">Official RBT Certificate</span>
-              <span className="text-[10px] text-gray-500 block">Synergy Medical Yoga</span>
+            <div className="flex flex-col items-center gap-3 shrink-0">
+              {/* Existing award icon + text */}
+              <div className="bg-white p-4 rounded-2xl border border-teal-100 text-center shadow-sm w-full">
+                <Award className="w-12 h-12 text-[#005550] mx-auto mb-2" />
+                <span className="text-xs font-bold text-gray-800 block">Official RBT Certificate</span>
+                <span className="text-[10px] text-gray-500 block">Synergy Medical Yoga</span>
+              </div>
+              {/* NEW: synergy_certificate_image.jpeg added below */}
+              <img
+                src="/images/others/synergy_certificate_image.jpeg"
+                alt="Synergy Certificate Sample"
+                className="w-48 h-auto rounded-xl border border-teal-200 shadow-sm"
+              />
             </div>
           </div>
         </div>
