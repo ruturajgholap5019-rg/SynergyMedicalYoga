@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   BookOpen,
   Calendar,
@@ -27,7 +27,7 @@ const CEO = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/MD.jpeg';
 const CMO = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/Poonam-Deshmukh-with-apron.jpeg';
 const PLAYSTORE = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/PLaystore-Icon-e1747384325874.webp';
 const APPSTORE = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Apple-store-e1747384344465.png';
-const APP_MOCKUP = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-२-1-scaled.png';
+const APP_MOCKUP = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-à¥¨-1-scaled.png';
 
 const COURSE_TESTIMONIALS = [
   {
@@ -55,21 +55,21 @@ const COURSE_TESTIMONIALS = [
     name: 'Sameedha Kokate',
     role: 'Certified Iyengar Yoga Teacher & Instructor',
     comment:
-      'Rope & Belt techniques are wonderful and help you know the reason behind why we do a particular asana and why we recommend not to do. A must-add skill for each yoga professional in today’s world!',
+      'Rope & Belt techniques are wonderful and help you know the reason behind why we do a particular asana and why we recommend not to do. A must-add skill for each yoga professional in todayâ€™s world!',
     stars: 5,
   },
   {
     name: 'Rupali Shevkari',
     role: 'Certified RBT Practitioner',
     comment:
-      'I recently completed the Rope & Belt training from Synergy Medical Yoga, and it was one of the best decisions I’ve made. The expert teaching team provided clear instructions, a well-structured curriculum, and hands-on practice.',
+      'I recently completed the Rope & Belt training from Synergy Medical Yoga, and it was one of the best decisions Iâ€™ve made. The expert teaching team provided clear instructions, a well-structured curriculum, and hands-on practice.',
     stars: 5,
   },
   {
     name: 'Richa',
     role: 'Certified Yoga & Wellness Trainer',
     comment:
-      'A heartfelt thanks to Manoj Sir, Sheetal Ma’am, Ashwini Ma’am, and the entire Synergy team for such an impactful RBT course. The perfect blend of science and practical healing has boosted my clinical confidence.',
+      'A heartfelt thanks to Manoj Sir, Sheetal Maâ€™am, Ashwini Maâ€™am, and the entire Synergy team for such an impactful RBT course. The perfect blend of science and practical healing has boosted my clinical confidence.',
     stars: 5,
   },
   {
@@ -83,7 +83,7 @@ const COURSE_TESTIMONIALS = [
     name: 'Devdarj Shettigar',
     role: 'Participant, Shirwal Residential Batch',
     comment:
-      'I attended the synergy medical yoga class at Green Hill Naturopathy center in Shirwal. Manoj Sir explained Anatomy subjects in an easy & simple method. Shital Ma’am was very supportive during practical sessions!',
+      'I attended the synergy medical yoga class at Green Hill Naturopathy center in Shirwal. Manoj Sir explained Anatomy subjects in an easy & simple method. Shital Maâ€™am was very supportive during practical sessions!',
     stars: 5,
   },
 ];
@@ -113,9 +113,9 @@ export default function CoursePage({ setActivePage }) {
 
   return (
     <div className="bg-white font-inter text-[#444444]">
-      {/* ──────────────────────────────────────────────
+      {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           1. HERO HEADER BANNER
-          ────────────────────────────────────────────── */}
+          â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="relative bg-gradient-to-br from-[#003d39] via-[#005550] to-[#002f2c] text-white py-16 sm:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-teal-400/10 via-transparent to-transparent pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -149,7 +149,7 @@ export default function CoursePage({ setActivePage }) {
                 </div>
                 <div className="bg-white/10 backdrop-blur-xs border border-white/10 p-3 rounded-2xl col-span-2 sm:col-span-1">
                   <p className="text-[10px] uppercase font-bold text-teal-200">COURSE FEE</p>
-                  <p className="text-sm font-bold text-white">₹19,999/-</p>
+                  <p className="text-sm font-bold text-white">â‚¹19,999/-</p>
                 </div>
               </div>
 
@@ -159,7 +159,7 @@ export default function CoursePage({ setActivePage }) {
                   onClick={() => setIsEnrollModalOpen(true)}
                   className="bg-amber-400 hover:bg-amber-500 text-gray-900 font-extrabold text-sm px-8 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer"
                 >
-                  <span>Enroll for Sep Batch (₹19,999)</span>
+                  <span>Enroll for Sep Batch (â‚¹19,999)</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
@@ -219,9 +219,9 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────
+      {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           2. WHY LEARN ROPE & BELT THERAPY (4 PILLARS)
-          ────────────────────────────────────────────── */}
+          â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="py-20 bg-gradient-to-b from-[#f4faf9] to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
@@ -295,9 +295,9 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────
+      {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           3. COURSE DETAILS & QUICK INFO BAR
-          ────────────────────────────────────────────── */}
+          â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="py-16 bg-[#eaf6f6]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-3xl p-8 sm:p-12 border border-teal-100 shadow-xl space-y-8">
@@ -337,23 +337,23 @@ export default function CoursePage({ setActivePage }) {
             <div className="bg-gradient-to-r from-[#005550] to-[#003d39] text-white p-6 sm:p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left shadow-lg">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-teal-200">TOTAL COURSE INVESTEMENT</p>
-                <h3 className="font-sansita text-3xl sm:text-4xl font-bold text-amber-300 mt-1">Course Fee ₹19,999/-</h3>
+                <h3 className="font-sansita text-3xl sm:text-4xl font-bold text-amber-300 mt-1">Course Fee â‚¹19,999/-</h3>
                 <p className="text-xs text-teal-100/90 mt-1">Includes Theory &amp; Practical Training, Course Manuals, and Video Access</p>
               </div>
               <button
                 onClick={() => setIsEnrollModalOpen(true)}
                 className="bg-amber-400 hover:bg-amber-500 text-gray-900 font-extrabold px-8 py-3.5 rounded-xl shadow-md transition-all cursor-pointer whitespace-nowrap text-sm"
               >
-                Register Now for ₹19,999
+                Register Now for â‚¹19,999
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────
+      {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           4. 4-WEEKEND CURRICULUM TIMELINE
-          ────────────────────────────────────────────── */}
+          â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="py-24 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
@@ -382,7 +382,7 @@ export default function CoursePage({ setActivePage }) {
                     W1
                   </div>
                   <div>
-                    <span>Weekend 1 – Online (Sat &amp; Sun)</span>
+                    <span>Weekend 1 â€“ Online (Sat &amp; Sun)</span>
                     <p className={`text-xs font-normal ${openWeekend === 1 ? 'text-teal-100' : 'text-gray-500'}`}>Sat: 3 Hours | Sun: 3 Hours</p>
                   </div>
                 </div>
@@ -426,7 +426,7 @@ export default function CoursePage({ setActivePage }) {
                     W2
                   </div>
                   <div>
-                    <span>Weekend 2 – Online (Sat &amp; Sun)</span>
+                    <span>Weekend 2 â€“ Online (Sat &amp; Sun)</span>
                     <p className={`text-xs font-normal ${openWeekend === 2 ? 'text-teal-100' : 'text-gray-500'}`}>Sat: 3 Hours | Sun: 3 Hours</p>
                   </div>
                 </div>
@@ -470,7 +470,7 @@ export default function CoursePage({ setActivePage }) {
                     W3
                   </div>
                   <div>
-                    <span>Weekend 3 – Online (Sat &amp; Sun)</span>
+                    <span>Weekend 3 â€“ Online (Sat &amp; Sun)</span>
                     <p className={`text-xs font-normal ${openWeekend === 3 ? 'text-teal-100' : 'text-gray-500'}`}>Sat: 3 Hours | Sun: 3 Hours</p>
                   </div>
                 </div>
@@ -514,7 +514,7 @@ export default function CoursePage({ setActivePage }) {
                     W4
                   </div>
                   <div>
-                    <span>Weekend 4 – Offline Practical (Fri, Sat, Sun)</span>
+                    <span>Weekend 4 â€“ Offline Practical (Fri, Sat, Sun)</span>
                     <p className="text-xs font-normal text-amber-200">Fri: 9 Hours | Sat: 9 Hours | Sun: 9 Hours (Full Clinical Days)</p>
                   </div>
                 </div>
@@ -568,9 +568,9 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────
+      {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           5. COURSE FACULTY PROFILES
-          ────────────────────────────────────────────── */}
+          â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="py-20 bg-[#f4f7f8]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
@@ -593,7 +593,7 @@ export default function CoursePage({ setActivePage }) {
                   />
                   <div>
                     <h3 className="font-poppins font-bold text-xl text-[#005550]">Dr. Poonam Deshmukh</h3>
-                    <p className="text-xs font-bold text-gray-600">Partner – Synergy Medical Yoga</p>
+                    <p className="text-xs font-bold text-gray-600">Partner â€“ Synergy Medical Yoga</p>
                     <p className="text-xs text-teal-700 font-semibold mt-0.5">B.Th.O &amp; OTR (USA NBCOT)</p>
                   </div>
                 </div>
@@ -615,13 +615,13 @@ export default function CoursePage({ setActivePage }) {
                   />
                   <div>
                     <h3 className="font-poppins font-bold text-xl text-[#005550]">Manoj Deshmukh</h3>
-                    <p className="text-xs font-bold text-gray-600">Founder &amp; Partner – Synergy Medical Yoga</p>
+                    <p className="text-xs font-bold text-gray-600">Founder &amp; Partner â€“ Synergy Medical Yoga</p>
                     <p className="text-xs text-teal-700 font-semibold mt-0.5">B.E. (BITS Pilani) + EPMBD (IIM Calcutta)</p>
                   </div>
                 </div>
 
                 <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                  Manoj Deshmukh brings over 22 years of corporate leadership experience combined with a deep understanding of joint biomechanics and therapeutic application of Rope &amp; Belt Therapy. Driven by the vision of making evidence-based Medical Yoga accessible to everyone, he leads Synergy’s mission to democratize RBT across India through technology-enabled healthcare, structured education, and innovative therapeutic products.
+                  Manoj Deshmukh brings over 22 years of corporate leadership experience combined with a deep understanding of joint biomechanics and therapeutic application of Rope &amp; Belt Therapy. Driven by the vision of making evidence-based Medical Yoga accessible to everyone, he leads Synergyâ€™s mission to democratize RBT across India through technology-enabled healthcare, structured education, and innovative therapeutic products.
                 </p>
               </div>
             </div>
@@ -630,9 +630,9 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────
+      {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           6. TESTIMONIALS FROM PAST BATCH STUDENTS
-          ────────────────────────────────────────────── */}
+          â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="py-20 bg-[#005550] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
@@ -663,9 +663,9 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────
+      {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           7. BOTTOM ENROLLMENT CTA BAR
-          ────────────────────────────────────────────── */}
+          â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="py-16 bg-gradient-to-br from-[#ebf7f7] to-[#d6f0f0]">
         <div className="max-w-4xl mx-auto px-4 text-center space-y-6">
           <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
@@ -680,7 +680,7 @@ export default function CoursePage({ setActivePage }) {
               onClick={() => setIsEnrollModalOpen(true)}
               className="bg-[#005550] hover:bg-[#003d39] text-white font-extrabold text-sm px-8 py-3.5 rounded-2xl shadow-xl transition-all flex items-center gap-2 cursor-pointer"
             >
-              <span>Enroll Online Now (₹19,999/-)</span>
+              <span>Enroll Online Now (â‚¹19,999/-)</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <a
@@ -694,9 +694,9 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────
+      {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           8. ENROLLMENT MODAL
-          ────────────────────────────────────────────── */}
+          â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {isEnrollModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative space-y-6 animate-in fade-in zoom-in duration-200">
@@ -710,7 +710,7 @@ export default function CoursePage({ setActivePage }) {
             <div className="space-y-1">
               <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">OFFICIAL REGISTRATION FORM</span>
               <h3 className="font-sansita text-2xl font-bold text-gray-900">Education Enrollment</h3>
-              <p className="text-xs text-gray-500">Batch Starting: <strong>5th Sept 2026</strong> | Fee: <strong>₹19,999/-</strong></p>
+              <p className="text-xs text-gray-500">Batch Starting: <strong>5th Sept 2026</strong> | Fee: <strong>â‚¹19,999/-</strong></p>
             </div>
 
             {formSubmitted ? (
