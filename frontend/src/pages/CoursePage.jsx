@@ -309,55 +309,14 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ── COURSE HIGHLIGHTS – exact 4 bullets from PDF page 3 ── */}
+      {/* ── REPLACED: Course Highlights with a single image ── */}
       <section className="py-16 bg-white border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center space-y-3 max-w-3xl mx-auto">
-            <span className="text-xs font-bold text-[#005550] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
-              What You Get
-            </span>
-            <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
-              Course Highlights
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-[#f4faf9] p-6 rounded-3xl border border-teal-100 text-center hover:shadow-lg transition-all">
-              <div className="w-14 h-14 bg-[#005550] text-white rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Users className="w-7 h-7" />
-              </div>
-              <h3 className="font-poppins font-bold text-[#005550] text-lg">Learn it from Experts</h3>
-              <p className="text-xs text-gray-600 mt-2 leading-relaxed">
-                of 45 Hours of Intensive Training in hybrid online and offline mode offering flexibility.
-              </p>
-            </div>
-            <div className="bg-[#f4faf9] p-6 rounded-3xl border border-teal-100 text-center hover:shadow-lg transition-all">
-              <div className="w-14 h-14 bg-[#005550] text-white rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Layers className="w-7 h-7" />
-              </div>
-              <h3 className="font-poppins font-bold text-[#005550] text-lg">Structured &amp; Focused Curriculum</h3>
-              <p className="text-xs text-gray-600 mt-2 leading-relaxed">
-                Comprehensive Theory &amp; Practical Curriculum, Course Books &amp; Personalized Tying Protocol Video Access
-              </p>
-            </div>
-            <div className="bg-[#f4faf9] p-6 rounded-3xl border border-teal-100 text-center hover:shadow-lg transition-all">
-              <div className="w-14 h-14 bg-[#005550] text-white rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Briefcase className="w-7 h-7" />
-              </div>
-              <h3 className="font-poppins font-bold text-[#005550] text-lg">Build Your Career</h3>
-              <p className="text-xs text-gray-600 mt-2 leading-relaxed">
-                Become the part of Synergy App to get enquiries from patients directly in your inbox
-              </p>
-            </div>
-            <div className="bg-[#f4faf9] p-6 rounded-3xl border border-teal-100 text-center hover:shadow-lg transition-all">
-              <div className="w-14 h-14 bg-[#005550] text-white rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-7 h-7" />
-              </div>
-              <h3 className="font-poppins font-bold text-[#005550] text-lg">Monetize Your Skill</h3>
-              <p className="text-xs text-gray-600 mt-2 leading-relaxed">
-                Opportunity to become Synergy Medical Yoga Products Reseller
-              </p>
-            </div>
-          </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <img
+            src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
+            alt="Why Learn RBT with Synergy - 4 Key Benefits"
+            className="w-full h-auto rounded-3xl shadow-md border border-gray-200"
+          />
         </div>
       </section>
 
