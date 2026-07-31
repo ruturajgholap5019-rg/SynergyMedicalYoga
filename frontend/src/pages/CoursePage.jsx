@@ -189,11 +189,11 @@ export default function CoursePage({ setActivePage }) {
               </div>
             </div>
             <div className="lg:col-span-6 flex">
-              <div className="relative overflow-hidden rounded-3xl border border-teal-100 shadow-xl bg-white w-full min-h-[360px] lg:min-h-full">
+              <div className="relative overflow-hidden rounded-3xl border border-teal-100 shadow-xl bg-white w-full">
                 <img
                   src="/images/others/ashwini-image.jpeg"
                   alt="Synergy Medical Yoga education session"
-                  className="w-full h-full min-h-[360px] object-cover object-center"
+                  className="w-full h-[330px] sm:h-[380px] lg:h-[430px] object-cover object-center"
                   loading="eager"
                   fetchPriority="high"
                 />
@@ -271,7 +271,7 @@ export default function CoursePage({ setActivePage }) {
       </section>
 
       {/* ───────────── COURSE HIGHLIGHTS ───────────── */}
-      <section className="py-10 bg-white">
+      <section className="pt-10 pb-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Heading */}
@@ -341,13 +341,13 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      <section className="py-8 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div>
+      <section className="pt-2 pb-16 bg-[#f7fbfa] border-y border-teal-50">
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-[28px] bg-white p-3 sm:p-4 shadow-xl border border-gray-200">
             <img
               src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
               alt=""
-              className="w-full rounded-3xl border border-gray-200 shadow-md"
+              className="w-full rounded-2xl"
             />
           </div>
         </div>
