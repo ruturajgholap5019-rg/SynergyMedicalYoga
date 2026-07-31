@@ -271,7 +271,7 @@ export default function CoursePage({ setActivePage }) {
       </section>
 
       {/* ───────────── COURSE HIGHLIGHTS ───────────── */}
-      <section className="pt-10 pb-16 bg-white">
+      <section className="pt-10 pb-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Heading */}
@@ -341,15 +341,13 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      <section className="pt-2 pb-16 bg-[#f7fbfa] border-y border-teal-50">
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-[28px] bg-white p-3 sm:p-4 shadow-xl border border-gray-200">
-            <img
-              src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
-              alt=""
-              className="w-full rounded-2xl"
-            />
-          </div>
+      <section className="py-14 bg-[#eef8f6] border-y border-teal-100/70">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <img
+            src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
+            alt=""
+            className="w-full rounded-2xl shadow-xl border border-gray-200 bg-white"
+          />
         </div>
       </section>
       {/* ── COURSE DETAILS ── */}
