@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   BookOpen,
   Award,
@@ -17,6 +17,12 @@ import { getImageUrl } from '../lib/api';
 
 const CEO = '/images/User/MD.jpeg';
 const CMO = '/images/User/Poonam-Deshmukh-with-apron.jpeg';
+const PRACTICAL_IMAGES = [
+  { src: '/images/others/ashwini-image.jpeg', alt: 'Clinical anatomy teaching session' },
+  { src: '/images/others/3.jpg', alt: 'Rope and belt standing alignment practice' },
+  { src: '/images/others/6.jpg', alt: 'Rope and belt practical table demonstration' },
+  { src: '/images/others/14.jpg', alt: 'Hands-on Rope and Belt Therapy practice' },
+];
 
 // All 14 testimonials – exact text from PDF
 const COURSE_TESTIMONIALS = [
@@ -123,6 +129,7 @@ const COURSE_TESTIMONIALS = [
 export default function CoursePage({ setActivePage }) {
   const [openWeekend, setOpenWeekend] = useState(1);
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
+  const [practicalSlide, setPracticalSlide] = useState(0);
   const testimonialTrackRef = useRef(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -133,6 +140,13 @@ export default function CoursePage({ setActivePage }) {
     message: '',
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPracticalSlide((current) => (current + 1) % PRACTICAL_IMAGES.length);
+    }, 4200);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleEnrollSubmit = (e) => {
     e.preventDefault();
@@ -290,52 +304,45 @@ export default function CoursePage({ setActivePage }) {
             </p>
           </div>
 
-          {/* Images Card */}
-          <div className="rounded-3xl border border-gray-200 bg-white shadow-lg p-3 sm:p-4">
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 h-auto lg:h-[360px]">
-
-              {/* Left */}
-              <div className="overflow-hidden rounded-2xl">
+          <div className="relative max-w-5xl mx-auto rounded-3xl border border-gray-200 bg-white shadow-lg p-3 sm:p-4">
+            <div className="relative overflow-hidden rounded-2xl bg-[#f4faf9] h-[260px] sm:h-[360px] lg:h-[430px]">
+              {PRACTICAL_IMAGES.map((image, index) => (
                 <img
-                  src="/images/others/ashwini-image.jpeg"
-                  alt=""
-                  className="w-full h-full object-cover"
+                  key={image.src}
+                  src={image.src}
+                  alt={image.alt}
+                  className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${index === practicalSlide ? 'opacity-100' : 'opacity-0'}`}
+                  loading={index === 0 ? 'eager' : 'lazy'}
                 />
-              </div>
-
-              {/* Middle */}
-              <div className="grid grid-rows-2 gap-4">
-
-                <div className="overflow-hidden rounded-2xl">
-                  <img
-                    src="/images/others/3.jpg"
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div className="overflow-hidden rounded-2xl">
-                  <img
-                    src="/images/others/6.jpg"
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-              </div>
-
-              {/* Right */}
-              <div className="overflow-hidden rounded-2xl">
-                <img
-                  src="/images/others/14.jpg"
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
+              ))}
             </div>
-
+            <button
+              type="button"
+              aria-label="Previous practical image"
+              onClick={() => setPracticalSlide((current) => (current - 1 + PRACTICAL_IMAGES.length) % PRACTICAL_IMAGES.length)}
+              className="absolute left-5 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-amber-300 text-[#005550] rounded-full w-10 h-10 shadow-lg border border-white/70 flex items-center justify-center transition-colors"
+            >
+              <ChevronDown className="w-5 h-5 rotate-90" />
+            </button>
+            <button
+              type="button"
+              aria-label="Next practical image"
+              onClick={() => setPracticalSlide((current) => (current + 1) % PRACTICAL_IMAGES.length)}
+              className="absolute right-5 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-amber-300 text-[#005550] rounded-full w-10 h-10 shadow-lg border border-white/70 flex items-center justify-center transition-colors"
+            >
+              <ChevronDown className="w-5 h-5 -rotate-90" />
+            </button>
+            <div className="absolute left-1/2 bottom-6 -translate-x-1/2 flex gap-2">
+              {PRACTICAL_IMAGES.map((image, index) => (
+                <button
+                  key={image.src}
+                  type="button"
+                  aria-label={`Show practical image ${index + 1}`}
+                  onClick={() => setPracticalSlide(index)}
+                  className={`h-2.5 rounded-full transition-all ${index === practicalSlide ? 'w-8 bg-[#005550]' : 'w-2.5 bg-white border border-[#005550]/30'}`}
+                />
+              ))}
+            </div>
           </div>
 
         </div>
