@@ -304,6 +304,8 @@ export default function CoursePage({ setActivePage }) {
       {/* ── COURSE HIGHLIGHTS ── */}
       <section className="py-12 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Heading */}
           <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold text-[#005550] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
               Visual Highlights
@@ -313,26 +315,52 @@ export default function CoursePage({ setActivePage }) {
             </h2>
           </div>
 
-          {/* Box/Grid Container */}
-          <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
-            <div className="p-4 sm:p-6 bg-gradient-to-r from-[#005550] to-[#003d39]">
-              <h3 className="text-white font-poppins font-bold text-lg text-center">Course Highlights Gallery</h3>
+          {/* Box / Card Container */}
+          <div className="bg-white rounded-3xl border border-gray-200 shadow-xl overflow-hidden">
+            {/* Box Header */}
+            <div className="bg-gradient-to-r from-[#005550] to-[#003d39] px-6 py-3.5">
+              <h3 className="text-white font-poppins font-semibold text-sm uppercase tracking-wider text-center">
+                📸 Gallery
+              </h3>
             </div>
-            <div className="p-4 sm:p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div className="h-48 md:h-56 lg:h-64 overflow-hidden rounded-xl">
-                  <img src="/images/others/ashwini-image.jpeg" alt="Ashwini" className="w-full h-full object-cover" />
+
+            {/* Box Body - Grid - Height increased to 440px */}
+            <div className="p-4 md:p-6 bg-[#005550]">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:h-[440px]">
+                {/* Left - Large Image */}
+                <div className="h-48 lg:h-full overflow-hidden rounded-xl shadow-md">
+                  <img
+                    src="/images/others/ashwini-image.jpeg"
+                    alt="Ashwini"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <div className="grid grid-rows-2 gap-4 h-48 md:h-56 lg:h-64">
-                  <div className="overflow-hidden rounded-xl">
-                    <img src="/images/others/3.jpg" alt="Training" className="w-full h-full object-cover" />
+
+                {/* Middle - 2 Stacked Images */}
+                <div className="grid grid-rows-2 gap-3 h-48 lg:h-full">
+                  <div className="overflow-hidden rounded-xl shadow-md">
+                    <img
+                      src="/images/others/3.jpg"
+                      alt="Training"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <div className="overflow-hidden rounded-xl">
-                    <img src="/images/others/6.jpg" alt="Practical" className="w-full h-full object-cover" />
+                  <div className="overflow-hidden rounded-xl shadow-md">
+                    <img
+                      src="/images/others/6.jpg"
+                      alt="Practical"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
-                <div className="h-48 md:h-56 lg:h-64 overflow-hidden rounded-xl">
-                  <img src="/images/others/14.jpg" alt="Therapy" className="w-full h-full object-cover" />
+
+                {/* Right - Large Image */}
+                <div className="h-48 lg:h-full overflow-hidden rounded-xl shadow-md">
+                  <img
+                    src="/images/others/14.jpg"
+                    alt="Therapy"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
             </div>
@@ -346,6 +374,7 @@ export default function CoursePage({ setActivePage }) {
               className="w-full max-w-6xl object-contain rounded-2xl shadow-md border border-gray-200"
             />
           </div>
+
         </div>
       </section>
 
@@ -506,7 +535,7 @@ export default function CoursePage({ setActivePage }) {
               )}
             </div>
 
-            {/* ── Weekend 4 – FIXED ── */}
+            {/* ── Weekend 4 – W4 badge ALWAYS amber ── */}
             <div className="border border-emerald-500/40 rounded-3xl overflow-hidden shadow-md bg-emerald-50/30 transition-all duration-300">
               <button
                 onClick={() => setOpenWeekend(openWeekend === 4 ? null : 4)}
@@ -514,6 +543,7 @@ export default function CoursePage({ setActivePage }) {
                   }`}
               >
                 <div className="flex items-center gap-3">
+                  {/* Badge always amber */}
                   <div className="w-8 h-8 rounded-full bg-amber-400 text-gray-900 flex items-center justify-center text-xs font-extrabold">
                     W4
                   </div>
@@ -539,7 +569,7 @@ export default function CoursePage({ setActivePage }) {
             </div>
           </div>
 
-          {/* ── EXAM & CERTIFICATION – with larger certificate image ── */}
+          {/* ── EXAM & CERTIFICATION – REMOVED redundant box ── */}
           <div className="bg-[#f0f9f8] rounded-3xl p-8 border border-teal-100 flex flex-col md:flex-row items-center gap-6 justify-between">
             <div className="space-y-2 text-center md:text-left">
               <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">ASSESSMENT &amp; CERTIFICATION</span>
@@ -551,11 +581,7 @@ export default function CoursePage({ setActivePage }) {
               </p>
             </div>
             <div className="flex flex-col items-center gap-3 shrink-0">
-              <div className="bg-white p-4 rounded-2xl border border-teal-100 text-center shadow-sm w-full">
-                <Award className="w-12 h-12 text-[#005550] mx-auto mb-2" />
-                <span className="text-xs font-bold text-gray-800 block">Official RBT Certificate</span>
-                <span className="text-[10px] text-gray-500 block">Synergy Medical Yoga</span>
-              </div>
+              {/* Only the certificate image – removed the white box above it */}
               <img
                 src="/images/others/synergy-certificate-image.jpeg"
                 alt="Synergy Certificate Sample"
