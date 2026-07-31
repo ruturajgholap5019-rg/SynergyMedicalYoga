@@ -5,7 +5,7 @@ import { api, getImageUrl } from '../lib/api';
 import ProductCard from '../components/ProductCard';
 import { useSiteSettings } from '../lib/useSiteSettings';
 
-const IMEDIYOG_LOGO  = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/I-Mediyog-Logo_PNG-06.png';
+const IMEDIYOG_LOGO  = '/images/others/I-Mediyog-Logo_PNG-06.webp';
 const PRODUCT_KNEE   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/06/HEaro-Image-300x300.png';
 const PRODUCT_NECK   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Neck-Pain-01-300x300.png';
 const PRODUCT_CORP   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Product-2-300x300.png';
@@ -363,7 +363,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
             {/* Logo column */}
             <div className="lg:col-span-5 flex justify-center">
               <img
-                src={IMEDIYOG_LOGO}
+                src={getImageUrl(IMEDIYOG_LOGO)}
                 alt="iMediYog Healthcare LLP"
                 className="max-w-xs sm:max-w-md w-full object-contain drop-shadow-md hover:scale-105 transition-transform duration-500"
               />

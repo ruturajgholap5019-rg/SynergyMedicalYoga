@@ -623,139 +623,15 @@ export default function ServicesPage({ setActivePage, currentUser }) {
       </section>
 
       {/* ──────────────────────────────────────────────
-          6.5 HOW TO GET STARTED 4-STEP PROCESS SECTION (Exact Match to synergymedicalyoga.com Screenshot)
+          6.5 WHY LEARN RBT WITH SYNERGY BANNER SECTION
           ────────────────────────────────────────────── */}
-      <section className="py-16 sm:py-24 bg-[#EAEBEB] border-t border-b border-gray-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-2 items-center relative">
-
-            {/* STEP 1 */}
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-4 relative pr-0 lg:pr-3 min-h-[320px] justify-between">
-              {/* Graphic: Giant Number 1 + Transparent Cutout Image */}
-              <div className="relative w-full h-44 flex items-center justify-center lg:justify-start">
-                <span className="text-[130px] font-black text-[#005550] leading-none select-none tracking-tighter opacity-95">
-                  1
-                </span>
-                <img
-                  src="https://synergymedicalyoga.com/wp-content/uploads/2025/09/Step-1.png"
-                  alt="Step 1 Book Visit"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/favicon.svg";
-                  }}
-                  className="h-36 object-contain absolute left-10 lg:left-14 bottom-0 drop-shadow-md mix-blend-multiply"
-                />
-              </div>
-              <div className="space-y-1 pt-1">
-                <h3 className="font-poppins text-2xl font-bold text-[#005550]">
-                  Step 1
-                </h3>
-                <p className="text-sm font-medium text-gray-700 leading-relaxed max-w-[240px]">
-                  Book an @home experience visit with nearest therapist or visit nearest center
-                </p>
-              </div>
-              {/* Vertical Divider Line with Starburst Icon */}
-              <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 h-3/4 items-center">
-                <div className="w-[1px] h-full bg-[#005550]/20 relative flex items-center justify-center">
-                  <span className="text-[#005550] text-sm bg-[#EAEBEB] py-1 font-bold">✦</span>
-                </div>
-              </div>
-            </div>
-
-            {/* STEP 2 */}
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-4 relative px-0 lg:px-3 min-h-[320px] justify-between">
-              <div className="space-y-1 pt-1">
-                <h3 className="font-poppins text-2xl font-bold text-[#005550]">
-                  Step 2
-                </h3>
-                <p className="text-sm font-medium text-gray-700 leading-relaxed max-w-[240px]">
-                  Get the thorough assessment done for your pain condition
-                </p>
-              </div>
-              {/* Graphic: Giant Number 2 + Transparent Cutout Image */}
-              <div className="relative w-full h-44 flex items-center justify-center lg:justify-start">
-                <span className="text-[130px] font-black text-[#005550] leading-none select-none tracking-tighter opacity-95">
-                  2
-                </span>
-                <img
-                  src="https://synergymedicalyoga.com/wp-content/uploads/2025/09/Step-2.png"
-                  alt="Step 2 Assessment"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/favicon.svg";
-                  }}
-                  className="h-36 object-contain absolute left-10 lg:left-14 bottom-0 drop-shadow-md mix-blend-multiply"
-                />
-              </div>
-              {/* Vertical Divider Line with Starburst Icon */}
-              <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 h-3/4 items-center">
-                <div className="w-[1px] h-full bg-[#005550]/20 relative flex items-center justify-center">
-                  <span className="text-[#005550] text-sm bg-[#EAEBEB] py-1 font-bold">✦</span>
-                </div>
-              </div>
-            </div>
-
-            {/* STEP 3 */}
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-4 relative px-0 lg:px-3 min-h-[320px] justify-between">
-              {/* Graphic: Transparent Cutout Image + Giant Number 3 */}
-              <div className="relative w-full h-44 flex items-center justify-center lg:justify-start">
-                <img
-                  src="https://synergymedicalyoga.com/wp-content/uploads/2025/09/Step-3.png"
-                  alt="Step 3 Recommendation"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/favicon.svg";
-                  }}
-                  className="h-36 object-contain absolute left-0 top-0 drop-shadow-md mix-blend-multiply"
-                />
-                <span className="text-[130px] font-black text-[#005550] leading-none select-none tracking-tighter opacity-95 absolute right-2 lg:right-6 bottom-0">
-                  3
-                </span>
-              </div>
-              <div className="space-y-1 pt-1">
-                <h3 className="font-poppins text-2xl font-bold text-[#005550]">
-                  Step 3
-                </h3>
-                <p className="text-sm font-medium text-gray-700 leading-relaxed max-w-[240px]">
-                  Get recommendation for therapy plan
-                </p>
-              </div>
-              {/* Vertical Divider Line with Starburst Icon */}
-              <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 h-3/4 items-center">
-                <div className="w-[1px] h-full bg-[#005550]/20 relative flex items-center justify-center">
-                  <span className="text-[#005550] text-sm bg-[#EAEBEB] py-1 font-bold">✦</span>
-                </div>
-              </div>
-            </div>
-
-            {/* STEP 4 */}
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-4 relative pl-0 lg:pl-3 min-h-[320px] justify-between">
-              <div className="space-y-1 pt-1">
-                <h3 className="font-poppins text-2xl font-bold text-[#005550]">
-                  Step 4
-                </h3>
-                <p className="text-sm font-medium text-gray-700 leading-relaxed max-w-[240px]">
-                  Purchase the therapy sessions and get started from the comfort of your home
-                </p>
-              </div>
-              {/* Graphic: Giant Number 4 + Transparent Cutout Image */}
-              <div className="relative w-full h-44 flex items-center justify-center lg:justify-start">
-                <span className="text-[130px] font-black text-[#005550] leading-none select-none tracking-tighter opacity-95">
-                  4
-                </span>
-                <img
-                  src="https://synergymedicalyoga.com/wp-content/uploads/2025/09/Step-4.png"
-                  alt="Step 4 Purchase Sessions"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/favicon.svg";
-                  }}
-                  className="h-36 object-contain absolute left-10 lg:left-14 bottom-0 drop-shadow-md mix-blend-multiply"
-                />
-              </div>
-            </div>
-
-          </div>
+      <section className="py-12 sm:py-16 bg-[#EAEBEB] border-t border-b border-gray-200/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
+          <img
+            src={getImageUrl('/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp')}
+            alt="Why Learn RBT with Synergy Banner"
+            className="w-full h-auto object-contain max-h-[600px] rounded-2xl shadow-md"
+          />
         </div>
       </section>
 

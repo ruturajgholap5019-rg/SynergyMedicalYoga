@@ -3,12 +3,12 @@ import { Target, Eye, Award } from 'lucide-react';
 import { useSiteSettings } from '../lib/useSiteSettings';
 import { getImageUrl } from '../lib/api';
 
-const CEO  = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/MD.jpeg';
-const CMO  = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/Poonam-Deshmukh-with-apron.jpeg';
-const CSCO = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/WhatsApp-Image-2025-07-21-at-11.36.32-AM.jpeg';
-const CTO  = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/Deepali.jpeg';
+const CEO  = '/images/User/MD.jpeg';
+const CMO  = '/images/User/Poonam-Deshmukh-with-apron.jpeg';
+const CSCO = '/images/User/WhatsApp-Image-2025-07-21-at-11.36.32-AM.jpeg';
+const CTO  = '/images/User/Deepali.jpeg';
 
-const IMEDIYOG_LOGO = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/I-Mediyog-Logo_PNG-06.png';
+const IMEDIYOG_LOGO = '/images/others/I-Mediyog-Logo_PNG-06.webp';
 const PLAYSTORE     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/PLaystore-Icon-e1747384325874.webp';
 const APPSTORE      = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Apple-store-e1747384344465.png';
 const PLAY_QR       = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/WhatsApp-Image-2025-06-03-at-8.34.11-PM.jpeg';
@@ -88,7 +88,7 @@ export default function AboutPage() {
           <div className="lg:col-span-6 flex items-center justify-center bg-gradient-to-b from-[#f4f7f8] to-[#eaefef] p-8 sm:p-12 rounded-3xl border border-gray-200 shadow-xs">
             <div className="w-full max-w-md flex justify-center">
               <img
-                src={IMEDIYOG_LOGO}
+                src={getImageUrl(IMEDIYOG_LOGO)}
                 alt="iMediYog Healthcare LLP Logo"
                 className="w-full h-auto object-contain drop-shadow-md hover:scale-105 transition-transform duration-500"
               />
@@ -120,12 +120,12 @@ export default function AboutPage() {
                 <div>
                   <div className="w-28 h-28 mx-auto rounded-2xl overflow-hidden border-4 border-[#005550]/15 shadow-md group-hover:scale-105 transition-transform duration-500 mb-4 bg-gray-100">
                     <img
-                      src={member.img}
+                      src={getImageUrl(member.img)}
                       alt={member.name}
                       className="w-full h-full object-cover object-top"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/doctor_1.png';
+                        e.target.src = '/images/others/ashwini-image.jpeg';
                       }}
                     />
                   </div>

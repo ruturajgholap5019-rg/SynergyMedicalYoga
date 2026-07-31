@@ -15,8 +15,8 @@ import {
 } from 'lucide-react';
 import { getImageUrl } from '../lib/api';
 
-const CEO = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/MD.jpeg';
-const CMO = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/Poonam-Deshmukh-with-apron.jpeg';
+const CEO = '/images/User/MD.jpeg';
+const CMO = '/images/User/Poonam-Deshmukh-with-apron.jpeg';
 
 // All 14 testimonials – exact text from PDF
 const COURSE_TESTIMONIALS = [
