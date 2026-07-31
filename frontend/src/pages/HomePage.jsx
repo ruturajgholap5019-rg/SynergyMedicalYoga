@@ -5,11 +5,11 @@ import { api, getImageUrl } from '../lib/api';
 import ProductCard from '../components/ProductCard';
 import { useSiteSettings } from '../lib/useSiteSettings';
 
-const IMEDIYOG_LOGO  = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/I-Mediyog-Logo_PNG-06.png';
-const PRODUCT_KNEE   = 'https://synergymedicalyoga.com/wp-content/uploads/2026/06/HEaro-Image-300x300.png';
+const IMEDIYOG_LOGO  = 'https://synergymedicalyoga.com/wp-content/uploads/2025/07/I-Mediyog-Logo_PNG-06.png';
+const PRODUCT_KNEE   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/06/HEaro-Image-300x300.png';
 const PRODUCT_NECK   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Neck-Pain-01-300x300.png';
 const PRODUCT_CORP   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Product-2-300x300.png';
-const APP_MOCKUP     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-२-1-scaled.png';
+const APP_MOCKUP     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-%E0%A5%A8-1-scaled.png';
 const PLAYSTORE      = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/PLaystore-Icon-e1747384325874.webp';
 const APPSTORE       = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Apple-store-e1747384344465.png';
 const DOCTOR         = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/doctor_1.png';
@@ -145,7 +145,13 @@ function Counter({ end, suffix = '' }) {
 export default function HomePage({ setActivePage, onAddToCart, onQuickView, onViewDetails, onBuyNow }) {
   const { settings } = useSiteSettings();
   const [slide, setSlide] = useState(0);
-  const heroSlides = DEFAULT_HERO_SLIDES;
+  const [heroSlides, setHeroSlides] = useState(() => {
+    try {
+      const cached = localStorage.getItem('synergy_cached_home_carousels');
+      if (cached) return JSON.parse(cached);
+    } catch (e) {}
+    return DEFAULT_HERO_SLIDES;
+  });
   const [featuredProducts, setFeaturedProducts] = useState(() => {
     try {
       const cached = localStorage.getItem('synergy_cached_home_products');
@@ -163,14 +169,40 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (api.getPublicCarousels) {
+          const cRes = await api.getPublicCarousels();
+          if (cRes?.data && Array.isArray(cRes.data) && cRes.data.length > 0) {
+            const homeSlides = cRes.data.filter((c) => {
+              const raw = c.imageUrl || c.src || c.url || c.image;
+              return raw && typeof raw === 'string' && raw.trim().length > 0 && (!c.page || c.page === 'home' || c.page === 'all');
+            });
+            if (homeSlides.length > 0) {
+              const mapped = homeSlides.map((c, idx) => {
+                const fallback = DEFAULT_HERO_SLIDES[idx % DEFAULT_HERO_SLIDES.length].src;
+                const rawSrc = c.imageUrl || c.src || c.url || c.image;
+                return {
+                  src: rawSrc ? getImageUrl(rawSrc) : fallback,
+                  fallback,
+                  alt: c.title || c.alt || 'Synergy Medical Yoga Banner',
+                  heading: c.heading || c.title || '',
+                  subtitle: c.subtitle || c.description || '',
+                  buttonText: c.buttonText || 'Explore Shop',
+                  buttonLink: c.buttonLink || '/shop',
+                };
+              });
+              setHeroSlides(mapped);
+              try { localStorage.setItem('synergy_cached_home_carousels', JSON.stringify(mapped)); } catch (e) {}
+            }
+          }
+        }
+      } catch (err) {}
+      try {
         const pRes = await api.getProducts();
         if (pRes.data && pRes.data.length > 0) {
           setFeaturedProducts(pRes.data.slice(0, 4));
           try { localStorage.setItem('synergy_cached_home_products', JSON.stringify(pRes.data.slice(0, 4))); } catch (e) {}
         }
-      } catch (err) {
-        // Fallback silently
-      }
+      } catch (err) {}
       try {
         if (api.getBlogs) {
           const bRes = await api.getBlogs();
@@ -218,21 +250,34 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         <section
           onMouseEnter={() => setIsCarouselPaused(true)}
           onMouseLeave={() => setIsCarouselPaused(false)}
-          className="relative w-full overflow-hidden bg-white aspect-[16/9] max-h-[780px] flex items-center group shadow-2xl"
+          className="relative w-full overflow-hidden bg-[#f8fbfb] h-[220px] xs:h-[280px] sm:h-[420px] md:h-[540px] lg:h-[650px] flex items-center group shadow-xl"
         >
           {heroSlides.map((s, i) => (
             <div
               key={i}
-              className={`absolute inset-0 transition-opacity duration-1000 ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}
             >
               <img
                 src={getImageUrl(s.src)}
-                alt={s.alt}
+                alt={s.alt || 'Synergy Medical Yoga Banner'}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
                 onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = s.fallback || '/favicon.svg';
+                  const localFallback = DEFAULT_HERO_SLIDES[i % DEFAULT_HERO_SLIDES.length]?.src || '/images/carousel/home/Website-Banner-4.webp';
+                  if (e.target.src !== localFallback && !e.target.src.endsWith(localFallback)) {
+                    e.target.src = localFallback;
+                  } else {
+                    e.target.onerror = null;
+                    e.target.src = '/images/carousel/home/Website-Banner-4.webp';
+                  }
                 }}
-                className="w-full h-full object-contain"
+                onClick={() => {
+                  if (s.buttonLink) {
+                    const target = s.buttonLink.replace(/^\//, '') || 'home';
+                    setActivePage(target);
+                  }
+                }}
+                className="w-full h-full object-contain bg-[#f8fbfb] cursor-pointer"
               />
               {/* Optional Slide Heading Overlay (only shown if title/subtitle exists) */}
               {(s.heading || s.subtitle) && (
@@ -258,26 +303,26 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           {/* Carousel Arrow Controls */}
           <button
             onClick={() => setSlide((slide - 1 + heroSlides.length) % heroSlides.length)}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 bg-black/40 hover:bg-[#005550] text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer shadow-lg active:scale-95"
             aria-label="Previous Slide"
           >
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
           <button
             onClick={() => setSlide((slide + 1) % heroSlides.length)}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 bg-black/40 hover:bg-[#005550] text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all cursor-pointer shadow-lg active:scale-95"
             aria-label="Next Slide"
           >
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
 
-          {/* Dots */}
-          <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+          {/* Dots Indicator */}
+          <div className="absolute bottom-2.5 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 flex gap-1.5 sm:gap-2 bg-black/20 backdrop-blur-xs px-3 py-1.5 rounded-full border border-white/10">
             {heroSlides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setSlide(i)}
-                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all cursor-pointer ${i === slide ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}`}
+                className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all cursor-pointer ${i === slide ? 'bg-white scale-125 shadow-md' : 'bg-white/50 hover:bg-white/80'}`}
                 aria-label={`Go to slide ${i + 1}`}
               />
             ))}

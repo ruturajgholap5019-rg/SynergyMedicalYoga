@@ -95,12 +95,30 @@ exports.updateUser = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteUser = catchAsync(async (req, res, next) => {
-  const user = await User.findByIdAndDelete(req.params.id);
+  const user = await User.findById(req.params.id);
   if (!user) return next(new AppError('User not found.', 404));
+
+  // Block deletion of protected or admin accounts
+  if (user.isProtected) {
+    return next(new AppError('This account is protected and cannot be deleted.', 403));
+  }
+  if (user.role === 'admin') {
+    return next(new AppError('Admin accounts cannot be deleted.', 403));
+  }
+
+  // Soft-delete: mark as deleted, clear sensitive tokens but keep the email record
+  // so the user CANNOT sign up again with the same email
+  user.isDeleted = true;
+  user.refreshToken = undefined;
+  await user.save({ validateBeforeSave: false });
+
+  // Also revoke all refresh tokens for this user
+  const RefreshToken = require('../models/RefreshToken');
+  await RefreshToken.updateMany({ user: user._id }, { revoked: true });
 
   res.status(200).json({
     status: 'success',
-    message: 'User deleted successfully',
+    message: 'User account permanently deleted.',
   });
 });
 

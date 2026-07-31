@@ -30,8 +30,11 @@ function subscribeTokenRefresh(cb) {
 }
 
 function onRefreshed() {
-  refreshSubscribers.map((cb) => cb());
+  const subs = [...refreshSubscribers];
   refreshSubscribers = [];
+  subs.forEach((cb) => {
+    try { cb(); } catch (e) {}
+  });
 }
 
 async function request(path, options = {}, isRetry = false) {
@@ -49,53 +52,69 @@ async function request(path, options = {}, isRetry = false) {
     ...(options.headers || {}),
   };
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    credentials: 'include',
-    ...options,
-    headers,
-  });
-  if (response.status === 401 && !isRetry && !path.includes('/auth/login') && !path.includes('/auth/refresh')) {
-    if (!isRefreshing) {
-      isRefreshing = true;
-      try {
-        const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
-          method: 'POST',
-          credentials: 'include',
-        });
-        isRefreshing = false;
-        if (refreshRes.ok) {
-          const refreshData = await refreshRes.json();
-          if (refreshData?.token) {
-            localStorage.setItem(ACCESS_TOKEN_KEY, refreshData.token);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), options.timeout || 7000);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      credentials: 'include',
+      signal: controller.signal,
+      ...options,
+      headers,
+    });
+    clearTimeout(timeoutId);
+
+    if (response.status === 401 && !isRetry && !path.includes('/auth/login') && !path.includes('/auth/refresh')) {
+      if (!isRefreshing) {
+        isRefreshing = true;
+        try {
+          const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
+            method: 'POST',
+            credentials: 'include',
+          });
+          if (refreshRes.ok) {
+            const refreshData = await refreshRes.json();
+            if (refreshData?.token) {
+              localStorage.setItem(ACCESS_TOKEN_KEY, refreshData.token);
+            }
+            clearClientLogoutMarker();
+            onRefreshed();
+            return request(path, options, true);
           }
-          clearClientLogoutMarker();
+        } catch (err) {
+          // Ignore refresh errors
+        } finally {
+          isRefreshing = false;
           onRefreshed();
-          return request(path, options, true);
         }
-      } catch (err) {
-        isRefreshing = false;
-      }
-    } else {
-      return new Promise((resolve) => {
-        subscribeTokenRefresh(() => {
-          resolve(request(path, options, true));
+      } else {
+        return new Promise((resolve) => {
+          subscribeTokenRefresh(() => {
+            resolve(request(path, options, true));
+          });
         });
-      });
+      }
     }
-  }
 
-  const contentType = response.headers.get('content-type') || '';
-  const isJson = contentType.includes('application/json');
-  const data = isJson ? await response.json() : await response.text();
+    const contentType = response.headers.get('content-type') || '';
+    const isJson = contentType.includes('application/json');
+    const data = isJson ? await response.json() : await response.text();
 
-  if (!response.ok) {
-    if (response.status === 401 && !path.includes('/auth/login')) {
-      markClientLoggedOut();
+    if (!response.ok) {
+      if (response.status === 401 && !path.includes('/auth/login')) {
+        markClientLoggedOut();
+      }
+      throw new Error(data?.message || 'Request failed');
     }
-    throw new Error(data?.message || 'Request failed');
-  }
 
-  return data;
+    return data;
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      throw new Error('Server response timed out');
+    }
+    throw err;
+  }
 }
 
 export function getImageUrl(path) {
@@ -105,16 +124,30 @@ export function getImageUrl(path) {
     if (!path) return FALLBACK_IMAGE;
   }
   path = String(path).trim();
-  if (path === 'undefined' || path === 'null' || path === '') {
+  if (path === 'undefined' || path === 'null' || path === '' || path === '[object Object]') {
     return FALLBACK_IMAGE;
   }
   let fullUrl = path;
   if (!path.startsWith('http://') && !path.startsWith('https://') && !path.startsWith('data:')) {
-    const configuredApiUrl = import.meta.env.VITE_API_URL || '';
-    const backendHost = configuredApiUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
-    fullUrl = backendHost
-      ? `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`
-      : `${path.startsWith('/') ? '' : '/'}${path}`;
+    const isFrontendStatic =
+      path.startsWith('/images/') ||
+      path.startsWith('images/') ||
+      path.startsWith('/favicon') ||
+      path.startsWith('favicon') ||
+      path.startsWith('/assets/') ||
+      path.startsWith('assets/') ||
+      path.startsWith('/icons') ||
+      path.startsWith('icons');
+
+    if (isFrontendStatic) {
+      fullUrl = path.startsWith('/') ? path : `/${path}`;
+    } else {
+      const configuredApiUrl = import.meta.env.VITE_API_URL || '';
+      const backendHost = configuredApiUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
+      fullUrl = backendHost
+        ? `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`
+        : `${path.startsWith('/') ? '' : '/'}${path}`;
+    }
   }
   // Automatically upgrade unencrypted links on secure pages to prevent mixed-content blocking.
   if (fullUrl.startsWith('http://') && typeof window !== 'undefined' && window.location.protocol === 'https:') {

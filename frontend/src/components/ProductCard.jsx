@@ -43,6 +43,8 @@ export default function ProductCard({ product, onAddToCart, onQuickView, onViewD
           <img
             src={getImageUrl(product.images?.[0] || product.image) || '/favicon.svg'}
             alt={product.name}
+            loading="lazy"
+            decoding="async"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = '/favicon.svg';

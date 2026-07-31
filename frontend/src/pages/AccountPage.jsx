@@ -4,7 +4,7 @@ import { api } from '../lib/api';
 import { toast } from 'react-toastify';
 
 export default function AccountPage({ setActivePage, currentUser, onAuthSuccess, onLogout }) {
-  const [activeTab, setActiveTab] = useState('login'); // for logged-out view: 'login' | 'signup'
+  const [activeTab, setActiveTab] = useState('login'); // 'login' | 'signup' | 'otp'
   const [userTab, setUserTab] = useState('dashboard'); // 'dashboard' | 'orders' | 'appointments' | 'downloads' | 'addresses' | 'details' | 'delete'
   const [loading, setLoading] = useState(false);
   const [myOrders, setMyOrders] = useState([]);
@@ -17,6 +17,9 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPhone, setSignUpPhone] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
+  // OTP state
+  const [otpCode, setOtpCode] = useState('');
+  const [otpResendCountdown, setOtpResendCountdown] = useState(0);
 
   // Address tab states
   const [shippingAddress, setShippingAddress] = useState({
@@ -88,24 +91,61 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     }
   };
 
-  const handleSignUp = async (e) => {
+  // Step 1: Send OTP to email
+  const handleSendOtp = async (e) => {
     e.preventDefault();
+    if (!signUpName.trim() || !signUpEmail.trim() || !signUpPassword) {
+      toast.error('Please fill in all required fields.');
+      return;
+    }
     setLoading(true);
     try {
-      const response = await api.register({
+      await api.sendOtp({
         name: signUpName.trim(),
         email: signUpEmail.trim().toLowerCase(),
         phone: signUpPhone.trim(),
         password: signUpPassword,
       });
-      toast.success('Account created successfully!');
-      onAuthSuccess?.(response.user);
+      toast.success(`Verification code sent to ${signUpEmail}!`);
+      setOtpCode('');
+      setActiveTab('otp');
+      // Start 60-second resend countdown
+      setOtpResendCountdown(60);
     } catch (error) {
-      toast.error(error.message || 'Sign up failed');
+      toast.error(error.message || 'Failed to send OTP.');
     } finally {
       setLoading(false);
     }
   };
+
+  // Step 2: Verify OTP and complete registration
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    if (otpCode.length !== 4) {
+      toast.error('Please enter the 4-digit code.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await api.verifyOtp({
+        email: signUpEmail.trim().toLowerCase(),
+        otp: otpCode,
+      });
+      toast.success('Account created successfully! Welcome to Synergy Medical Yoga!');
+      onAuthSuccess?.(response.user);
+    } catch (error) {
+      toast.error(error.message || 'Invalid or expired code.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Resend countdown effect
+  React.useEffect(() => {
+    if (otpResendCountdown <= 0) return;
+    const timer = setTimeout(() => setOtpResendCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [otpResendCountdown]);
 
   const handleLogoutClick = async () => {
     try {
@@ -684,9 +724,73 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                     {loading ? 'Please wait...' : 'Log In'}
                   </button>
                 </form>
+              ) : activeTab === 'otp' ? (
+                /* OTP VERIFICATION SCREEN */
+                <div className="space-y-6">
+                  <div className="text-center space-y-2">
+                    <div className="w-16 h-16 mx-auto rounded-2xl bg-teal-50 flex items-center justify-center">
+                      <Mail className="w-8 h-8 text-[#005550]" />
+                    </div>
+                    <h3 className="font-bold text-slate-900 text-lg">Check your email</h3>
+                    <p className="text-sm text-slate-500">
+                      We sent a 4-digit code to <strong className="text-slate-800">{signUpEmail}</strong>.
+                      Enter it below to verify your account.
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleVerifyOtp} className="space-y-5">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-2 text-center">Verification Code</label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]{4}"
+                        maxLength={4}
+                        required
+                        autoFocus
+                        placeholder="0000"
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                        className="w-full text-center text-4xl font-black tracking-[16px] py-5 bg-[#f8fbfb] border-2 border-slate-200 rounded-2xl text-[#005550] focus:outline-none focus:border-[#005550] transition-all"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={loading || otpCode.length !== 4}
+                      className="w-full bg-[#005550] hover:bg-[#003d39] text-white font-extrabold py-3.5 rounded-xl shadow-md transition-all text-sm disabled:opacity-60 cursor-pointer"
+                    >
+                      {loading ? 'Verifying...' : 'Verify & Create Account'}
+                    </button>
+
+                    <div className="text-center space-y-2">
+                      {otpResendCountdown > 0 ? (
+                        <p className="text-xs text-slate-400">
+                          Resend code in <strong className="text-slate-600">{otpResendCountdown}s</strong>
+                        </p>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleSendOtp}
+                          disabled={loading}
+                          className="text-xs text-[#005550] font-bold underline cursor-pointer disabled:opacity-50"
+                        >
+                          Resend verification code
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('signup')}
+                        className="block w-full text-xs text-slate-400 hover:text-slate-600 cursor-pointer mt-1"
+                      >
+                        ← Change email address
+                      </button>
+                    </div>
+                  </form>
+                </div>
               ) : (
                 /* SIGN UP FORM */
-                <form onSubmit={handleSignUp} className="space-y-4">
+                <form onSubmit={handleSendOtp} className="space-y-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">Full Name *</label>
                     <div className="relative">
@@ -753,7 +857,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                     disabled={loading}
                     className="w-full bg-[#005550] hover:bg-[#003d39] text-white font-extrabold py-3.5 rounded-xl shadow-md transition-all text-sm mt-2 disabled:opacity-70 cursor-pointer"
                   >
-                    {loading ? 'Creating Account...' : 'Create Synergy Account'}
+                    {loading ? 'Sending Code...' : 'Continue — Get Verification Code'}
                   </button>
                 </form>
               )}

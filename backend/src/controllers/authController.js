@@ -33,7 +33,8 @@ exports.register = catchAsync(async (req, res, next) => {
   const password = req.body.password;
 
   const existing = await User.findOne({ email });
-  if (existing) return next(new AppError('Email already registered.', 400));
+  if (existing && !existing.isDeleted) return next(new AppError('Email already registered.', 400));
+  if (existing && existing.isDeleted) return next(new AppError('This account has been permanently deleted. Please contact support.', 403));
 
   const user = await User.create({ name, email, phone, password, role: 'customer' });
   const tokenVersion = user.tokenVersion || 0;
@@ -58,6 +59,10 @@ exports.login = catchAsync(async (req, res, next) => {
 
   if (!user || !(await user.matchPassword(password))) {
     return next(new AppError('Invalid email or password.', 401));
+  }
+
+  if (user.isDeleted) {
+    return next(new AppError('This account has been permanently deleted. Please contact support.', 403));
   }
 
   const tokenVersion = user.tokenVersion || 0;
