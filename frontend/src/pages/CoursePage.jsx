@@ -1,32 +1,24 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   BookOpen,
-  Calendar,
-  Clock,
   Award,
   CheckCircle2,
   PhoneCall,
-  Mail,
   UserCheck,
-  GraduationCap,
   Sparkles,
-  ChevronDown,
-  ChevronUp,
   Star,
   Send,
   X,
   ArrowRight,
-  Users,
-  Layers,
-  TrendingUp,
-  Briefcase,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { getImageUrl } from '../lib/api';
 
 const CEO = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/MD.jpeg';
 const CMO = 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/Poonam-Deshmukh-with-apron.jpeg';
 
-// All 14 testimonials from pages 6 & 7 of the PDF – exact text
+// All 14 testimonials – exact text from PDF
 const COURSE_TESTIMONIALS = [
   {
     name: 'Dr. Ashwini Tapshalkar',
@@ -246,61 +238,61 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ── WHY LEARN RBT (4 PILLARS) – exact text from PDF page 2 ── */}
-      <section className="py-20 bg-gradient-to-b from-[#f4faf9] to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center space-y-3 max-w-3xl mx-auto">
+      {/* ── WHY LEARN RBT (4 PILLARS) – REDUCED HEIGHT ── */}
+      <section className="py-12 bg-gradient-to-b from-[#f4faf9] to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center space-y-2 max-w-3xl mx-auto">
             <span className="text-xs font-bold text-[#005550] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
               Transformative Healthcare Skills
             </span>
             <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
               Why Learn Rope &amp; Belt Therapy?
             </h2>
-            <p className="text-sm sm:text-base text-gray-600">
-              Equip yourself with clinically proven non-invasive techniques designed by doctors to treat knee, back, neck, and shoulder pain effectively.
+            <p className="text-sm text-gray-600">
+              Equip yourself with clinically proven non-invasive techniques designed by doctors.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white rounded-3xl p-6 border border-gray-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors duration-300">
-                  <UserCheck className="w-6 h-6" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm hover:shadow-lg transition-all group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors">
+                  <UserCheck className="w-5 h-5" />
                 </div>
-                <h3 className="font-poppins font-bold text-[#005550] text-lg">Help Yourself, Family &amp; Society</h3>
-                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                <h3 className="font-poppins font-bold text-[#005550] text-base">Help Yourself, Family &amp; Society</h3>
+                <p className="text-xs text-gray-600 leading-relaxed">
                   Learn RBT to help society reduce their dependence on surgery for treating knee pain, back pain, neck pain and shoulder pain. This therapy is designed by doctors. It is a unique blend of modern anatomy concepts and yogic wisdom. Easy to learn, easy to set up even at home.
                 </p>
               </div>
             </div>
-            <div className="bg-white rounded-3xl p-6 border border-gray-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors duration-300">
-                  <BookOpen className="w-6 h-6" />
+            <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm hover:shadow-lg transition-all group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors">
+                  <BookOpen className="w-5 h-5" />
                 </div>
-                <h3 className="font-poppins font-bold text-[#005550] text-lg">Applied Yoga</h3>
-                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                <h3 className="font-poppins font-bold text-[#005550] text-base">Applied Yoga</h3>
+                <p className="text-xs text-gray-600 leading-relaxed">
                   Learn application of yoga to treat musculoskeletal diseases (Knee Pain, Back Pain, Neck Pain, Shoulder Pain). There are 5 Lakh surgeries happening in India every year for knee and back. Help people avoid surgeries using rope &amp; belt therapy adoption.
                 </p>
               </div>
             </div>
-            <div className="bg-white rounded-3xl p-6 border border-gray-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors duration-300">
-                  <Award className="w-6 h-6" />
+            <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm hover:shadow-lg transition-all group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors">
+                  <Award className="w-5 h-5" />
                 </div>
-                <h3 className="font-poppins font-bold text-[#005550] text-lg">Special Skill</h3>
-                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                <h3 className="font-poppins font-bold text-[#005550] text-base">Special Skill</h3>
+                <p className="text-xs text-gray-600 leading-relaxed">
                   Rope &amp; Belt therapy gets into details of anatomy of joints as well as pathology of pain condition so that you understand why a particular pain starts. This also helps you in your regular fitness yoga batches to handle patients with special conditions.
                 </p>
               </div>
             </div>
-            <div className="bg-white rounded-3xl p-6 border border-gray-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors duration-300">
-                  <Sparkles className="w-6 h-6" />
+            <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm hover:shadow-lg transition-all group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors">
+                  <Sparkles className="w-5 h-5" />
                 </div>
-                <h3 className="font-poppins font-bold text-[#005550] text-lg">Earn More</h3>
-                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                <h3 className="font-poppins font-bold text-[#005550] text-base">Earn More</h3>
+                <p className="text-xs text-gray-600 leading-relaxed">
                   Earning potential of medical yoga techniques like Rope &amp; Belt therapy is very high compared to regular yoga classes. It helps you build a sustainable career in the field of yoga.
                 </p>
               </div>
@@ -309,59 +301,86 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ── COURSE HIGHLIGHTS – exact 4 bullets from PDF page 3 ── */}
-      <section className="py-16 bg-white border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center space-y-3 max-w-3xl mx-auto">
-            <span className="text-xs font-bold text-[#005550] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
-              What You Get
-            </span>
-            <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
+      {/* ───────────── COURSE HIGHLIGHTS ───────────── */}
+      <section className="py-14 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Heading */}
+          <div className="text-center mb-10">
+            <span className="inline-flex items-center rounded-full border border-teal-100 bg-teal-50 px-4 py-1 text-xs font-bold uppercase tracking-widest text-[#005550]">
               Course Highlights
+            </span>
+
+            <h2 className="mt-4 font-sansita text-3xl md:text-4xl font-bold text-[#005550]">
+              Practical Learning Experience
             </h2>
+
+            <p className="mt-3 max-w-3xl mx-auto text-gray-600">
+              Learn through live demonstrations, expert guidance and hands-on
+              Rope & Belt Therapy training.
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-[#f4faf9] p-6 rounded-3xl border border-teal-100 text-center hover:shadow-lg transition-all">
-              <div className="w-14 h-14 bg-[#005550] text-white rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Users className="w-7 h-7" />
+
+          {/* Images Card */}
+          <div className="rounded-3xl border border-gray-200 bg-white shadow-lg p-5">
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-auto lg:h-[500px]">
+
+              {/* Left */}
+              <div className="overflow-hidden rounded-2xl">
+                <img
+                  src="/images/others/ashwini-image.jpeg"
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <h3 className="font-poppins font-bold text-[#005550] text-lg">Learn it from Experts</h3>
-              <p className="text-xs text-gray-600 mt-2 leading-relaxed">
-                of 45 Hours of Intensive Training in hybrid online and offline mode offering flexibility.
-              </p>
-            </div>
-            <div className="bg-[#f4faf9] p-6 rounded-3xl border border-teal-100 text-center hover:shadow-lg transition-all">
-              <div className="w-14 h-14 bg-[#005550] text-white rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Layers className="w-7 h-7" />
+
+              {/* Middle */}
+              <div className="grid grid-rows-2 gap-4">
+
+                <div className="overflow-hidden rounded-2xl">
+                  <img
+                    src="/images/others/3.jpg"
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <div className="overflow-hidden rounded-2xl">
+                  <img
+                    src="/images/others/6.jpg"
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
               </div>
-              <h3 className="font-poppins font-bold text-[#005550] text-lg">Structured &amp; Focused Curriculum</h3>
-              <p className="text-xs text-gray-600 mt-2 leading-relaxed">
-                Comprehensive Theory &amp; Practical Curriculum, Course Books &amp; Personalized Tying Protocol Video Access
-              </p>
-            </div>
-            <div className="bg-[#f4faf9] p-6 rounded-3xl border border-teal-100 text-center hover:shadow-lg transition-all">
-              <div className="w-14 h-14 bg-[#005550] text-white rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Briefcase className="w-7 h-7" />
+
+              {/* Right */}
+              <div className="overflow-hidden rounded-2xl">
+                <img
+                  src="/images/others/14.jpg"
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <h3 className="font-poppins font-bold text-[#005550] text-lg">Build Your Career</h3>
-              <p className="text-xs text-gray-600 mt-2 leading-relaxed">
-                Become the part of Synergy App to get enquiries from patients directly in your inbox
-              </p>
+
             </div>
-            <div className="bg-[#f4faf9] p-6 rounded-3xl border border-teal-100 text-center hover:shadow-lg transition-all">
-              <div className="w-14 h-14 bg-[#005550] text-white rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-7 h-7" />
-              </div>
-              <h3 className="font-poppins font-bold text-[#005550] text-lg">Monetize Your Skill</h3>
-              <p className="text-xs text-gray-600 mt-2 leading-relaxed">
-                Opportunity to become Synergy Medical Yoga Products Reseller
-              </p>
-            </div>
+
           </div>
+
+          {/* Banner */}
+          <div className="mt-10">
+            <img
+              src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
+              alt=""
+              className="w-full rounded-3xl border border-gray-200 shadow-md"
+            />
+          </div>
+
         </div>
       </section>
-
-      {/* ── COURSE DETAILS – exact data from page 4 ── */}
+      {/* ── COURSE DETAILS ── */}
       <section className="py-16 bg-[#eaf6f6]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-3xl p-8 sm:p-12 border border-teal-100 shadow-xl space-y-8">
@@ -412,26 +431,26 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ── CURRICULUM – exact weekend content from page 5 ── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center space-y-3">
+      {/* ── CURRICULUM – collapsible (only one open) ── */}
+      <section className="py-16 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div className="text-center space-y-2">
             <span className="text-xs font-bold text-[#005550] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
               45-Hour Structured Syllabus
             </span>
             <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">Course Curriculum</h2>
             <p className="text-sm text-gray-600 max-w-2xl mx-auto">
-              Progressive 4-weekend module transitioning from fundamental joint biomechanics to advanced hands-on clinical rope &amp; belt tying protocols.
+              Click on each weekend to expand and see the detailed syllabus.
             </p>
           </div>
+
           <div className="space-y-6">
             {/* Weekend 1 */}
-            <div className="border border-gray-200 rounded-3xl overflow-hidden shadow-xs transition-all duration-300">
+            <div className="border border-gray-200 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
               <button
                 onClick={() => setOpenWeekend(openWeekend === 1 ? null : 1)}
-                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${
-                  openWeekend === 1 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
-                }`}
+                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${openWeekend === 1 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold ${openWeekend === 1 ? 'bg-amber-400 text-gray-900' : 'bg-[#005550] text-white'}`}>
@@ -456,13 +475,13 @@ export default function CoursePage({ setActivePage }) {
                 </div>
               )}
             </div>
+
             {/* Weekend 2 */}
-            <div className="border border-gray-200 rounded-3xl overflow-hidden shadow-xs transition-all duration-300">
+            <div className="border border-gray-200 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
               <button
                 onClick={() => setOpenWeekend(openWeekend === 2 ? null : 2)}
-                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${
-                  openWeekend === 2 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
-                }`}
+                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${openWeekend === 2 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold ${openWeekend === 2 ? 'bg-amber-400 text-gray-900' : 'bg-[#005550] text-white'}`}>
@@ -487,13 +506,13 @@ export default function CoursePage({ setActivePage }) {
                 </div>
               )}
             </div>
+
             {/* Weekend 3 */}
-            <div className="border border-gray-200 rounded-3xl overflow-hidden shadow-xs transition-all duration-300">
+            <div className="border border-gray-200 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
               <button
                 onClick={() => setOpenWeekend(openWeekend === 3 ? null : 3)}
-                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${
-                  openWeekend === 3 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
-                }`}
+                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${openWeekend === 3 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold ${openWeekend === 3 ? 'bg-amber-400 text-gray-900' : 'bg-[#005550] text-white'}`}>
@@ -517,24 +536,27 @@ export default function CoursePage({ setActivePage }) {
                 </div>
               )}
             </div>
-            {/* Weekend 4 – Offline */}
+
+            {/* ── Weekend 4 – W4 badge ALWAYS amber ── */}
             <div className="border border-emerald-500/40 rounded-3xl overflow-hidden shadow-md bg-emerald-50/30 transition-all duration-300">
               <button
                 onClick={() => setOpenWeekend(openWeekend === 4 ? null : 4)}
-                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${
-                  openWeekend === 4 ? 'bg-[#005550] text-white shadow-md' : 'bg-emerald-900 text-white hover:bg-emerald-800'
-                }`}
+                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${openWeekend === 4 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
+                  }`}
               >
                 <div className="flex items-center gap-3">
+                  {/* Badge always amber */}
                   <div className="w-8 h-8 rounded-full bg-amber-400 text-gray-900 flex items-center justify-center text-xs font-extrabold">
                     W4
                   </div>
                   <div>
                     <span>Weekend 4 – Offline (Fri, Sat, Sun)</span>
-                    <p className="text-xs font-normal text-amber-200">Fri: Full Day (9 Hours) Sat: Full Day (9 Hours) Sun: Full Day (9 Hours)</p>
+                    <p className={`text-xs font-normal ${openWeekend === 4 ? 'text-teal-100' : 'text-gray-500'}`}>
+                      Fri: Full Day (9 Hours) Sat: Full Day (9 Hours) Sun: Full Day (9 Hours)
+                    </p>
                   </div>
                 </div>
-                {openWeekend === 4 ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5 text-white/80" />}
+                {openWeekend === 4 ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
               </button>
               {openWeekend === 4 && (
                 <div className="p-6 bg-white space-y-3 border-t border-gray-100 text-sm text-gray-700">
@@ -548,7 +570,8 @@ export default function CoursePage({ setActivePage }) {
               )}
             </div>
           </div>
-          {/* Exam & Certificate – exact from PDF */}
+
+          {/* ── EXAM & CERTIFICATION – REMOVED redundant box ── */}
           <div className="bg-[#f0f9f8] rounded-3xl p-8 border border-teal-100 flex flex-col md:flex-row items-center gap-6 justify-between">
             <div className="space-y-2 text-center md:text-left">
               <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">ASSESSMENT &amp; CERTIFICATION</span>
@@ -556,20 +579,23 @@ export default function CoursePage({ setActivePage }) {
               <p className="text-xs sm:text-sm text-gray-600 max-w-xl">
                 <strong>Theory Exam :</strong> Online during the course<br />
                 <strong>Practical :</strong> After 1 month from completion<br />
-                <em>Certificate will be issued only after qualifying in the practical exam . Being certified is a pre- requisite for registration Synergy app</em>
+                <em>Certificate will be issued only after qualifying in the practical exam. Being certified is a pre-requisite for registration on the Synergy app.</em>
               </p>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-teal-100 text-center shadow-sm shrink-0">
-              <Award className="w-12 h-12 text-[#005550] mx-auto mb-2" />
-              <span className="text-xs font-bold text-gray-800 block">Official RBT Certificate</span>
-              <span className="text-[10px] text-gray-500 block">Synergy Medical Yoga</span>
+            <div className="flex flex-col items-center gap-3 shrink-0">
+              {/* Only the certificate image – removed the white box above it */}
+              <img
+                src="/images/others/synergy-certificate-image.jpeg"
+                alt="Synergy Certificate Sample"
+                className="w-72 max-h-48 object-contain rounded-xl border border-teal-200 shadow-sm"
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── FACULTY – exact bios from page 4 ── */}
-      <section className="py-20 bg-[#f4f7f8]">
+      {/* ── FACULTY ── */}
+      <section className="py-16 bg-[#f4f7f8]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center space-y-2">
             <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">LEARN FROM CLINICAL EXPERTS</span>
@@ -611,34 +637,36 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS – all 14 from pages 6 & 7 ── */}
-      <section className="py-20 bg-[#005550] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center space-y-2">
+      {/* ── TESTIMONIALS – horizontally scrollable ── */}
+      <section className="py-12 bg-[#005550] text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          <div className="text-center space-y-1">
             <span className="text-xs font-bold text-teal-200 uppercase tracking-wider">STUDENT FEEDBACK &amp; REVIEWS</span>
             <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-white">What Our RBT Alumni Say</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {COURSE_TESTIMONIALS.map((t, idx) => (
-              <div key={idx} className="bg-white text-gray-800 rounded-3xl p-6 shadow-lg flex flex-col justify-between text-left space-y-4">
-                <div className="space-y-3">
-                  <div className="flex gap-1 text-amber-400">
-                    {[...Array(t.stars)].map((_, i) => <Star key={i} className="w-4 h-4 fill-amber-400" />)}
+          <div className="overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-teal-200 scrollbar-track-transparent">
+            <div className="flex gap-4 w-max">
+              {COURSE_TESTIMONIALS.map((t, idx) => (
+                <div key={idx} className="bg-white text-gray-800 rounded-2xl p-4 shadow-lg flex flex-col justify-between min-w-[240px] max-w-[280px] space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex gap-1 text-amber-400">
+                      {[...Array(t.stars)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />)}
+                    </div>
+                    <p className="text-xs text-gray-600 leading-relaxed italic">"{t.comment}"</p>
                   </div>
-                  <p className="text-xs text-gray-600 leading-relaxed italic">"{t.comment}"</p>
+                  <div className="pt-2 border-t border-gray-100">
+                    <h4 className="font-poppins font-bold text-sm text-[#005550]">{t.name}</h4>
+                    {t.role && <p className="text-[10px] text-gray-500 mt-0.5">{t.role}</p>}
+                  </div>
                 </div>
-                <div className="pt-3 border-t border-gray-100">
-                  <h4 className="font-poppins font-bold text-sm text-[#005550]">{t.name}</h4>
-                  {t.role && <p className="text-[11px] text-gray-500 mt-0.5">{t.role}</p>}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ── BOTTOM CTA ── */}
-      <section className="py-16 bg-gradient-to-br from-[#ebf7f7] to-[#d6f0f0]">
+      <section className="py-12 bg-gradient-to-br from-[#ebf7f7] to-[#d6f0f0]">
         <div className="max-w-4xl mx-auto px-4 text-center space-y-6">
           <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
             Ready to Become a Certified Rope &amp; Belt Therapist?
