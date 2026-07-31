@@ -301,77 +301,81 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ── COURSE HIGHLIGHTS ── */}
-      <section className="py-12 bg-white border-t border-gray-100">
+      {/* ───────────────────── COURSE HIGHLIGHTS ───────────────────── */}
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Heading */}
-          <div className="text-center mb-8">
-            <span className="inline-block text-xs font-bold text-[#005550] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
+          <div className="text-center mb-10">
+            <span className="inline-block px-4 py-1 text-xs font-bold uppercase tracking-widest text-[#005550] bg-teal-50 rounded-full border border-teal-100">
               Visual Highlights
             </span>
-            <h2 className="mt-3 font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
+
+            <h2 className="mt-4 font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
               Course Highlights
             </h2>
+
+            <p className="mt-3 text-gray-600 max-w-2xl mx-auto">
+              Experience our practical Rope & Belt Therapy training with
+              hands-on learning, expert faculty guidance, and real clinical
+              demonstrations.
+            </p>
           </div>
 
-          {/* Box / Card Container */}
-          <div className="bg-white rounded-3xl border border-gray-200 shadow-xl overflow-hidden">
-            {/* Box Header */}
-            <div className="bg-gradient-to-r from-[#005550] to-[#003d39] px-6 py-3.5">
-              <h3 className="text-white font-poppins font-semibold text-sm uppercase tracking-wider text-center">
-                📸 Gallery
-              </h3>
-            </div>
+          {/* Main Box */}
+          <div className="bg-white rounded-[28px] border border-gray-200 shadow-lg p-5 md:p-6">
 
-            {/* Box Body - Grid - Height increased to 440px */}
-            <div className="p-4 md:p-6 bg-[#005550]">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:h-[440px]">
-                {/* Left - Large Image */}
-                <div className="h-48 lg:h-full overflow-hidden rounded-xl shadow-md">
-                  <img
-                    src="/images/others/ashwini-image.jpeg"
-                    alt="Ashwini"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:h-[360px]">
 
-                {/* Middle - 2 Stacked Images */}
-                <div className="grid grid-rows-2 gap-3 h-48 lg:h-full">
-                  <div className="overflow-hidden rounded-xl shadow-md">
-                    <img
-                      src="/images/others/3.jpg"
-                      alt="Training"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="overflow-hidden rounded-xl shadow-md">
-                    <img
-                      src="/images/others/6.jpg"
-                      alt="Practical"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-
-                {/* Right - Large Image */}
-                <div className="h-48 lg:h-full overflow-hidden rounded-xl shadow-md">
-                  <img
-                    src="/images/others/14.jpg"
-                    alt="Therapy"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+              {/* Left */}
+              <div className="overflow-hidden rounded-2xl border border-gray-200">
+                <img
+                  src="/images/others/ashwini-image.jpeg"
+                  alt="Faculty Training"
+                  className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                />
               </div>
+
+              {/* Middle */}
+              <div className="grid grid-rows-2 gap-4">
+
+                <div className="overflow-hidden rounded-2xl border border-gray-200">
+                  <img
+                    src="/images/others/3.jpg"
+                    alt="RBT Training"
+                    className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                  />
+                </div>
+
+                <div className="overflow-hidden rounded-2xl border border-gray-200">
+                  <img
+                    src="/images/others/6.jpg"
+                    alt="Hands-on Practical"
+                    className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                  />
+                </div>
+
+              </div>
+
+              {/* Right */}
+              <div className="overflow-hidden rounded-2xl border border-gray-200">
+                <img
+                  src="/images/others/14.jpg"
+                  alt="Medical Yoga Therapy"
+                  className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                />
+              </div>
+
             </div>
+
           </div>
 
-          {/* Banner */}
-          <div className="mt-8 flex justify-center">
+          {/* Bottom Banner */}
+          <div className="mt-8">
             <img
               src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
               alt="Why Learn RBT with Synergy"
-              className="w-full max-w-6xl object-contain rounded-2xl shadow-md border border-gray-200"
+              className="w-full rounded-3xl border border-gray-200 shadow-md"
             />
           </div>
 
