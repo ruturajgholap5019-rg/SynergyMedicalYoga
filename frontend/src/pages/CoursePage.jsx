@@ -304,71 +304,48 @@ export default function CoursePage({ setActivePage }) {
       {/* ── COURSE HIGHLIGHTS ── */}
       <section className="py-12 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-          {/* Heading */}
-          <div className="text-center mb-10">
+          <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold text-[#005550] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
               Visual Highlights
             </span>
-
             <h2 className="mt-3 font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
               Course Highlights
             </h2>
           </div>
 
-          {/* Green Background */}
-          <div className="bg-[#005550] p-5 md:p-8">
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:h-[620px]">
-
-              {/* Left Large Image */}
-              <div className="h-full">
-                <img
-                  src="/images/others/ashwini-image.jpeg"
-                  alt="Ashwini"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Middle Column */}
-              <div className="grid grid-rows-2 gap-5 h-full">
-
-                <img
-                  src="/images/others/3.jpg"
-                  alt="Training"
-                  className="w-full h-full object-cover"
-                />
-
-                <img
-                  src="/images/others/6.jpg"
-                  alt="Practical"
-                  className="w-full h-full object-cover"
-                />
-
-              </div>
-
-              {/* Right Large Image */}
-              <div className="h-full">
-                <img
-                  src="/images/others/14.jpg"
-                  alt="Therapy"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
+          {/* Box/Grid Container */}
+          <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
+            <div className="p-4 sm:p-6 bg-gradient-to-r from-[#005550] to-[#003d39]">
+              <h3 className="text-white font-poppins font-bold text-lg text-center">Course Highlights Gallery</h3>
             </div>
-
+            <div className="p-4 sm:p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="h-48 md:h-56 lg:h-64 overflow-hidden rounded-xl">
+                  <img src="/images/others/ashwini-image.jpeg" alt="Ashwini" className="w-full h-full object-cover" />
+                </div>
+                <div className="grid grid-rows-2 gap-4 h-48 md:h-56 lg:h-64">
+                  <div className="overflow-hidden rounded-xl">
+                    <img src="/images/others/3.jpg" alt="Training" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="overflow-hidden rounded-xl">
+                    <img src="/images/others/6.jpg" alt="Practical" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+                <div className="h-48 md:h-56 lg:h-64 overflow-hidden rounded-xl">
+                  <img src="/images/others/14.jpg" alt="Therapy" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Banner */}
-          <div className="mt-10 flex justify-center">
+          <div className="mt-8 flex justify-center">
             <img
               src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
               alt="Why Learn RBT with Synergy"
-              className="w-full max-w-6xl object-contain"
+              className="w-full max-w-6xl object-contain rounded-2xl shadow-md border border-gray-200"
             />
           </div>
-
         </div>
       </section>
 
