@@ -313,10 +313,29 @@ export default function CoursePage({ setActivePage }) {
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            <img src="/images/others/ashwini-image.jpeg" alt="Highlight 1" className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-2xl shadow-md border border-gray-200" />
-            <img src="/images/others/3.jpg" alt="Highlight 2" className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-2xl shadow-md border border-gray-200" />
-            <img src="/images/others/6.jpg" alt="Highlight 3" className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-2xl shadow-md border border-gray-200" />
-            <img src="/images/others/14.jpg" alt="Highlight 4" className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-2xl shadow-md border border-gray-200" />
+            <img
+              src="/images/others/ashwini-image.jpeg"
+              alt="Highlight 1"
+              className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-2xl shadow-md border border-gray-200"
+            />
+
+            <img
+              src="/images/others/3.jpg"
+              alt="Highlight 2"
+              className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-2xl shadow-md border border-gray-200"
+            />
+
+            <img
+              src="/images/others/6.jpg"
+              alt="Highlight 3"
+              className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-2xl shadow-md border border-gray-200"
+            />
+
+            <img
+              src="/images/others/14.jpg"
+              alt="Highlight 4"
+              className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-2xl shadow-md border border-gray-200"
+            />
           </div>
           <div className="flex justify-center">
             <img
@@ -397,9 +416,8 @@ export default function CoursePage({ setActivePage }) {
             <div className="border border-gray-200 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
               <button
                 onClick={() => setOpenWeekend(openWeekend === 1 ? null : 1)}
-                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${
-                  openWeekend === 1 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
-                }`}
+                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${openWeekend === 1 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold ${openWeekend === 1 ? 'bg-amber-400 text-gray-900' : 'bg-[#005550] text-white'}`}>
@@ -429,9 +447,8 @@ export default function CoursePage({ setActivePage }) {
             <div className="border border-gray-200 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
               <button
                 onClick={() => setOpenWeekend(openWeekend === 2 ? null : 2)}
-                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${
-                  openWeekend === 2 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
-                }`}
+                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${openWeekend === 2 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold ${openWeekend === 2 ? 'bg-amber-400 text-gray-900' : 'bg-[#005550] text-white'}`}>
@@ -461,9 +478,8 @@ export default function CoursePage({ setActivePage }) {
             <div className="border border-gray-200 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
               <button
                 onClick={() => setOpenWeekend(openWeekend === 3 ? null : 3)}
-                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${
-                  openWeekend === 3 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
-                }`}
+                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${openWeekend === 3 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold ${openWeekend === 3 ? 'bg-amber-400 text-gray-900' : 'bg-[#005550] text-white'}`}>
@@ -492,9 +508,8 @@ export default function CoursePage({ setActivePage }) {
             <div className="border border-emerald-500/40 rounded-3xl overflow-hidden shadow-md bg-emerald-50/30 transition-all duration-300">
               <button
                 onClick={() => setOpenWeekend(openWeekend === 4 ? null : 4)}
-                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${
-                  openWeekend === 4 ? 'bg-[#005550] text-white shadow-md' : 'bg-emerald-900 text-white hover:bg-emerald-800'
-                }`}
+                className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${openWeekend === 4 ? 'bg-[#005550] text-white shadow-md' : 'bg-emerald-900 text-white hover:bg-emerald-800'
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-amber-400 text-gray-900 flex items-center justify-center text-xs font-extrabold">
@@ -532,11 +547,6 @@ export default function CoursePage({ setActivePage }) {
               </p>
             </div>
             <div className="flex flex-col items-center gap-3 shrink-0">
-              <div className="bg-white p-4 rounded-2xl border border-teal-100 text-center shadow-sm w-full">
-                <Award className="w-12 h-12 text-[#005550] mx-auto mb-2" />
-                <span className="text-xs font-bold text-gray-800 block">Official RBT Certificate</span>
-                <span className="text-[10px] text-gray-500 block">Synergy Medical Yoga</span>
-              </div>
               <img
                 src="/images/others/synergy-certificate-image.jpeg"
                 alt="Synergy Certificate Sample"
