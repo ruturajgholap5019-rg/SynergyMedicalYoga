@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   BookOpen,
   Award,
@@ -22,6 +22,8 @@ const PRACTICAL_IMAGES = [
   { src: '/images/others/3.jpg', alt: 'Rope and belt standing alignment practice' },
   { src: '/images/others/6.jpg', alt: 'Rope and belt practical table demonstration' },
   { src: '/images/others/14.jpg', alt: 'Hands-on Rope and Belt Therapy practice' },
+  { src: '/images/Products/HEaro-Image.webp', alt: 'Therapy product learning setup' },
+  { src: '/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp', alt: 'Structured RBT learning resources' },
 ];
 
 // All 14 testimonials – exact text from PDF
@@ -129,7 +131,6 @@ const COURSE_TESTIMONIALS = [
 export default function CoursePage({ setActivePage }) {
   const [openWeekend, setOpenWeekend] = useState(1);
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
-  const [practicalSlide, setPracticalSlide] = useState(0);
   const testimonialTrackRef = useRef(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -140,13 +141,6 @@ export default function CoursePage({ setActivePage }) {
     message: '',
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setPracticalSlide((current) => (current + 1) % PRACTICAL_IMAGES.length);
-    }, 4200);
-    return () => clearInterval(timer);
-  }, []);
 
   const handleEnrollSubmit = (e) => {
     e.preventDefault();
@@ -304,43 +298,21 @@ export default function CoursePage({ setActivePage }) {
             </p>
           </div>
 
-          <div className="relative max-w-5xl mx-auto rounded-3xl border border-gray-200 bg-white shadow-lg p-3 sm:p-4">
-            <div className="relative overflow-hidden rounded-2xl bg-[#f4faf9] h-[260px] sm:h-[360px] lg:h-[430px]">
+          <div className="max-w-6xl mx-auto rounded-3xl border border-gray-200 bg-white shadow-lg p-3 sm:p-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {PRACTICAL_IMAGES.map((image, index) => (
-                <img
+                <div
                   key={image.src}
-                  src={image.src}
-                  alt={image.alt}
-                  className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${index === practicalSlide ? 'opacity-100' : 'opacity-0'}`}
-                  loading={index === 0 ? 'eager' : 'lazy'}
-                />
-              ))}
-            </div>
-            <button
-              type="button"
-              aria-label="Previous practical image"
-              onClick={() => setPracticalSlide((current) => (current - 1 + PRACTICAL_IMAGES.length) % PRACTICAL_IMAGES.length)}
-              className="absolute left-5 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-amber-300 text-[#005550] rounded-full w-10 h-10 shadow-lg border border-white/70 flex items-center justify-center transition-colors"
-            >
-              <ChevronDown className="w-5 h-5 rotate-90" />
-            </button>
-            <button
-              type="button"
-              aria-label="Next practical image"
-              onClick={() => setPracticalSlide((current) => (current + 1) % PRACTICAL_IMAGES.length)}
-              className="absolute right-5 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-amber-300 text-[#005550] rounded-full w-10 h-10 shadow-lg border border-white/70 flex items-center justify-center transition-colors"
-            >
-              <ChevronDown className="w-5 h-5 -rotate-90" />
-            </button>
-            <div className="absolute left-1/2 bottom-6 -translate-x-1/2 flex gap-2">
-              {PRACTICAL_IMAGES.map((image, index) => (
-                <button
-                  key={image.src}
-                  type="button"
-                  aria-label={`Show practical image ${index + 1}`}
-                  onClick={() => setPracticalSlide(index)}
-                  className={`h-2.5 rounded-full transition-all ${index === practicalSlide ? 'w-8 bg-[#005550]' : 'w-2.5 bg-white border border-[#005550]/30'}`}
-                />
+                  className={`group relative overflow-hidden rounded-2xl bg-[#f4faf9] border border-gray-100 shadow-sm ${index === 5 ? 'sm:col-span-2 lg:col-span-1' : ''}`}
+                >
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-[190px] sm:h-[220px] lg:h-[240px] object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading={index < 3 ? 'eager' : 'lazy'}
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
               ))}
             </div>
           </div>
