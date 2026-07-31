@@ -301,68 +301,67 @@ export default function CoursePage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ───────────────────── COURSE HIGHLIGHTS ───────────────────── */}
-      <section className="py-16 bg-white">
+      {/* ───────────── COURSE HIGHLIGHTS ───────────── */}
+      <section className="py-14 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Heading */}
           <div className="text-center mb-10">
-            <span className="inline-block px-4 py-1 text-xs font-bold uppercase tracking-widest text-[#005550] bg-teal-50 rounded-full border border-teal-100">
-              Visual Highlights
+            <span className="inline-flex items-center rounded-full border border-teal-100 bg-teal-50 px-4 py-1 text-xs font-bold uppercase tracking-widest text-[#005550]">
+              Course Highlights
             </span>
 
-            <h2 className="mt-4 font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
-              Course Highlights
+            <h2 className="mt-4 font-sansita text-3xl md:text-4xl font-bold text-[#005550]">
+              Practical Learning Experience
             </h2>
 
-            <p className="mt-3 text-gray-600 max-w-2xl mx-auto">
-              Experience our practical Rope & Belt Therapy training with
-              hands-on learning, expert faculty guidance, and real clinical
-              demonstrations.
+            <p className="mt-3 max-w-3xl mx-auto text-gray-600">
+              Learn through live demonstrations, expert guidance and hands-on
+              Rope & Belt Therapy training.
             </p>
           </div>
 
-          {/* Main Box */}
-          <div className="bg-white rounded-[28px] border border-gray-200 shadow-lg p-5 md:p-6">
+          {/* Images Card */}
+          <div className="rounded-3xl border border-gray-200 bg-white shadow-lg p-5">
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:h-[360px]">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-auto lg:h-[500px]">
 
               {/* Left */}
-              <div className="overflow-hidden rounded-2xl border border-gray-200">
+              <div className="overflow-hidden rounded-2xl">
                 <img
                   src="/images/others/ashwini-image.jpeg"
-                  alt="Faculty Training"
-                  className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                  alt=""
+                  className="w-full h-full object-cover"
                 />
               </div>
 
               {/* Middle */}
               <div className="grid grid-rows-2 gap-4">
 
-                <div className="overflow-hidden rounded-2xl border border-gray-200">
+                <div className="overflow-hidden rounded-2xl">
                   <img
                     src="/images/others/3.jpg"
-                    alt="RBT Training"
-                    className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                    alt=""
+                    className="w-full h-full object-cover"
                   />
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-gray-200">
+                <div className="overflow-hidden rounded-2xl">
                   <img
                     src="/images/others/6.jpg"
-                    alt="Hands-on Practical"
-                    className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                    alt=""
+                    className="w-full h-full object-cover"
                   />
                 </div>
 
               </div>
 
               {/* Right */}
-              <div className="overflow-hidden rounded-2xl border border-gray-200">
+              <div className="overflow-hidden rounded-2xl">
                 <img
                   src="/images/others/14.jpg"
-                  alt="Medical Yoga Therapy"
-                  className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                  alt=""
+                  className="w-full h-full object-cover"
                 />
               </div>
 
@@ -370,18 +369,17 @@ export default function CoursePage({ setActivePage }) {
 
           </div>
 
-          {/* Bottom Banner */}
-          <div className="mt-8">
+          {/* Banner */}
+          <div className="mt-10">
             <img
               src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
-              alt="Why Learn RBT with Synergy"
+              alt=""
               className="w-full rounded-3xl border border-gray-200 shadow-md"
             />
           </div>
 
         </div>
       </section>
-
       {/* ── COURSE DETAILS ── */}
       <section className="py-16 bg-[#eaf6f6]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
