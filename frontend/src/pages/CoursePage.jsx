@@ -303,7 +303,7 @@ export default function CoursePage({ setActivePage }) {
               {PRACTICAL_IMAGES.map((image, index) => (
                 <div
                   key={image.src}
-                  className={`group relative overflow-hidden rounded-2xl bg-[#f4faf9] border border-gray-100 shadow-sm ${index === 5 ? 'sm:col-span-2 lg:col-span-1' : ''}`}
+                  className="group relative overflow-hidden rounded-2xl bg-[#f4faf9] border border-gray-100 shadow-sm"
                 >
                   <img
                     src={image.src}
