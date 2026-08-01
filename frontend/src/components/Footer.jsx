@@ -28,21 +28,21 @@ export default function Footer({ setActivePage }) {
     <footer className="font-inter bg-[#f4f7f8] text-gray-700 border-t border-gray-200/80">
 
       {/* Main Footer Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
 
           {/* Col 1: Brand & Logo */}
           <div className="lg:col-span-5 space-y-3">
             <img
               src={LOGO}
               alt="Synergy Medical Yoga"
-              className="h-28 sm:h-32 lg:h-36 w-auto object-contain cursor-pointer transition-all"
+              className="h-20 sm:h-24 lg:h-24 w-auto object-contain cursor-pointer transition-all"
               onClick={() => goTo('home')}
             />
             <p className="text-sm text-gray-600 leading-relaxed max-w-md">
               {settings.synergyInitText || 'Synergy Medical Yoga is iMediYog Healthcare LLP initiative. It is working with vision democratising rope & belt therapy which is used in conservative management of knee pain, neck pain and back pain. It offers educational courses in Rope & Belt Therapy, products for pain prevention and recovery as well as run a mobile app for people to find the nearest therapist around their locale.'}
             </p>
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center gap-3">
               <a
                 href={settings.socialFacebook || "https://facebook.com/synergymedicalyoga"}
                 target="_blank"

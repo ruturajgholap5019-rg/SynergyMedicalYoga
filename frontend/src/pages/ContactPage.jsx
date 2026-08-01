@@ -35,14 +35,11 @@ export default function ContactPage() {
     <div className="font-inter text-[#555555] space-y-12 pb-20">
       
       {/* Header Banner */}
-      <section className="bg-[#005550] py-20 px-4 text-center text-white">
-        <div className="max-w-4xl mx-auto space-y-3">
-          <h1 className="font-poppins text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white">
-            Contact Synergy Medical Yoga
+      <section className="bg-[#005550] py-16 px-4 text-center text-white">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="font-sansita text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white">
+            Contact Us
           </h1>
-          <p className="text-white/90 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-            Have questions about Rope &amp; Belt Therapy, product orders, or reseller partnerships? Reach out to our Pune team.
-          </p>
         </div>
       </section>
 

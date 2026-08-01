@@ -145,13 +145,7 @@ function Counter({ end, suffix = '' }) {
 export default function HomePage({ setActivePage, onAddToCart, onQuickView, onViewDetails, onBuyNow }) {
   const { settings } = useSiteSettings();
   const [slide, setSlide] = useState(0);
-  const [heroSlides, setHeroSlides] = useState(() => {
-    try {
-      const cached = localStorage.getItem('synergy_cached_home_carousels');
-      if (cached) return JSON.parse(cached);
-    } catch (e) {}
-    return DEFAULT_HERO_SLIDES;
-  });
+  const [heroSlides] = useState(DEFAULT_HERO_SLIDES);
   const [featuredProducts, setFeaturedProducts] = useState(() => {
     try {
       const cached = localStorage.getItem('synergy_cached_home_products');
@@ -169,32 +163,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (api.getPublicCarousels) {
-          const cRes = await api.getPublicCarousels();
-          if (cRes?.data && Array.isArray(cRes.data) && cRes.data.length > 0) {
-            const homeSlides = cRes.data.filter((c) => {
-              const raw = c.imageUrl || c.src || c.url || c.image;
-              return raw && typeof raw === 'string' && raw.trim().length > 0 && (!c.page || c.page === 'home' || c.page === 'all');
-            });
-            if (homeSlides.length > 0) {
-              const mapped = homeSlides.map((c, idx) => {
-                const fallback = DEFAULT_HERO_SLIDES[idx % DEFAULT_HERO_SLIDES.length].src;
-                const rawSrc = c.imageUrl || c.src || c.url || c.image;
-                return {
-                  src: rawSrc ? getImageUrl(rawSrc) : fallback,
-                  fallback,
-                  alt: c.title || c.alt || 'Synergy Medical Yoga Banner',
-                  heading: c.heading || c.title || '',
-                  subtitle: c.subtitle || c.description || '',
-                  buttonText: c.buttonText || 'Explore Shop',
-                  buttonLink: c.buttonLink || '/shop',
-                };
-              });
-              setHeroSlides(mapped);
-              try { localStorage.setItem('synergy_cached_home_carousels', JSON.stringify(mapped)); } catch (e) {}
-            }
-          }
-        }
+        localStorage.removeItem('synergy_cached_home_carousels');
       } catch (err) {}
       try {
         const pRes = await api.getProducts();
@@ -224,6 +193,30 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
     return () => clearInterval(timer);
   }, [heroSlides, isCarouselPaused]);
 
+  useEffect(() => {
+    if (heroSlides.length === 0) return;
+    const prioritySlides = heroSlides.slice(0, 2);
+    const preloadLinks = prioritySlides.map((prioritySlide) => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = prioritySlide.src;
+      document.head.appendChild(link);
+      return link;
+    });
+    return () => {
+      preloadLinks.forEach((link) => link.remove());
+    };
+  }, [heroSlides]);
+
+  useEffect(() => {
+    if (heroSlides.length === 0) return;
+    const nextSlide = heroSlides[(slide + 1) % heroSlides.length];
+    if (!nextSlide?.src) return;
+    const img = new Image();
+    img.src = nextSlide.src;
+  }, [slide, heroSlides]);
+
   return (
     <div className="bg-white font-inter text-sm sm:text-[15px] text-[#555555]">
 
@@ -250,17 +243,24 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         <section
           onMouseEnter={() => setIsCarouselPaused(true)}
           onMouseLeave={() => setIsCarouselPaused(false)}
-          className="relative w-full overflow-hidden bg-[#f8fbfb] h-[220px] xs:h-[280px] sm:h-[420px] md:h-[540px] lg:h-[650px] flex items-center group shadow-xl"
+          className="relative mt-0 w-full overflow-hidden bg-[#f8fbfb] h-[220px] xs:h-[280px] sm:h-[420px] md:h-[540px] lg:h-[650px] flex items-center group shadow-xl"
         >
-          {heroSlides.map((s, i) => (
+          {heroSlides.map((s, i) => {
+            const shouldRender =
+              i === slide ||
+              i === (slide + 1) % heroSlides.length ||
+              i === (slide - 1 + heroSlides.length) % heroSlides.length;
+            if (!shouldRender) return null;
+            return (
             <div
               key={i}
               className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${i === slide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}
             >
               <img
-                src={getImageUrl(s.src)}
+                src={s.src}
                 alt={s.alt || 'Synergy Medical Yoga Banner'}
                 loading={i === 0 ? 'eager' : 'lazy'}
+                fetchPriority={i === slide ? 'high' : 'low'}
                 decoding="async"
                 onError={(e) => {
                   const localFallback = DEFAULT_HERO_SLIDES[i % DEFAULT_HERO_SLIDES.length]?.src || '/images/carousel/home/Website-Banner-4.webp';
@@ -298,7 +298,8 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
                 </>
               )}
             </div>
-          ))}
+            );
+          })}
 
           {/* Carousel Arrow Controls */}
           <button
