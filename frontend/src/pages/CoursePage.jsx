@@ -399,7 +399,7 @@ export default function CoursePage({ setActivePage }) {
                 </div>
               </div>
               <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                Occupational Therapist with over 20 years of clinical experience, integrating Medical Yoga principles with modern musculoskeletal anatomy through practical demonstrations and real-life case studies.
+                Dr. Poonam Deshmukh is an Occupational Therapist with over 20 years of clinical experience and is a USA-certified Occupational Therapist (OTR), having practiced in the United States for more than five years. She specializes in integrating the ancient principles of Medical Yoga with the modern understanding of musculoskeletal anatomy to develop effective therapeutic approaches. Known for her engaging teaching style, Dr. Poonam simplifies complex clinical concepts through practical demonstrations and real-life case studies, enabling healthcare professionals to confidently apply them in clinical practice.
               </p>
             </div>
             <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
@@ -412,7 +412,7 @@ export default function CoursePage({ setActivePage }) {
                 </div>
               </div>
               <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                Founder and Partner of Synergy Medical Yoga, focused on making evidence-based Rope &amp; Belt Therapy simple, affordable, and accessible through education, products, and technology.
+                Manoj Deshmukh, Founder &amp; Partner of Synergy Medical Yoga, brings over 22 years of corporate leadership experience combined with a deep understanding of joint biomechanics and the therapeutic application of Rope &amp; Belt Therapy. Driven by the vision of making evidence-based Medical Yoga accessible to everyone, he leads Synergy's mission to democratize Rope &amp; Belt Therapy across India through technology-enabled healthcare, structured education, and innovative therapeutic products. His goal is to make this effective, non-invasive therapy simple, affordable, and widely accessible, empowering people to maintain joint health and reduce the need for avoidable surgical interventions.
               </p>
             </div>
           </div>
