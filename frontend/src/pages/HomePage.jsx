@@ -569,11 +569,11 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       {/* ──────────────────────────────────────────────
           5.5 BECAUSE SHE DESERVES TO WALK FREE FROM PAIN
           ────────────────────────────────────────────── */}
-      <section className="w-full bg-[#e0f5f3] py-0 px-0 overflow-hidden">
+      <section className="w-full bg-[#e0f5f3] py-0 px-0 overflow-hidden h-[200px] xs:h-[260px] sm:h-[320px] md:h-[380px] lg:h-[420px] flex items-center">
         <img
           src="/images/others/Website-Banner-5.webp"
           alt="Because she deserves to walk free from pain"
-          className="w-full h-auto object-cover sm:object-fill block"
+          className="w-full h-full object-cover object-center block"
         />
       </section>
 
