@@ -574,27 +574,8 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           <img
             src="/images/others/Website-Banner-5.webp"
             alt="Because she deserves to walk free from pain"
-            className="w-full max-h-[240px] sm:max-h-[320px] md:max-h-[380px] object-contain rounded-xl sm:rounded-2xl"
+            className="w-full max-h-[260px] sm:max-h-[340px] md:max-h-[400px] lg:max-h-[440px] object-contain rounded-xl sm:rounded-2xl"
           />
-        </div>
-      </section>
-      <section className="hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-6 space-y-4">
-              <h2 className="font-sansita text-4xl sm:text-5xl lg:text-6xl font-bold text-[#005550] leading-tight">
-                Because She<br />Deserves<br />to Walk Free<br />from Pain.
-              </h2>
-            </div>
-            <div className="lg:col-span-6 flex justify-center">
-              <img
-                src="https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png"
-                alt="Because She Deserves to Walk Free from Pain"
-                className="w-auto max-h-[240px] sm:max-h-[300px] lg:max-h-[340px] object-contain rounded-3xl drop-shadow-xl hover:scale-102 transition-transform duration-500"
-                onError={(e) => { e.target.onerror = null; e.target.src = APP_MOCKUP; }}
-              />
-            </div>
-          </div>
         </div>
       </section>
 
