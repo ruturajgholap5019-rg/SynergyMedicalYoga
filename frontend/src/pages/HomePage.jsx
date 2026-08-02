@@ -4,6 +4,7 @@ import { PRODUCTS } from '../data/mockData';
 import { api, getImageUrl } from '../lib/api';
 import ProductCard from '../components/ProductCard';
 import { useSiteSettings } from '../lib/useSiteSettings';
+import ScrollReveal from '../components/ScrollReveal';
 
 const IMEDIYOG_LOGO  = '/images/others/I-Mediyog-Logo_PNG-06.webp';
 const PRODUCT_KNEE   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/06/HEaro-Image-300x300.png';
@@ -335,41 +336,43 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           ────────────────────────────────────────────── */}
       <section className="py-20 bg-linear-to-br from-[#ebf7f7] to-[#d6f0f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Text column - Immediately visible to eliminate hidden text bug with gentle hover elevation */}
-            <div ref={aboutRef} className="lg:col-span-7 space-y-6 opacity-100 transition-all duration-300 hover:translate-x-1">
-              <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
-                About iMediYog Healthcare LLP
-              </h2>
-              <p className="text-base sm:text-lg leading-relaxed text-gray-700">
-                <strong className="text-[#005550]">iMediYog Healthcare LLP</strong> is a Pune-based healthcare company with a vision to become a comprehensive <strong className="text-gray-900">Therapy Care Hub</strong>, making quality therapy education and services accessible through an integrated ecosystem of certified professionals, technology, and innovative healthcare solutions across multiple therapy disciplines.
-              </p>
-              <p className="text-base sm:text-lg leading-relaxed text-gray-700">
-                <strong className="text-[#005550]">Synergy Medical Yoga</strong> is one of iMediYog Healthcare LLP's flagship initiatives dedicated to democratizing <strong className="text-gray-900">Rope &amp; Belt Therapy</strong> for the prevention and conservative management of <strong className="text-gray-900">knee, back, and neck pain</strong>. Through certified education programs, clinically designed therapy products, and a technology platform connecting people with certified Rope &amp; Belt Therapy practitioners, Synergy Medical Yoga is making this specialized therapy more accessible across India.
-              </p>
+          <ScrollReveal animation="fade-up">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              
+              {/* Text column */}
+              <div ref={aboutRef} className="lg:col-span-7 space-y-6">
+                <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
+                  About iMediYog Healthcare LLP
+                </h2>
+                <p className="text-base sm:text-lg leading-relaxed text-gray-700">
+                  <strong className="text-[#005550]">iMediYog Healthcare LLP</strong> is a Pune-based healthcare company with a vision to become a comprehensive <strong className="text-gray-900">Therapy Care Hub</strong>, making quality therapy education and services accessible through an integrated ecosystem of certified professionals, technology, and innovative healthcare solutions across multiple therapy disciplines.
+                </p>
+                <p className="text-base sm:text-lg leading-relaxed text-gray-700">
+                  <strong className="text-[#005550]">Synergy Medical Yoga</strong> is one of iMediYog Healthcare LLP's flagship initiatives dedicated to democratizing <strong className="text-gray-900">Rope &amp; Belt Therapy</strong> for the prevention and conservative management of <strong className="text-gray-900">knee, back, and neck pain</strong>. Through certified education programs, clinically designed therapy products, and a technology platform connecting people with certified Rope &amp; Belt Therapy practitioners, Synergy Medical Yoga is making this specialized therapy more accessible across India.
+                </p>
 
-              <div>
-                <button
-                  onClick={() => { setActivePage('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="bg-[#005550] hover:bg-[#003d39] text-white font-bold px-8 py-3.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 inline-flex items-center gap-2 animate-float"
-                >
-                  <span>Know More</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                <div>
+                  <button
+                    onClick={() => { setActivePage('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className="bg-[#005550] hover:bg-[#003d39] text-white font-bold px-8 py-3.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 inline-flex items-center gap-2 btn-glow-primary"
+                  >
+                    <span>Know More</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* Logo column */}
-            <div className="lg:col-span-5 flex justify-center">
-              <img
-                src={getImageUrl(IMEDIYOG_LOGO)}
-                alt="iMediYog Healthcare LLP"
-                className="max-w-xs sm:max-w-md w-full object-contain drop-shadow-md hover:scale-105 transition-transform duration-500"
-              />
-            </div>
+              {/* Logo column */}
+              <div className="lg:col-span-5 flex justify-center img-zoom-hover">
+                <img
+                  src={getImageUrl(IMEDIYOG_LOGO)}
+                  alt="iMediYog Healthcare LLP"
+                  className="max-w-xs sm:max-w-md w-full object-contain drop-shadow-md transition-transform duration-500"
+                />
+              </div>
 
-          </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -509,23 +512,27 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            {/* Left text - Immediately visible to eliminate hidden text bug */}
-            <div ref={orthRef} className="lg:col-span-6 space-y-6 animate-fade-in-left-lg opacity-100 translate-x-0">
-              <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
-                Explore Our Orthopaedic Pain Relief &amp; Posture Correction Belts
-              </h2>
-              <p className="text-base sm:text-lg leading-relaxed text-gray-700">
-                Experience the power of Yoga &amp; modern medicin principles of anatomy into our knee stabilizers or the neck pain releif kit for corporates. These kits are designed for specific conditions keeping in mind the overuse of certain joints during certain sports activities like running , cycling , trekking or even for that matter gym activities. It has been proven grealy useful for those who are in sedentary jobs in corporates. Trusted by hundreds of sports enthusiats and corporate employees , synergy has become partner in their journey of better joint health , be it knees , neck or back.
-              </p>
+            {/* Left text */}
+            <div ref={orthRef} className="lg:col-span-6 space-y-6">
+              <ScrollReveal animation="slide-left">
+                <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
+                  Explore Our Orthopaedic Pain Relief &amp; Posture Correction Belts
+                </h2>
+                <p className="text-base sm:text-lg leading-relaxed text-gray-700 mt-4">
+                  Experience the power of Yoga &amp; modern medicin principles of anatomy into our knee stabilizers or the neck pain releif kit for corporates. These kits are designed for specific conditions keeping in mind the overuse of certain joints during certain sports activities like running , cycling , trekking or even for that matter gym activities. It has been proven grealy useful for those who are in sedentary jobs in corporates. Trusted by hundreds of sports enthusiats and corporate employees , synergy has become partner in their journey of better joint health , be it knees , neck or back.
+                </p>
+              </ScrollReveal>
             </div>
 
-            {/* Right image - Full Object Cover Box Fit */}
+            {/* Right image */}
             <div className="lg:col-span-6 flex justify-center">
-              <img
-                src={PRODUCT_KNEE}
-                alt="Knee Stabilizer Belts"
-                className="w-full sm:h-[480px] object-contain rounded-3xl drop-shadow-2xl hover:scale-105 transition-transform duration-500"
-              />
+              <ScrollReveal animation="zoom-in">
+                <img
+                  src={PRODUCT_KNEE}
+                  alt="Knee Stabilizer Belts"
+                  className="w-full sm:h-[480px] object-contain rounded-3xl drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+                />
+              </ScrollReveal>
             </div>
 
           </div>
@@ -539,28 +546,32 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       <section className="py-20 bg-[#f4f7f8] border-t border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
-          <div className="flex justify-between items-center">
-            <p className="text-[#005550] font-semibold text-sm">Showing top featured therapeutic kits (4 in a row)</p>
-            <button
-              onClick={() => setActivePage('shop')}
-              className="text-xs font-extrabold text-[#005550] hover:underline flex items-center gap-1 cursor-pointer"
-            >
-              View All Products <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          <ScrollReveal animation="fade-up">
+            <div className="flex justify-between items-center">
+              <p className="text-[#005550] font-semibold text-sm">Showing top featured therapeutic kits (4 in a row)</p>
+              <button
+                onClick={() => setActivePage('shop')}
+                className="text-xs font-extrabold text-[#005550] hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                View All Products <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </ScrollReveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {(featuredProducts.length > 0 ? featuredProducts : PRODUCTS.slice(0, 4)).map((p) => (
-              <ProductCard
-                key={p._id || p.id}
-                product={p}
-                onAddToCart={onAddToCart}
-                onQuickView={onQuickView}
-                onViewDetails={onViewDetails}
-                onBuyNow={onBuyNow}
-              />
-            ))}
-          </div>
+          <ScrollReveal animation="zoom-in" delay={150}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+              {(featuredProducts.length > 0 ? featuredProducts : PRODUCTS.slice(0, 4)).map((p) => (
+                <ProductCard
+                  key={p._id || p.id}
+                  product={p}
+                  onAddToCart={onAddToCart}
+                  onQuickView={onQuickView}
+                  onViewDetails={onViewDetails}
+                  onBuyNow={onBuyNow}
+                />
+              ))}
+            </div>
+          </ScrollReveal>
 
         </div>
       </section>
@@ -587,52 +598,56 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
             
             {/* Phone mockup */}
             <div className="lg:col-span-5 flex justify-center">
-              <img
-                src={APP_MOCKUP}
-                alt="Download Synergy MYT App"
-                className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl animate-float-slow"
-              />
+              <ScrollReveal animation="slide-left">
+                <img
+                  src={APP_MOCKUP}
+                  alt="Download Synergy MYT App"
+                  className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl animate-float-slow"
+                />
+              </ScrollReveal>
             </div>
 
             {/* Text & Badges */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="space-y-2">
-                <p className="text-xs font-extrabold uppercase tracking-widest text-[#005550]">
-                  FIND THE NEAREST THERAPIST / CENTER
+              <ScrollReveal animation="slide-right">
+                <div className="space-y-2">
+                  <p className="text-xs font-extrabold uppercase tracking-widest text-[#005550]">
+                    FIND THE NEAREST THERAPIST / CENTER
+                  </p>
+                  <div className="w-16 h-0.5 bg-[#005550]" />
+                </div>
+
+                <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
+                  Download Our App
+                </h2>
+
+                <p className="text-base sm:text-lg leading-relaxed text-gray-700">
+                  Discover the transformative power of Medical Yoga Therapy with our all-in-one app! Whether you're seeking a qualified therapist nearby, who can come to your place for therapy service or a medical yoga therapy centre nearby who can take care of your pain management end to end, our app has you covered.
                 </p>
-                <div className="w-16 h-0.5 bg-[#005550]" />
-              </div>
 
-              <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
-                Download Our App
-              </h2>
-
-              <p className="text-base sm:text-lg leading-relaxed text-gray-700">
-                Discover the transformative power of Medical Yoga Therapy with our all-in-one app! Whether you're seeking a qualified therapist nearby, who can come to your place for therapy service or a medical yoga therapy centre nearby who can take care of your pain management end to end, our app has you covered.
-              </p>
-
-              {/* App badges & Actual QR code scanners */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100">
-                  <div className="w-16 h-16 bg-white p-1 rounded-xl border border-gray-200 shrink-0">
-                    <img src={getImageUrl(settings.playStoreQrImage || PLAY_QR)} alt="Google Play QR Code" className="w-full h-full object-contain rounded-lg" />
+                {/* App badges & Actual QR code scanners */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                  <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100 hover-lift">
+                    <div className="w-16 h-16 bg-white p-1 rounded-xl border border-gray-200 shrink-0">
+                      <img src={getImageUrl(settings.playStoreQrImage || PLAY_QR)} alt="Google Play QR Code" className="w-full h-full object-contain rounded-lg" />
+                    </div>
+                    <div>
+                      <img src={PLAYSTORE} alt="Google Play" className="h-7 object-contain mb-1" />
+                      <p className="text-[10px] text-gray-500 font-bold">Scan QR code to install</p>
+                    </div>
                   </div>
-                  <div>
-                    <img src={PLAYSTORE} alt="Google Play" className="h-7 object-contain mb-1" />
-                    <p className="text-[10px] text-gray-500 font-bold">Scan QR code to install</p>
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100">
-                  <div className="w-16 h-16 bg-white p-1 rounded-xl border border-gray-200 shrink-0">
-                    <img src={getImageUrl(settings.appStoreQrImage || APPLE_QR)} alt="App Store QR Code" className="w-full h-full object-contain rounded-lg" />
-                  </div>
-                  <div>
-                    <img src={APPSTORE} alt="App Store" className="h-7 object-contain mb-1" />
-                    <p className="text-[10px] text-gray-500 font-bold">Scan QR code to install</p>
+                  <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100 hover-lift">
+                    <div className="w-16 h-16 bg-white p-1 rounded-xl border border-gray-200 shrink-0">
+                      <img src={getImageUrl(settings.appStoreQrImage || APPLE_QR)} alt="App Store QR Code" className="w-full h-full object-contain rounded-lg" />
+                    </div>
+                    <div>
+                      <img src={APPSTORE} alt="App Store" className="h-7 object-contain mb-1" />
+                      <p className="text-[10px] text-gray-500 font-bold">Scan QR code to install</p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </ScrollReveal>
             </div>
 
           </div>

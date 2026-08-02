@@ -233,6 +233,42 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Interactive Buttons & Micro Hover Effects */
+button, .btn {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button:hover, .btn:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+button:active, .btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-glow-primary {
+  box-shadow: 0 4px 14px 0 rgba(0, 85, 80, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-glow-primary:hover {
+  box-shadow: 0 8px 25px 0 rgba(0, 122, 115, 0.55);
+  transform: translateY(-3px) scale(1.02);
+}
+
+/* Image Hover Zoom Effects */
+.img-zoom-hover {
+  overflow: hidden;
+}
+
+.img-zoom-hover img {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.img-zoom-hover:hover img {
+  transform: scale(1.08);
+}
+
 /* Custom scrollbars */
 ::-webkit-scrollbar { width: 8px; height: 6px; }
 ::-webkit-scrollbar-track { background: #f8fafc; }
