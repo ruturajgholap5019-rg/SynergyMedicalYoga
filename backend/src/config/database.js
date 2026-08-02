@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
+let isConnected = false;
+
 const connectDB = async () => {
+  if (isConnected || mongoose.connection.readyState >= 1) {
+    return;
+  }
   try {
     const mongoUri =
       process.env.MONGO_URI ||
@@ -8,14 +13,15 @@ const connectDB = async () => {
       process.env.MONGODB_URL;
 
     if (!mongoUri) {
-      throw new Error('MONGO_URI is required.');
+      console.warn('MONGO_URI is required for database connection.');
+      return;
     }
 
     const conn = await mongoose.connect(mongoUri);
+    isConnected = true;
     console.log(`MongoDB connected: ${conn.connection.host}`);
   } catch (err) {
     console.error(`MongoDB connection error: ${err.message}`);
-    process.exit(1);
   }
 };
 
