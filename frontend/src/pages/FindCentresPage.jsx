@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { RESELLERS_AND_CENTRES } from '../data/mockData';
 import { MapPin, Phone, Clock, Search, Navigation, UserCheck, Building2 } from 'lucide-react';
+import ScrollReveal from '../components/ScrollReveal';
 
 export default function FindCentresPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -89,7 +90,7 @@ export default function FindCentresPage() {
                 <div
                   key={center.id}
                   onClick={() => setSelectedCenter(center)}
-                  className={`p-6 rounded-2xl border transition-all cursor-pointer ${
+                  className={`p-6 rounded-2xl border transition-all cursor-pointer hover-lift ${
                     isSelected
                       ? 'bg-teal-50/70 border-[#005550] shadow-md ring-2 ring-[#005550]/20'
                       : 'bg-white border-gray-200 shadow-sm hover:border-[#005550]/50'

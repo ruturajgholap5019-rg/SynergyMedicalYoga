@@ -14,6 +14,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { getImageUrl } from '../lib/api';
+import ScrollReveal from '../components/ScrollReveal';
 
 const CEO = '/images/User/MD.jpeg';
 const CMO = '/images/User/Poonam-Deshmukh-with-apron.jpeg';
@@ -241,63 +242,68 @@ export default function CoursePage({ setActivePage }) {
       {/* ── WHY LEARN RBT (4 PILLARS) – REDUCED HEIGHT ── */}
       <section className="py-12 bg-gradient-to-b from-[#f4faf9] to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="text-center space-y-2 max-w-3xl mx-auto">
-            <span className="text-xs font-bold text-[#005550] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
-              Transformative Healthcare Skills
-            </span>
-            <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
-              Why Learn Rope &amp; Belt Therapy?
-            </h2>
-            <p className="text-sm text-gray-600">
-              Equip yourself with clinically proven non-invasive techniques designed by doctors.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm hover:shadow-lg transition-all group">
-              <div className="space-y-3">
-                <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors">
-                  <UserCheck className="w-5 h-5" />
+          <ScrollReveal animation="fade-up">
+            <div className="text-center space-y-2 max-w-3xl mx-auto">
+              <span className="text-xs font-bold text-[#005550] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
+                Transformative Healthcare Skills
+              </span>
+              <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
+                Why Learn Rope &amp; Belt Therapy?
+              </h2>
+              <p className="text-sm text-gray-600">
+                Equip yourself with clinically proven non-invasive techniques designed by doctors.
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal animation="zoom-in" delay={150}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm hover:shadow-lg transition-all group hover-lift">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors">
+                    <UserCheck className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-poppins font-bold text-[#005550] text-base">Help Yourself, Family &amp; Society</h3>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Learn RBT to help society reduce their dependence on surgery for treating knee pain, back pain, neck pain and shoulder pain. This therapy is designed by doctors. It is a unique blend of modern anatomy concepts and yogic wisdom. Easy to learn, easy to set up even at home.
+                  </p>
                 </div>
-                <h3 className="font-poppins font-bold text-[#005550] text-base">Help Yourself, Family &amp; Society</h3>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  Learn RBT to help society reduce their dependence on surgery for treating knee pain, back pain, neck pain and shoulder pain. This therapy is designed by doctors. It is a unique blend of modern anatomy concepts and yogic wisdom. Easy to learn, easy to set up even at home.
-                </p>
+              </div>
+              <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm hover:shadow-lg transition-all group hover-lift">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors">
+                    <BookOpen className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-poppins font-bold text-[#005550] text-base">Applied Yoga</h3>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Learn application of yoga to treat musculoskeletal diseases (Knee Pain, Back Pain, Neck Pain, Shoulder Pain). There are 5 Lakh surgeries happening in India every year for knee and back. Help people avoid surgeries using rope &amp; belt therapy adoption.
+                  </p>
+                </div>
+              </div>
+              <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm hover:shadow-lg transition-all group hover-lift">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors">
+                    <Award className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-poppins font-bold text-[#005550] text-base">Special Skill</h3>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Rope &amp; Belt therapy gets into details of anatomy of joints as well as pathology of pain condition so that you understand why a particular pain starts. This also helps you in your regular fitness yoga batches to handle patients with special conditions.
+                  </p>
+                </div>
+              </div>
+              <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm hover:shadow-lg transition-all group hover-lift">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-poppins font-bold text-[#005550] text-base">Earn More</h3>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Earning potential of medical yoga techniques like Rope &amp; Belt therapy is very high compared to regular yoga classes. It helps you build a sustainable career in the field of yoga.
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm hover:shadow-lg transition-all group">
-              <div className="space-y-3">
-                <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors">
-                  <BookOpen className="w-5 h-5" />
-                </div>
-                <h3 className="font-poppins font-bold text-[#005550] text-base">Applied Yoga</h3>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  Learn application of yoga to treat musculoskeletal diseases (Knee Pain, Back Pain, Neck Pain, Shoulder Pain). There are 5 Lakh surgeries happening in India every year for knee and back. Help people avoid surgeries using rope &amp; belt therapy adoption.
-                </p>
-              </div>
-            </div>
-            <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm hover:shadow-lg transition-all group">
-              <div className="space-y-3">
-                <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors">
-                  <Award className="w-5 h-5" />
-                </div>
-                <h3 className="font-poppins font-bold text-[#005550] text-base">Special Skill</h3>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  Rope &amp; Belt therapy gets into details of anatomy of joints as well as pathology of pain condition so that you understand why a particular pain starts. This also helps you in your regular fitness yoga batches to handle patients with special conditions.
-                </p>
-              </div>
-            </div>
-            <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm hover:shadow-lg transition-all group">
-              <div className="space-y-3">
-                <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005550] group-hover:bg-[#005550] group-hover:text-white transition-colors">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <h3 className="font-poppins font-bold text-[#005550] text-base">Earn More</h3>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  Earning potential of medical yoga techniques like Rope &amp; Belt therapy is very high compared to regular yoga classes. It helps you build a sustainable career in the field of yoga.
-                </p>
-              </div>
-            </div>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
