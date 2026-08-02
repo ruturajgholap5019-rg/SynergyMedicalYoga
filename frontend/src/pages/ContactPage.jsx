@@ -35,7 +35,7 @@ export default function ContactPage() {
     <div className="font-inter text-[#555555] space-y-12 pb-20">
       
       {/* Header Banner */}
-      <section className="bg-[#005550] py-20 px-4 text-center text-white">
+      <section className="bg-[#005550] py-20 px-4 text-center text-white animate-fade-in-up">
         <div className="max-w-4xl mx-auto space-y-3">
           <h1 className="font-poppins text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white">
             Contact Synergy Medical Yoga
@@ -51,8 +51,8 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           
           {/* Left Info Sidebar (5 cols) */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="bg-[#005550] text-white p-8 rounded-3xl shadow-xl space-y-6">
+          <div className="lg:col-span-5 space-y-6 animate-fade-in-left">
+            <div className="bg-[#005550] text-white p-8 rounded-3xl shadow-xl space-y-6 hover-lift">
               <div>
                 <span className="text-xs font-bold text-teal-200 uppercase tracking-wider">
                   HEADQUARTERS &amp; MAIN CLINIC

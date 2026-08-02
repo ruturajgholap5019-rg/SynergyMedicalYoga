@@ -55,7 +55,7 @@ export default function AboutPage() {
       {/* ──────────────────────────────────────────────
           1. HERO BANNER HEADER
           ────────────────────────────────────────────── */}
-      <section className="bg-[#005550] py-20 px-4 text-center text-white relative overflow-hidden">
+      <section className="bg-[#005550] py-20 px-4 text-center text-white relative overflow-hidden animate-fade-in-up">
         <div className="max-w-4xl mx-auto space-y-3 relative z-10">
           <h1 className="font-poppins text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white">
             About Medical Yoga Therapy
@@ -115,7 +115,7 @@ export default function AboutPage() {
             {TEAM.map((member) => (
               <div
                 key={member.name}
-                className="bg-white rounded-3xl p-5 sm:p-6 text-center shadow-xs hover:shadow-xl border border-gray-200/80 transition-all duration-300 flex flex-col justify-between group"
+                className="bg-white rounded-3xl p-5 sm:p-6 text-center shadow-xs hover:shadow-xl border border-gray-200/80 transition-all duration-300 flex flex-col justify-between group hover-lift animate-fade-in-up"
               >
                 <div>
                   <div className="w-28 h-28 mx-auto rounded-2xl overflow-hidden border-4 border-[#005550]/15 shadow-md group-hover:scale-105 transition-transform duration-500 mb-4 bg-gray-100">

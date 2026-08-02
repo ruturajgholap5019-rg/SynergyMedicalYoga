@@ -21,7 +21,7 @@ export default function FindCentresPage() {
     <div className="font-inter text-[#555555] space-y-12 pb-20">
       
       {/* Header Banner */}
-      <section className="bg-linear-to-br from-[#ebf7f7] to-[#d6f0f0] py-20 px-4 text-center">
+      <section className="bg-linear-to-br from-[#ebf7f7] to-[#d6f0f0] py-20 px-4 text-center animate-fade-in-up">
         <div className="max-w-4xl mx-auto space-y-4">
           <p className="text-xs font-bold uppercase tracking-widest text-[#005550]">
             NATIONWIDE THERAPY NETWORK
@@ -36,8 +36,8 @@ export default function FindCentresPage() {
       </section>
 
       {/* Filter & Search Bar */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#f4f7f8] p-6 rounded-3xl border border-gray-200/80 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in-up">
+        <div className="bg-[#f4f7f8] p-6 rounded-3xl border border-gray-200/80 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between hover-lift">
           
           {/* Search Input */}
           <div className="relative flex-1 w-full">
