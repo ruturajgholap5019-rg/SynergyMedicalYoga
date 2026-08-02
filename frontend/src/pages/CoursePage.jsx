@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   BookOpen,
   Award,
@@ -18,6 +18,14 @@ import ScrollReveal from '../components/ScrollReveal';
 
 const CEO = '/images/User/MD.jpeg';
 const CMO = '/images/User/Poonam-Deshmukh-with-apron.jpeg';
+const PRACTICAL_IMAGES = [
+  { src: '/images/others/ashwini-image.jpeg', alt: 'Clinical anatomy teaching session' },
+  { src: '/images/others/3.jpg', alt: 'Rope and belt standing alignment practice' },
+  { src: '/images/others/6.jpg', alt: 'Rope and belt practical table demonstration' },
+  { src: '/images/others/14.jpg', alt: 'Hands-on Rope and Belt Therapy practice' },
+  { src: '/images/Products/HEaro-Image.webp', alt: 'Therapy product learning setup' },
+  { src: '/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp', alt: 'Structured RBT learning resources' },
+];
 
 // All 14 testimonials – exact text from PDF
 const COURSE_TESTIMONIALS = [
@@ -124,6 +132,7 @@ const COURSE_TESTIMONIALS = [
 export default function CoursePage({ setActivePage }) {
   const [openWeekend, setOpenWeekend] = useState(1);
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
+  const testimonialTrackRef = useRef(null);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -146,92 +155,60 @@ export default function CoursePage({ setActivePage }) {
 
   return (
     <div className="bg-white font-inter text-[#444444]">
+      <section className="bg-[#005550] py-16 px-4 text-center text-white">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="font-sansita text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+            Education
+          </h1>
+        </div>
+      </section>
       {/* ── HERO ── */}
-      <section className="relative bg-gradient-to-br from-[#003d39] via-[#005550] to-[#002f2c] text-white py-16 sm:py-24 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-[#f4faf9] via-white to-[#e8f5f3] py-12 sm:py-16 lg:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-teal-400/10 via-transparent to-transparent pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-7 space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 bg-teal-800/60 border border-teal-400/30 px-3.5 py-1.5 rounded-full text-xs font-bold text-teal-200 tracking-wide uppercase backdrop-blur-xs">
-                <Sparkles className="w-3.5 h-3.5 text-teal-300 animate-pulse" />
-                <span>Hybrid (Online + Offline) Certification</span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-stretch">
+            <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 bg-white border border-teal-100 px-4 py-2 rounded-full text-xs font-bold text-[#005550] tracking-wide uppercase shadow-sm">
+                <BookOpen className="w-4 h-4" />
+                <span>Synergy Learning Programs</span>
               </div>
-              <h1 className="font-sansita text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight drop-shadow-md">
-                Medical Yoga Therapy
-                <br />
-                <span className="text-teal-200 italic font-normal text-3xl sm:text-4xl lg:text-5xl">
-                  Rope &amp; Belt Therapy Training Course
-                </span>
-              </h1>
-              <p className="text-base sm:text-lg text-teal-100/90 max-w-2xl leading-relaxed">
-                Modern Therapy with Ancient Wisdom. Master doctor-supervised non-surgical postural realignment, joint friction elimination, and specialized musculoskeletal pain recovery techniques.
+              <h2 className="font-sansita text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-[#005550]">
+                Learn Medical Yoga Therapy with clinical clarity
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                Synergy education programs help yoga professionals, therapists, and wellness learners understand practical, anatomy-led Rope &amp; Belt Therapy for pain care and better movement.
               </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2">
-                <div className="bg-white/10 backdrop-blur-xs border border-white/10 p-3 rounded-2xl">
-                  <p className="text-[10px] uppercase font-bold text-teal-200">DURATION</p>
-                  <p className="text-sm font-bold text-white">45 Hours (1 Month)</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-xs border border-white/10 p-3 rounded-2xl">
-                  <p className="text-[10px] uppercase font-bold text-teal-200">NEXT BATCH</p>
-                  <p className="text-sm font-bold text-amber-300">5th Sept 2026</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-xs border border-white/10 p-3 rounded-2xl col-span-2 sm:col-span-1">
-                  <p className="text-[10px] uppercase font-bold text-teal-200">COURSE FEE</p>
-                  <p className="text-sm font-bold text-white">₹19,999/-</p>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
                 <button
-                  onClick={() => setIsEnrollModalOpen(true)}
-                  className="bg-amber-400 hover:bg-amber-500 text-gray-900 font-extrabold text-sm px-8 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer"
+                  onClick={() => document.getElementById('upcoming-course')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="bg-white hover:bg-[#005550] text-[#005550] hover:text-white font-bold text-sm px-6 py-3.5 rounded-2xl shadow-md border-2 border-[#005550] transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Enroll for Sep Batch (₹19,999)</span>
+                  <span>View Upcoming Course</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
                 <a
                   href="https://wa.me/919730321042?text=Hi%2C%20I%20want%20to%20know%20more%20about%20the%20Rope%20%26%20Belt%20Therapy%20Course"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm px-6 py-3.5 rounded-2xl shadow-md transition-all flex items-center gap-2"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm px-6 py-3.5 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2"
                 >
                   <PhoneCall className="w-4 h-4" />
                   <span>WhatsApp Inquiry</span>
                 </a>
               </div>
             </div>
-            <div className="lg:col-span-5 flex justify-center">
-              <div className="bg-white text-gray-800 rounded-3xl p-6 sm:p-8 shadow-2xl border border-teal-100 max-w-md w-full space-y-6">
-                <div className="text-center space-y-1">
-                  <span className="text-xs font-extrabold uppercase tracking-widest text-[#005550]">OFFICIAL SYNERGY BROCHURE</span>
-                  <h3 className="font-sansita text-2xl font-bold text-[#005550]">Medical Yoga Therapy</h3>
-                  <div className="w-12 h-0.5 bg-[#005550] mx-auto mt-2" />
-                </div>
-                <div className="bg-[#f0f9f8] p-4 rounded-2xl border border-teal-100 text-xs space-y-3">
-                  <div className="flex items-center justify-between border-b border-teal-100/80 pb-2">
-                    <span className="text-gray-500 font-medium">Batch Schedule</span>
-                    <span className="font-bold text-[#005550]">Weekend Batch</span>
-                  </div>
-                  <div className="flex items-center justify-between border-b border-teal-100/80 pb-2">
-                    <span className="text-gray-500 font-medium">Instructional Mode</span>
-                    <span className="font-bold text-[#005550]">Online + Offline Practical</span>
-                  </div>
-                  <div className="flex items-center justify-between border-b border-teal-100/80 pb-2">
-                    <span className="text-gray-500 font-medium">Language</span>
-                    <span className="font-bold text-[#005550]">English + Hindi</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500 font-medium">Certification</span>
-                    <span className="font-bold text-emerald-700">Official RBT Certificate</span>
-                  </div>
-                </div>
-                <div className="text-center space-y-3 pt-2">
-                  <p className="text-xs text-gray-500 font-medium">Have questions before joining?</p>
-                  <button
-                    onClick={() => setIsEnrollModalOpen(true)}
-                    className="w-full bg-[#005550] hover:bg-[#003d39] text-white font-bold py-3 rounded-xl text-xs shadow-md transition-all cursor-pointer"
-                  >
-                    Request Callback / Download Syllabus
-                  </button>
+            <div className="lg:col-span-6 flex">
+              <div className="relative overflow-hidden rounded-3xl border border-teal-100 shadow-xl bg-white w-full">
+                <img
+                  src="/images/others/ashwini-image.jpeg"
+                  alt="Synergy Medical Yoga education session"
+                  className="w-full h-[330px] sm:h-[380px] lg:h-[430px] object-cover object-center"
+                  loading="eager"
+                  fetchPriority="high"
+                />
+                <div className="absolute left-4 bottom-4 right-4 bg-white/92 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/70">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#005550]">Education at Synergy</p>
+                  <p className="text-sm text-gray-600 mt-1">Structured learning, practical demonstration, and guided therapy application.</p>
                 </div>
               </div>
             </div>
@@ -308,11 +285,11 @@ export default function CoursePage({ setActivePage }) {
       </section>
 
       {/* ───────────── COURSE HIGHLIGHTS ───────────── */}
-      <section className="py-14 bg-white">
+      <section className="pt-10 pb-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Heading */}
-          <div className="text-center mb-10">
+          <div className="text-center mb-6">
             <span className="inline-flex items-center rounded-full border border-teal-100 bg-teal-50 px-4 py-1 text-xs font-bold uppercase tracking-widest text-[#005550]">
               Course Highlights
             </span>
@@ -321,78 +298,50 @@ export default function CoursePage({ setActivePage }) {
               Practical Learning Experience
             </h2>
 
-            <p className="mt-3 max-w-3xl mx-auto text-gray-600">
+            <p className="hidden">
               Learn through live demonstrations, expert guidance and hands-on
               Rope & Belt Therapy training.
             </p>
           </div>
 
-          {/* Images Card */}
-          <div className="rounded-3xl border border-gray-200 bg-white shadow-lg p-5">
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-auto lg:h-[500px]">
-
-              {/* Left */}
-              <div className="overflow-hidden rounded-2xl">
-                <img
-                  src="/images/others/ashwini-image.jpeg"
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Middle */}
-              <div className="grid grid-rows-2 gap-4">
-
-                <div className="overflow-hidden rounded-2xl">
+          <div className="max-w-6xl mx-auto rounded-3xl border border-gray-200 bg-white shadow-lg p-3 sm:p-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+              {PRACTICAL_IMAGES.map((image, index) => (
+                <div
+                  key={image.src}
+                  className="group relative overflow-hidden rounded-2xl bg-[#f4faf9] border border-gray-100 shadow-sm"
+                >
                   <img
-                    src="/images/others/3.jpg"
-                    alt=""
-                    className="w-full h-full object-cover"
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-[190px] sm:h-[220px] lg:h-[240px] object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading={index < 3 ? 'eager' : 'lazy'}
                   />
+                  <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
-
-                <div className="overflow-hidden rounded-2xl">
-                  <img
-                    src="/images/others/6.jpg"
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-              </div>
-
-              {/* Right */}
-              <div className="overflow-hidden rounded-2xl">
-                <img
-                  src="/images/others/14.jpg"
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
+              ))}
             </div>
-
-          </div>
-
-          {/* Banner */}
-          <div className="mt-10">
-            <img
-              src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
-              alt=""
-              className="w-full rounded-3xl border border-gray-200 shadow-md"
-            />
           </div>
 
         </div>
       </section>
+
+      <section className="py-14 bg-[#eef8f6] border-y border-teal-100/70">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <img
+            src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
+            alt=""
+            className="w-full rounded-2xl shadow-xl border border-gray-200 bg-white"
+          />
+        </div>
+      </section>
       {/* ── COURSE DETAILS ── */}
-      <section className="py-16 bg-[#eaf6f6]">
+      <section id="upcoming-course" className="py-16 bg-[#eaf6f6] scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-3xl p-8 sm:p-12 border border-teal-100 shadow-xl space-y-8">
             <div className="text-center space-y-2">
-              <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">BATCH &amp; ENROLLMENT SPECIFICATIONS</span>
-              <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">Course Details at a Glance</h2>
+              <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">Upcoming Course</span>
+              <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">Rope &amp; Belt Therapy Training Course</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="p-5 bg-teal-50/50 rounded-2xl border border-teal-100 space-y-1">
@@ -427,10 +376,10 @@ export default function CoursePage({ setActivePage }) {
                 <p className="text-xs text-teal-100/90 mt-1">Includes Theory &amp; Practical Training, Course Manuals, and Video Access</p>
               </div>
               <button
-                onClick={() => setIsEnrollModalOpen(true)}
+                onClick={() => document.getElementById('course-curriculum')?.scrollIntoView({ behavior: 'smooth' })}
                 className="bg-amber-400 hover:bg-amber-500 text-gray-900 font-extrabold px-8 py-3.5 rounded-xl shadow-md transition-all cursor-pointer whitespace-nowrap text-sm"
               >
-                Register Now for ₹19,999
+                View Course Curriculum
               </button>
             </div>
           </div>
@@ -438,7 +387,45 @@ export default function CoursePage({ setActivePage }) {
       </section>
 
       {/* ── CURRICULUM – collapsible (only one open) ── */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-[#f4f7f8]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div className="text-center space-y-2">
+            <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">Course Faculty</span>
+            <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">Learn From Clinical Experts</h2>
+            <div className="w-16 h-0.5 bg-[#005550] mx-auto mt-2" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
+              <div className="flex items-center gap-4">
+                <img src={getImageUrl(CMO)} alt="Dr. Poonam Deshmukh" className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-[#005550] shadow-md" />
+                <div>
+                  <h3 className="font-poppins font-bold text-xl text-[#005550]">Dr. Poonam Deshmukh</h3>
+                  <p className="text-xs font-bold text-gray-600">Partner - Synergy Medical Yoga</p>
+                  <p className="text-xs text-teal-700 font-semibold mt-0.5">B.Th.O &amp; OTR (USA NBCOT)</p>
+                </div>
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                Dr. Poonam Deshmukh is an Occupational Therapist with over 20 years of clinical experience and is a USA-certified Occupational Therapist (OTR), having practiced in the United States for more than five years. She specializes in integrating the ancient principles of Medical Yoga with the modern understanding of musculoskeletal anatomy to develop effective therapeutic approaches. Known for her engaging teaching style, Dr. Poonam simplifies complex clinical concepts through practical demonstrations and real-life case studies, enabling healthcare professionals to confidently apply them in clinical practice.
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
+              <div className="flex items-center gap-4">
+                <img src={getImageUrl(CEO)} alt="Manoj Deshmukh" className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-[#005550] shadow-md" />
+                <div>
+                  <h3 className="font-poppins font-bold text-xl text-[#005550]">Manoj Deshmukh</h3>
+                  <p className="text-xs font-bold text-gray-600">Partner - Synergy Medical Yoga</p>
+                  <p className="text-xs text-teal-700 font-semibold mt-0.5">B.E. (BITS Pilani) + EPMBD (IIM Calcutta)</p>
+                </div>
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                Manoj Deshmukh, Founder &amp; Partner of Synergy Medical Yoga, brings over 22 years of corporate leadership experience combined with a deep understanding of joint biomechanics and the therapeutic application of Rope &amp; Belt Therapy. Driven by the vision of making evidence-based Medical Yoga accessible to everyone, he leads Synergy's mission to democratize Rope &amp; Belt Therapy across India through technology-enabled healthcare, structured education, and innovative therapeutic products. His goal is to make this effective, non-invasive therapy simple, affordable, and widely accessible, empowering people to maintain joint health and reduce the need for avoidable surgical interventions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="course-curriculum" className="py-16 bg-white scroll-mt-24">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           <div className="text-center space-y-2">
             <span className="text-xs font-bold text-[#005550] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
@@ -601,7 +588,7 @@ export default function CoursePage({ setActivePage }) {
       </section>
 
       {/* ── FACULTY ── */}
-      <section className="py-16 bg-[#f4f7f8]">
+      <section className="hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center space-y-2">
             <span className="text-xs font-bold text-[#005550] uppercase tracking-wider">LEARN FROM CLINICAL EXPERTS</span>
@@ -644,16 +631,46 @@ export default function CoursePage({ setActivePage }) {
       </section>
 
       {/* ── TESTIMONIALS – horizontally scrollable ── */}
+      <style>{`
+        @keyframes educationFeedbackMarquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        .education-feedback-track {
+          animation: educationFeedbackMarquee 42s linear infinite;
+        }
+        .education-feedback-track:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
+
       <section className="py-12 bg-[#005550] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="text-center space-y-1">
-            <span className="text-xs font-bold text-teal-200 uppercase tracking-wider">STUDENT FEEDBACK &amp; REVIEWS</span>
+            <span className="text-xs font-bold text-teal-200 uppercase tracking-wider">FEEDBACK &amp; REVIEWS</span>
             <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-white">What Our RBT Alumni Say</h2>
           </div>
-          <div className="overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-teal-200 scrollbar-track-transparent">
-            <div className="flex gap-4 w-max">
-              {COURSE_TESTIMONIALS.map((t, idx) => (
-                <div key={idx} className="bg-white text-gray-800 rounded-2xl p-4 shadow-lg flex flex-col justify-between min-w-[240px] max-w-[280px] space-y-3">
+          <div className="relative">
+            <button
+              type="button"
+              aria-label="Scroll feedback left"
+              onClick={() => testimonialTrackRef.current?.scrollBy({ left: -320, behavior: 'smooth' })}
+              className="absolute left-0 top-1/2 z-10 -translate-y-1/2 bg-white/95 hover:bg-amber-300 text-[#005550] rounded-full w-10 h-10 shadow-lg border border-white/70 flex items-center justify-center transition-colors"
+            >
+              <ChevronDown className="w-5 h-5 rotate-90" />
+            </button>
+            <button
+              type="button"
+              aria-label="Scroll feedback right"
+              onClick={() => testimonialTrackRef.current?.scrollBy({ left: 320, behavior: 'smooth' })}
+              className="absolute right-0 top-1/2 z-10 -translate-y-1/2 bg-white/95 hover:bg-amber-300 text-[#005550] rounded-full w-10 h-10 shadow-lg border border-white/70 flex items-center justify-center transition-colors"
+            >
+              <ChevronDown className="w-5 h-5 -rotate-90" />
+            </button>
+            <div ref={testimonialTrackRef} className="overflow-x-auto pb-4 scrollbar-none">
+              <div className="education-feedback-track flex gap-4 w-max pr-4">
+              {[...COURSE_TESTIMONIALS, ...COURSE_TESTIMONIALS].map((t, idx) => (
+                <div key={`${t.name}-${idx}`} className="bg-white text-gray-800 rounded-2xl p-4 shadow-lg flex flex-col justify-between min-w-[240px] max-w-[280px] space-y-3">
                   <div className="space-y-2">
                     <div className="flex gap-1 text-amber-400">
                       {[...Array(t.stars)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />)}
@@ -666,6 +683,7 @@ export default function CoursePage({ setActivePage }) {
                   </div>
                 </div>
               ))}
+              </div>
             </div>
           </div>
         </div>

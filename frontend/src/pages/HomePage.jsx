@@ -7,7 +7,7 @@ import { useSiteSettings } from '../lib/useSiteSettings';
 import ScrollReveal from '../components/ScrollReveal';
 
 const IMEDIYOG_LOGO  = '/images/others/I-Mediyog-Logo_PNG-06.webp';
-const PRODUCT_KNEE   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/06/HEaro-Image-300x300.png';
+const PRODUCT_KNEE   = '/images/others/HEaro-Image.png';
 const PRODUCT_NECK   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Neck-Pain-01-300x300.png';
 const PRODUCT_CORP   = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Product-2-300x300.png';
 const APP_MOCKUP     = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-%E0%A5%A8-1-scaled.png';
