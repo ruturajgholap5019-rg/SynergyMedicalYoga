@@ -569,14 +569,12 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       {/* ──────────────────────────────────────────────
           5.5 BECAUSE SHE DESERVES TO WALK FREE FROM PAIN
           ────────────────────────────────────────────── */}
-      <section className="py-6 sm:py-8 bg-[#e0f5f3] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
-          <img
-            src="/images/others/Website-Banner-5.webp"
-            alt="Because she deserves to walk free from pain"
-            className="w-full max-h-[260px] sm:max-h-[340px] md:max-h-[400px] lg:max-h-[440px] object-contain rounded-xl sm:rounded-2xl"
-          />
-        </div>
+      <section className="w-full bg-[#e0f5f3] py-0 px-0 overflow-hidden">
+        <img
+          src="/images/others/Website-Banner-5.webp"
+          alt="Because she deserves to walk free from pain"
+          className="w-full h-auto object-cover sm:object-fill block"
+        />
       </section>
 
 
