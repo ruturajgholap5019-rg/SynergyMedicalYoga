@@ -33,6 +33,9 @@ exports.protect = catchAsync(async (req, res, next) => {
       const decoded = verifyAccessToken(token);
       const user = await User.findById(decoded.id).select('-password +tokenVersion');
       if (user) {
+        if (user.isDeleted) {
+          return next(new AppError('This account has been permanently deleted.', 401));
+        }
         if ((decoded.tokenVersion || 0) !== (user.tokenVersion || 0)) {
           return next(new AppError('Session expired. Please log in again.', 401));
         }
@@ -52,6 +55,10 @@ exports.protect = catchAsync(async (req, res, next) => {
       if (storedToken) {
         const user = await User.findById(decodedRefresh.id).select('-password +tokenVersion');
         if (user) {
+          if (user.isDeleted) {
+            await RefreshToken.findOneAndUpdate({ token: refreshToken }, { revoked: true });
+            return next(new AppError('This account has been permanently deleted.', 401));
+          }
           if ((decodedRefresh.tokenVersion || 0) !== (user.tokenVersion || 0)) {
             await RefreshToken.findOneAndUpdate({ token: refreshToken }, { revoked: true });
             return next(new AppError('Session expired. Please log in again.', 401));

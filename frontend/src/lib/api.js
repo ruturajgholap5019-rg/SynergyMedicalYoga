@@ -193,6 +193,16 @@ export const api = {
       markClientLoggedOut();
     }
   },
+  deleteAccount: async () => {
+    try {
+      const res = await request('/auth/delete-account', {
+        method: 'DELETE',
+      });
+      return res;
+    } finally {
+      markClientLoggedOut();
+    }
+  },
   refreshToken: () => request('/auth/refresh', {
     method: 'POST',
   }),

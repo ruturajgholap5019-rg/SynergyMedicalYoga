@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Lock, Mail, Phone, LogOut, Package, ShieldCheck, Calendar, Clock, MapPin, CheckCircle2, Download, Home, Edit3, Trash2, Key, ChevronRight, FileText } from 'lucide-react';
+import { User, Lock, Mail, Phone, Package, ShieldCheck, CheckCircle2, Edit3, Trash2, ChevronRight } from 'lucide-react';
 import { api } from '../lib/api';
 import { toast } from 'react-toastify';
 
@@ -127,14 +127,24 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     }
     setLoading(true);
     try {
-      const response = await api.verifyOtp({
-        email: signUpEmail.trim().toLowerCase(),
-        otp: otpCode,
-      });
+      let response;
+      if (typeof api.verifyOtp === 'function') {
+        response = await api.verifyOtp({
+          email: signUpEmail.trim().toLowerCase(),
+          otp: otpCode,
+        });
+      } else {
+        response = await api.register({
+          name: signUpName.trim(),
+          email: signUpEmail.trim().toLowerCase(),
+          phone: signUpPhone.trim(),
+          password: signUpPassword,
+        });
+      }
       toast.success('Account created successfully! Welcome to Synergy Medical Yoga!');
       onAuthSuccess?.(response.user);
     } catch (error) {
-      toast.error(error.message || 'Invalid or expired code.');
+      toast.error(error.message || 'Failed to create account.');
     } finally {
       setLoading(false);
     }
@@ -172,10 +182,18 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     toast.success('Shipping & billing address saved!');
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (window.confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
-      toast.success('Account deletion request processed.');
-      handleLogoutClick();
+      setLoading(true);
+      try {
+        await api.deleteAccount();
+        toast.success('Your account has been permanently deleted.');
+        onLogout?.();
+      } catch (err) {
+        toast.error(err.message || 'Failed to delete account.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -643,10 +661,11 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                     </p>
                     <button
                       type="button"
+                      disabled={loading}
                       onClick={handleDeleteAccount}
-                      className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-xl font-bold text-xs shadow-sm flex items-center gap-2 transition-colors cursor-pointer"
+                      className="bg-rose-600 hover:bg-rose-700 disabled:opacity-60 text-white px-6 py-3 rounded-xl font-bold text-xs shadow-sm flex items-center gap-2 transition-colors cursor-pointer"
                     >
-                      <Trash2 className="w-4 h-4" /> Permanently Delete My Account
+                      <Trash2 className="w-4 h-4" /> {loading ? 'Deleting...' : 'Permanently Delete My Account'}
                     </button>
                   </div>
                 </div>

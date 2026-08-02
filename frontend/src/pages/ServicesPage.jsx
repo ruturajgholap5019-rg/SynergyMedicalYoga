@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronDown, ChevronUp, MapPin, CheckCircle2, QrCode, Clock, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { ChevronDown, ChevronUp, CheckCircle2, QrCode, Clock, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { api, getImageUrl } from '../lib/api';
 import AppointmentModal from '../components/AppointmentModal';
 import { useSiteSettings } from '../lib/useSiteSettings';
@@ -625,14 +625,12 @@ export default function ServicesPage({ setActivePage, currentUser }) {
       {/* ──────────────────────────────────────────────
           6.5 WHY LEARN RBT WITH SYNERGY BANNER SECTION
           ────────────────────────────────────────────── */}
-      <section className="py-12 sm:py-16 bg-[#EAEBEB] border-t border-b border-gray-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
-          <img
-            src={getImageUrl('/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp')}
-            alt="Why Learn RBT with Synergy Banner"
-            className="w-full h-auto object-contain max-h-[600px] rounded-2xl shadow-md"
-          />
-        </div>
+      <section className="w-full bg-[#EAEBEB] border-t border-b border-gray-200/80">
+        <img
+          src={getImageUrl('/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp')}
+          alt="Why Learn RBT with Synergy Banner"
+          className="w-full h-auto block"
+        />
       </section>
 
 
