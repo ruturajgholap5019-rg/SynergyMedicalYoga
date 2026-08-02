@@ -250,7 +250,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         <section
           onMouseEnter={() => setIsCarouselPaused(true)}
           onMouseLeave={() => setIsCarouselPaused(false)}
-          className="relative w-full overflow-hidden bg-[#f8fbfb] h-[220px] xs:h-[280px] sm:h-[420px] md:h-[540px] lg:h-[650px] flex items-center group shadow-xl"
+          className="relative w-full overflow-hidden bg-[#f8fbfb] h-screen min-h-[500px] flex items-center group shadow-xl"
         >
           {heroSlides.map((s, i) => (
             <div
@@ -277,7 +277,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
                     setActivePage(target);
                   }
                 }}
-                className="w-full h-full object-contain bg-[#f8fbfb] cursor-pointer"
+                className="w-full h-full object-cover bg-[#f8fbfb] cursor-pointer"
               />
               {/* Optional Slide Heading Overlay (only shown if title/subtitle exists) */}
               {(s.heading || s.subtitle) && (
@@ -375,16 +375,14 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
 
 
       {/* ──────────────────────────────────────────────
-          3. WHY LEARN RBT WITH SYNERGY MEDICAL YOGA (Live WordPress Alternating Timeline Design)
+          3. WHY LEARN RBT WITH SYNERGY MEDICAL YOGA
           ────────────────────────────────────────────── */}
-      <section className="py-8 sm:py-12 bg-[#f8fdfe]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <img
-            src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
-            alt="Why learn RBT with Synergy Medical Yoga"
-            className="w-full h-auto object-contain rounded-xl sm:rounded-2xl"
-          />
-        </div>
+      <section className="w-full bg-[#f8fdfe] py-0 px-0 overflow-hidden">
+        <img
+          src="/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp"
+          alt="Why learn RBT with Synergy Medical Yoga"
+          className="w-full h-full object-cover block"
+        />
       </section>
       <section className="hidden">
         {/* Decorative Botanical Timeline Wave connecting illustrations across columns */}
@@ -571,12 +569,12 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       {/* ──────────────────────────────────────────────
           5.5 BECAUSE SHE DESERVES TO WALK FREE FROM PAIN
           ────────────────────────────────────────────── */}
-      <section className="py-8 sm:py-12 bg-[#e0f5f3] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-6 sm:py-8 bg-[#e0f5f3] overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
           <img
             src="/images/others/Website-Banner-5.webp"
             alt="Because she deserves to walk free from pain"
-            className="w-full h-auto object-contain rounded-xl sm:rounded-2xl"
+            className="w-full max-h-[240px] sm:max-h-[320px] md:max-h-[380px] object-contain rounded-xl sm:rounded-2xl"
           />
         </div>
       </section>
@@ -592,7 +590,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
               <img
                 src="https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png"
                 alt="Because She Deserves to Walk Free from Pain"
-                className="w-full max-w-lg object-contain rounded-3xl drop-shadow-xl hover:scale-102 transition-transform duration-500"
+                className="w-auto max-h-[240px] sm:max-h-[300px] lg:max-h-[340px] object-contain rounded-3xl drop-shadow-xl hover:scale-102 transition-transform duration-500"
                 onError={(e) => { e.target.onerror = null; e.target.src = APP_MOCKUP; }}
               />
             </div>
