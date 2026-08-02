@@ -317,12 +317,12 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           </button>
 
           {/* Dots Indicator */}
-          <div className="absolute bottom-2.5 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 flex gap-1.5 sm:gap-2 bg-black/20 backdrop-blur-xs px-3 py-1.5 rounded-full border border-white/10">
+          <div className="absolute bottom-2.5 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 flex gap-1.5 bg-black/20 backdrop-blur-xs px-2.5 py-1 rounded-full border border-white/10">
             {heroSlides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setSlide(i)}
-                className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all cursor-pointer ${i === slide ? 'bg-white scale-125 shadow-md' : 'bg-white/50 hover:bg-white/80'}`}
+                className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all cursor-pointer ${i === slide ? 'bg-gray-800 scale-125 shadow-sm' : 'bg-gray-400/70 hover:bg-gray-600'}`}
                 aria-label={`Go to slide ${i + 1}`}
               />
             ))}
