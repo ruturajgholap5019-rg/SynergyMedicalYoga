@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronDown, ChevronUp, CheckCircle2, QrCode, Clock, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, CheckCircle2, QrCode, Clock, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { api, getImageUrl } from '../lib/api';
 import AppointmentModal from '../components/AppointmentModal';
 import { useSiteSettings } from '../lib/useSiteSettings';

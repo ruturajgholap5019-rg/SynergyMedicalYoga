@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Lock, Mail, Phone, Package, ShieldCheck, CheckCircle2, Edit3, Trash2, ChevronRight } from 'lucide-react';
+import { User, Lock, Mail, Phone, LogOut, Package, ShieldCheck, Calendar, Clock, MapPin, CheckCircle2, Download, Home, Edit3, Trash2, Key, ChevronRight, FileText } from 'lucide-react';
 import { api } from '../lib/api';
 import { toast } from 'react-toastify';
 

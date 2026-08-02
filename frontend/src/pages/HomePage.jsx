@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, ArrowRight, QrCode } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight, Star, QrCode } from 'lucide-react';
 import { PRODUCTS } from '../data/mockData';
 import { api, getImageUrl } from '../lib/api';
 import ProductCard from '../components/ProductCard';

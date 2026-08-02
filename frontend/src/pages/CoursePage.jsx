@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import {
+  BookOpen,
+  Award,
   CheckCircle2,
   PhoneCall,
+  UserCheck,
   Sparkles,
   Star,
+  Send,
+  X,
   ArrowRight,
   ChevronDown,
   ChevronUp,
