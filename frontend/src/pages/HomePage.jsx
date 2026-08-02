@@ -638,24 +638,24 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
           </div>
 
           {/* Stats Bar */}
-          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-teal-100/60 max-w-4xl mx-auto mt-16 grid grid-cols-3 divide-x divide-gray-200 text-center">
-            <div className="px-4">
-              <div className="font-poppins font-extrabold text-3xl sm:text-4xl md:text-5xl text-[#005550]">
+          <div className="bg-white rounded-xl p-4 sm:p-5 shadow-md border border-teal-100/60 max-w-2xl mx-auto mt-10 grid grid-cols-3 divide-x divide-gray-200 text-center">
+            <div className="px-2 sm:px-4">
+              <div className="font-poppins font-extrabold text-xl sm:text-2xl md:text-3xl text-[#005550]">
                 <Counter end={settings.statsCities ?? 15} />
               </div>
-              <p className="text-xs sm:text-sm font-bold tracking-widest text-gray-600 uppercase mt-2">CITIES</p>
+              <p className="text-[10px] sm:text-xs font-bold tracking-wider text-gray-600 uppercase mt-1">CITIES</p>
             </div>
-            <div className="px-4">
-              <div className="font-poppins font-extrabold text-3xl sm:text-4xl md:text-5xl text-[#005550]">
+            <div className="px-2 sm:px-4">
+              <div className="font-poppins font-extrabold text-xl sm:text-2xl md:text-3xl text-[#005550]">
                 <Counter end={settings.statsCenters ?? 200} suffix="+" />
               </div>
-              <p className="text-xs sm:text-sm font-bold tracking-widest text-gray-600 uppercase mt-2">CENTERS</p>
+              <p className="text-[10px] sm:text-xs font-bold tracking-wider text-gray-600 uppercase mt-1">CENTERS</p>
             </div>
-            <div className="px-4">
-              <div className="font-poppins font-extrabold text-3xl sm:text-4xl md:text-5xl text-[#005550]">
+            <div className="px-2 sm:px-4">
+              <div className="font-poppins font-extrabold text-xl sm:text-2xl md:text-3xl text-[#005550]">
                 <Counter end={settings.statsTherapists ?? 400} suffix="+" />
               </div>
-              <p className="text-xs sm:text-sm font-bold tracking-widest text-gray-600 uppercase mt-2">THERAPISTS</p>
+              <p className="text-[10px] sm:text-xs font-bold tracking-wider text-gray-600 uppercase mt-1">THERAPISTS</p>
             </div>
           </div>
 
@@ -666,14 +666,12 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
       {/* ──────────────────────────────────────────────
           6.5 DOWNLOAD OUR APP TO BOOK AN APPOINTMENT
           ────────────────────────────────────────────── */}
-      <section className="py-8 sm:py-12 bg-[#eaf6f6]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <img
-            src="/images/others/Download-the-app-Synergy-MYT-3-scaled.webp"
-            alt="Download the Synergy MYT app"
-            className="w-full h-auto object-contain rounded-xl sm:rounded-2xl"
-          />
-        </div>
+      <section className="w-full bg-[#eaf6f6] py-0 px-0 overflow-hidden">
+        <img
+          src="/images/others/Download-the-app-Synergy-MYT-3-scaled.webp"
+          alt="Download the Synergy MYT app"
+          className="w-full h-full object-cover block"
+        />
       </section>
       <section className="hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
