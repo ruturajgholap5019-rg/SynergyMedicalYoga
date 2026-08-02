@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp, MapPin, CheckCircle2, QrCode, Clock, ChevronLef
 import { api, getImageUrl } from '../lib/api';
 import AppointmentModal from '../components/AppointmentModal';
 import { useSiteSettings } from '../lib/useSiteSettings';
+import ScrollReveal from '../components/ScrollReveal';
 
 const APP_MOCKUP = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-२-1-scaled.png';
 const PLAYSTORE  = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/PLaystore-Icon-e1747384325874.webp';
@@ -246,60 +247,62 @@ export default function ServicesPage({ setActivePage, currentUser }) {
           ────────────────────────────────────────────── */}
       <section className="py-20 bg-[#eaf6f6]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <ScrollReveal animation="fade-up">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
-            {/* App Mockup */}
-            <div className="lg:col-span-5 flex justify-center">
-              <img
-                src={getImageUrl(settings.appMockupImage || APP_MOCKUP)}
-                alt="Synergy MYT App"
-                className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
-              />
+              {/* App Mockup */}
+              <div className="lg:col-span-5 flex justify-center">
+                <img
+                  src={getImageUrl(settings.appMockupImage || APP_MOCKUP)}
+                  alt="Synergy MYT App"
+                  className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+
+              {/* Text & Download Options */}
+              <div className="lg:col-span-7 space-y-6">
+                <div className="space-y-2">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#005550]">
+                    FIND THE NEAREST THERAPIST / CENTER
+                  </p>
+                  <div className="w-16 h-0.5 bg-[#005550]" />
+                </div>
+
+                <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
+                  Download Our App
+                </h2>
+
+                <div className="space-y-4 text-base sm:text-lg leading-relaxed text-gray-700">
+                  <p>
+                    Discover the transformative power of Medical Yoga Therapy with our all-in-one app! Whether you're seeking a qualified therapist nearby, who can come to your place or you want to find a nearest medical yoga center which is on synergy platform of integrated approach nearby who can take care of your pain management end to end, our app has you covered.
+                  </p>
+                  <p>
+                    Our app has certified medical yoga therapists from various institutes and who work closely with yoga physicians and nuitritionists to provide a holistic regimen for recovery from pain.
+                  </p>
+                </div>
+
+                {/* QR Code & Store Badges */}
+                <div className="flex flex-wrap gap-6 pt-4 items-center">
+                  <a href={settings.playStoreUrl || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100 hover:shadow-md transition-all cursor-pointer btn-glow-primary">
+                    <QrCode className="w-10 h-10 text-[#005550]" />
+                    <div>
+                      <img src={PLAYSTORE} alt="Google Play" className="h-8 object-contain" />
+                      <p className="text-[10px] text-gray-500 font-medium mt-0.5">Scan or tap to download</p>
+                    </div>
+                  </a>
+
+                  <a href={settings.appStoreUrl || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100 hover:shadow-md transition-all cursor-pointer btn-glow-primary">
+                    <QrCode className="w-10 h-10 text-[#005550]" />
+                    <div>
+                      <img src={APPSTORE} alt="App Store" className="h-8 object-contain" />
+                      <p className="text-[10px] text-gray-500 font-medium mt-0.5">Scan or tap to download</p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
             </div>
-
-            {/* Text & Download Options */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="space-y-2">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#005550]">
-                  FIND THE NEAREST THERAPIST / CENTER
-                </p>
-                <div className="w-16 h-0.5 bg-[#005550]" />
-              </div>
-
-              <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-[#005550] leading-tight">
-                Download Our App
-              </h2>
-
-              <div className="space-y-4 text-base sm:text-lg leading-relaxed text-gray-700">
-                <p>
-                  Discover the transformative power of Medical Yoga Therapy with our all-in-one app! Whether you're seeking a qualified therapist nearby, who can come to your place or you want to find a nearest medical yoga center which is on synergy platform of integrated approach nearby who can take care of your pain management end to end, our app has you covered.
-                </p>
-                <p>
-                  Our app has certified medical yoga therapists from various institutes and who work closely with yoga physicians and nuitritionists to provide a holistic regimen for recovery from pain.
-                </p>
-              </div>
-
-              {/* QR Code & Store Badges */}
-              <div className="flex flex-wrap gap-6 pt-4 items-center">
-                <a href={settings.playStoreUrl || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100 hover:shadow-md transition-all cursor-pointer">
-                  <QrCode className="w-10 h-10 text-[#005550]" />
-                  <div>
-                    <img src={PLAYSTORE} alt="Google Play" className="h-8 object-contain" />
-                    <p className="text-[10px] text-gray-500 font-medium mt-0.5">Scan or tap to download</p>
-                  </div>
-                </a>
-
-                <a href={settings.appStoreUrl || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white p-3.5 rounded-2xl shadow-sm border border-teal-100 hover:shadow-md transition-all cursor-pointer">
-                  <QrCode className="w-10 h-10 text-[#005550]" />
-                  <div>
-                    <img src={APPSTORE} alt="App Store" className="h-8 object-contain" />
-                    <p className="text-[10px] text-gray-500 font-medium mt-0.5">Scan or tap to download</p>
-                  </div>
-                </a>
-              </div>
-            </div>
-
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -625,14 +628,12 @@ export default function ServicesPage({ setActivePage, currentUser }) {
       {/* ──────────────────────────────────────────────
           6.5 WHY LEARN RBT WITH SYNERGY BANNER SECTION
           ────────────────────────────────────────────── */}
-      <section className="py-12 sm:py-16 bg-[#EAEBEB] border-t border-b border-gray-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
-          <img
-            src={getImageUrl('/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp')}
-            alt="Why Learn RBT with Synergy Banner"
-            className="w-full h-auto object-contain max-h-[600px] rounded-2xl shadow-md"
-          />
-        </div>
+      <section className="w-full bg-[#EAEBEB] border-t border-b border-gray-200/80">
+        <img
+          src={getImageUrl('/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp')}
+          alt="Why Learn RBT with Synergy Banner"
+          className="w-full h-auto block"
+        />
       </section>
 
 

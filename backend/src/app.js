@@ -27,6 +27,11 @@ app.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
 app.use(
   helmet({
     crossOriginResourcePolicy: false,
+    hsts: {
+      maxAge: 31536000, // 1 year in seconds
+      includeSubDomains: true,
+      preload: true,
+    },
   })
 );
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.CLIENT_URL || '')
@@ -58,8 +63,12 @@ app.use(mongoSanitize());
 app.use(xss());
 app.use(hpp());
 
-// Serve uploaded static files
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// Serve uploaded static files with 30-day browser caching
+app.use('/uploads', express.static(path.join(__dirname, '../uploads'), {
+  maxAge: '30d',
+  immutable: true,
+  etag: true,
+}));
 
 app.get(['/', '/api'], (req, res) => {
   res.json({

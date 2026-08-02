@@ -57,12 +57,16 @@ exports.login = catchAsync(async (req, res, next) => {
 
   const user = await User.findOne({ email }).select('+password +tokenVersion');
 
-  if (!user || !(await user.matchPassword(password))) {
+  if (!user) {
     return next(new AppError('Invalid email or password.', 401));
   }
 
   if (user.isDeleted) {
     return next(new AppError('This account has been permanently deleted. Please contact support.', 403));
+  }
+
+  if (!(await user.matchPassword(password))) {
+    return next(new AppError('Invalid email or password.', 401));
   }
 
   const tokenVersion = user.tokenVersion || 0;
@@ -95,6 +99,7 @@ exports.refresh = catchAsync(async (req, res, next) => {
 
   const user = await User.findById(decoded.id).select('+tokenVersion');
   if (!user) return next(new AppError('User not found.', 401));
+  if (user.isDeleted) return next(new AppError('This account has been permanently deleted.', 401));
   if ((decoded.tokenVersion || 0) !== (user.tokenVersion || 0)) {
     return next(new AppError('Session expired. Please log in again.', 401));
   }
@@ -140,5 +145,34 @@ exports.getProfile = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     user: req.user,
+  });
+});
+
+exports.deleteAccount = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return next(new AppError('User not found.', 404));
+  }
+
+  if (user.isProtected) {
+    return next(new AppError('This account is protected and cannot be deleted.', 403));
+  }
+  if (user.role === 'admin') {
+    return next(new AppError('Admin accounts cannot be deleted from the account portal.', 403));
+  }
+
+  user.isDeleted = true;
+  user.tokenVersion = (user.tokenVersion || 0) + 1;
+  user.refreshToken = undefined;
+  await user.save({ validateBeforeSave: false });
+
+  await RefreshToken.updateMany({ user: user._id }, { revoked: true });
+  clearTokensCookies(res);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Your account has been permanently deleted.',
   });
 });

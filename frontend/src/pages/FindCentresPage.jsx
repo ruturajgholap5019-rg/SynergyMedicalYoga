@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { RESELLERS_AND_CENTRES } from '../data/mockData';
 import { MapPin, Phone, Clock, Search, Navigation, UserCheck, Building2 } from 'lucide-react';
+import ScrollReveal from '../components/ScrollReveal';
 
 export default function FindCentresPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,7 +22,7 @@ export default function FindCentresPage() {
     <div className="font-inter text-[#555555] space-y-12 pb-20">
       
       {/* Header Banner */}
-      <section className="bg-linear-to-br from-[#ebf7f7] to-[#d6f0f0] py-20 px-4 text-center">
+      <section className="bg-linear-to-br from-[#ebf7f7] to-[#d6f0f0] py-20 px-4 text-center animate-fade-in-up">
         <div className="max-w-4xl mx-auto space-y-4">
           <p className="text-xs font-bold uppercase tracking-widest text-[#005550]">
             NATIONWIDE THERAPY NETWORK
@@ -36,8 +37,8 @@ export default function FindCentresPage() {
       </section>
 
       {/* Filter & Search Bar */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#f4f7f8] p-6 rounded-3xl border border-gray-200/80 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in-up">
+        <div className="bg-[#f4f7f8] p-6 rounded-3xl border border-gray-200/80 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between hover-lift">
           
           {/* Search Input */}
           <div className="relative flex-1 w-full">
@@ -89,7 +90,7 @@ export default function FindCentresPage() {
                 <div
                   key={center.id}
                   onClick={() => setSelectedCenter(center)}
-                  className={`p-6 rounded-2xl border transition-all cursor-pointer ${
+                  className={`p-6 rounded-2xl border transition-all cursor-pointer hover-lift ${
                     isSelected
                       ? 'bg-teal-50/70 border-[#005550] shadow-md ring-2 ring-[#005550]/20'
                       : 'bg-white border-gray-200 shadow-sm hover:border-[#005550]/50'

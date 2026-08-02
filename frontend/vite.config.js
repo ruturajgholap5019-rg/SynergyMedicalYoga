@@ -19,6 +19,28 @@ export default defineConfig(({ mode }) => {
       },
       dedupe: ['react', 'react-dom'],
     },
+    build: {
+      target: 'esnext',
+      cssCodeSplit: true,
+      sourcemap: false,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('react-dom') || id.includes('react/')) {
+                return 'vendor-react';
+              }
+              if (id.includes('lucide-react')) {
+                return 'vendor-icons';
+              }
+              if (id.includes('react-toastify')) {
+                return 'vendor-toast';
+              }
+            }
+          },
+        },
+      },
+    },
     server: {
       host: true,
       port: 5173,

@@ -1,6 +1,7 @@
 const Appointment = require('../models/Appointment');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
+const notificationService = require('../services/notificationService');
 
 exports.createAppointment = catchAsync(async (req, res, next) => {
   const {
@@ -34,6 +35,19 @@ exports.createAppointment = catchAsync(async (req, res, next) => {
     notes,
     status: 'pending',
     paymentStatus: 'pending',
+  });
+
+  // Dispatch WhatsApp & Email Notifications in background (non-blocking)
+  notificationService.sendAppointmentNotification({
+    patientName,
+    patientPhone,
+    patientEmail,
+    serviceTitle,
+    appointmentDate,
+    timeSlot,
+    center: center || 'Greens Center, Chinchwad, Pune',
+  }).catch((err) => {
+    console.error('Background appointment notification dispatch error:', err.message);
   });
 
   res.status(201).json({

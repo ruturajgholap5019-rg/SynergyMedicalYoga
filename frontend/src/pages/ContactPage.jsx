@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, Loader2 } from 'lucide-react';
 import { useSiteSettings } from '../lib/useSiteSettings';
 import { api } from '../lib/api';
+import ScrollReveal from '../components/ScrollReveal';
 
 export default function ContactPage() {
   const { settings } = useSiteSettings();
@@ -35,7 +36,7 @@ export default function ContactPage() {
     <div className="font-inter text-[#555555] space-y-12 pb-20">
       
       {/* Header Banner */}
-      <section className="bg-[#005550] py-20 px-4 text-center text-white">
+      <section className="bg-[#005550] py-20 px-4 text-center text-white animate-fade-in-up">
         <div className="max-w-4xl mx-auto space-y-3">
           <h1 className="font-poppins text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white">
             Contact Synergy Medical Yoga
@@ -51,8 +52,8 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           
           {/* Left Info Sidebar (5 cols) */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="bg-[#005550] text-white p-8 rounded-3xl shadow-xl space-y-6">
+          <div className="lg:col-span-5 space-y-6 animate-fade-in-left">
+            <div className="bg-[#005550] text-white p-8 rounded-3xl shadow-xl space-y-6 hover-lift">
               <div>
                 <span className="text-xs font-bold text-teal-200 uppercase tracking-wider">
                   HEADQUARTERS &amp; MAIN CLINIC
@@ -111,12 +112,13 @@ export default function ContactPage() {
             </div>
           </div>
 
-          {/* Right Contact Form (7 cols) */}
-          <div className="lg:col-span-7 bg-[#f4f7f8] p-8 sm:p-10 rounded-3xl border border-gray-200/80 shadow-sm">
-            <h3 className="font-poppins text-2xl font-bold text-[#2C2D33] mb-2">Send Us a Message</h3>
-            <p className="text-xs text-gray-500 mb-6">Fill out the form below and our medical team will respond within 24 hours.</p>
-
-            {submitted ? (
+          {/* Right Form (7 cols) */}
+          <div className="lg:col-span-7 bg-white p-8 sm:p-10 rounded-3xl border border-gray-200/80 shadow-md">
+            <ScrollReveal animation="slide-right">
+              <h3 className="font-poppins text-2xl font-bold text-gray-900 mb-2">Send Us a Direct Enquiry</h3>
+              <p className="text-xs text-gray-500 mb-6">
+                Fill in your contact details below and our team will get back to you within 24 hours.
+              </p> {submitted ? (
               <div className="p-8 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-3">
                 <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
                 <h4 className="font-bold text-gray-900 text-lg">Thank You for Reaching Out!</h4>
@@ -212,6 +214,7 @@ export default function ContactPage() {
                 </button>
               </form>
             )}
+            </ScrollReveal>
           </div>
 
         </div>
