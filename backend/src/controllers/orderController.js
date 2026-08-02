@@ -6,6 +6,7 @@ const stripe = require('../config/stripe');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 const { sendOrderConfirmation } = require('../services/emailService');
+const notificationService = require('../services/notificationService');
 
 // Helper function to extract valid items safely without Mongoose CastErrors
 const extractValidItems = async (req) => {
@@ -98,6 +99,17 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
   await order.save();
   await Cart.findOneAndDelete({ user: req.user._id });
+
+  notificationService.sendOrderNotification({
+    orderId: order._id,
+    customerName: req.user.name,
+    phone: req.user.phone,
+    email: req.user.email,
+    totalAmount,
+    paymentMethod: paymentMethod || 'upi',
+  }).catch((err) => {
+    console.error('Background order notification error:', err.message);
+  });
 
   res.status(201).json({
     status: 'success',

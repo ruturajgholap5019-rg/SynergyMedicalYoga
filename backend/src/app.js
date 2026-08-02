@@ -27,6 +27,11 @@ app.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
 app.use(
   helmet({
     crossOriginResourcePolicy: false,
+    hsts: {
+      maxAge: 31536000, // 1 year in seconds
+      includeSubDomains: true,
+      preload: true,
+    },
   })
 );
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.CLIENT_URL || '')

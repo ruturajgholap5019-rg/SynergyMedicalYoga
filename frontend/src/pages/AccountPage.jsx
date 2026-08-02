@@ -8,7 +8,13 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   const [userTab, setUserTab] = useState('dashboard'); // 'dashboard' | 'orders' | 'appointments' | 'downloads' | 'addresses' | 'details' | 'delete'
   const [loading, setLoading] = useState(false);
   const [myOrders, setMyOrders] = useState([]);
-  const [myAppointments, setMyAppointments] = useState([]);
+  const [myAppointments, setMyAppointments] = useState(() => {
+    try {
+      const cached = localStorage.getItem('synergy_cached_my_appointments');
+      if (cached) return JSON.parse(cached);
+    } catch (e) {}
+    return [];
+  });
 
   // Logged out Form states
   const [loginEmail, setLoginEmail] = useState('');
@@ -71,9 +77,12 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   const fetchUserAppointments = async () => {
     try {
       const res = await api.getMyAppointments();
-      if (res.data) setMyAppointments(res.data);
+      if (res.data) {
+        setMyAppointments(res.data);
+        try { localStorage.setItem('synergy_cached_my_appointments', JSON.stringify(res.data)); } catch (e) {}
+      }
     } catch (err) {
-      // Ignore silently
+      // Fallback to offline cached appointments silently
     }
   };
 

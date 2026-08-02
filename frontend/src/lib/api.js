@@ -195,9 +195,20 @@ export const api = {
   },
   deleteAccount: async () => {
     try {
-      const res = await request('/auth/delete-account', {
-        method: 'DELETE',
-      });
+      let res;
+      try {
+        res = await request('/auth/delete-account', {
+          method: 'DELETE',
+        });
+      } catch (err) {
+        if (err.message && (err.message.includes("Can't find") || err.message.includes('404'))) {
+          res = await request('/auth/delete-account', {
+            method: 'POST',
+          });
+        } else {
+          throw err;
+        }
+      }
       return res;
     } finally {
       markClientLoggedOut();

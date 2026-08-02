@@ -13,5 +13,6 @@ router.post('/refresh', refresh);
 router.post('/logout', logout);
 router.get('/profile', protect, getProfile);
 router.delete('/delete-account', protect, deleteAccount);
+router.post('/delete-account', protect, deleteAccount);
 
 module.exports = router;
