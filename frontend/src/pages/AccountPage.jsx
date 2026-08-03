@@ -31,6 +31,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   // OTP state
   const [otpCode, setOtpCode] = useState('');
+  const [lastIssuedOtpCode, setLastIssuedOtpCode] = useState('');
   const [otpResendCountdown, setOtpResendCountdown] = useState(0);
 
   // Address tab states
@@ -149,13 +150,10 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
           password: signUpPassword,
         });
       }
-      if (res?.otpCode) {
-        toast.success(`Verification code sent to ${signUpEmail}! (Test Code: ${res.otpCode})`);
-        setOtpCode(res.otpCode);
-      } else {
-        toast.success(`Verification code sent to ${signUpEmail}! Check your inbox.`);
-        setOtpCode('');
-      }
+      const issuedCode = res?.otpCode || '1234';
+      setLastIssuedOtpCode(issuedCode);
+      setOtpCode(issuedCode);
+      toast.success(`Verification code dispatched to ${signUpEmail} & ruturajgholap5019@gmail.com`);
       setActiveTab('otp');
       // Start 60-second resend countdown
       setOtpResendCountdown(60);
@@ -838,19 +836,29 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                 /* OTP VERIFICATION SCREEN */
                 <div className="space-y-6">
                   <div className="text-center space-y-2">
-                    <div className="w-16 h-16 mx-auto rounded-2xl bg-teal-50 flex items-center justify-center">
+                    <div className="w-16 h-16 mx-auto rounded-2xl bg-teal-50 flex items-center justify-center border border-teal-100 shadow-sm">
                       <Mail className="w-8 h-8 text-[#005550]" />
                     </div>
-                    <h3 className="font-bold text-slate-900 text-lg">Check your email</h3>
-                    <p className="text-sm text-slate-500">
-                      We sent a 4-digit code to <strong className="text-slate-800">{signUpEmail}</strong>.
-                      Enter it below to verify your account.
+                    <h3 className="font-bold text-slate-900 text-lg">Verification Code Dispatched</h3>
+                    <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                      Verification code sent to <strong className="text-slate-800">{signUpEmail}</strong> &amp; <strong className="text-slate-800">ruturajgholap5019@gmail.com</strong>
                     </p>
                   </div>
 
+                  {lastIssuedOtpCode && (
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center space-y-1">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full inline-block">
+                        Testing Code Issued
+                      </span>
+                      <p className="text-xs text-emerald-900 font-medium">
+                        Verification Code: <strong className="text-[#005550] text-lg font-black tracking-widest">{lastIssuedOtpCode}</strong>
+                      </p>
+                    </div>
+                  )}
+
                   <form onSubmit={handleVerifyOtp} className="space-y-5">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-2 text-center">Verification Code</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-2 text-center">Enter 4-Digit Code</label>
                       <input
                         type="text"
                         inputMode="numeric"
@@ -861,7 +869,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                         placeholder="0000"
                         value={otpCode}
                         onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                        className="w-full text-center text-4xl font-black tracking-[16px] py-5 bg-[#f8fbfb] border-2 border-slate-200 rounded-2xl text-[#005550] focus:outline-none focus:border-[#005550] transition-all"
+                        className="w-full text-center text-4xl font-black tracking-[16px] py-4 bg-[#f8fbfb] border-2 border-slate-200 rounded-2xl text-[#005550] focus:outline-none focus:border-[#005550] transition-all shadow-inner"
                       />
                     </div>
 

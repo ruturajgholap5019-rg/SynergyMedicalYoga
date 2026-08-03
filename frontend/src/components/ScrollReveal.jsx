@@ -57,7 +57,7 @@ export default function ScrollReveal({
     <div
       ref={ref}
       style={{ transitionDelay: `${delay}ms` }}
-      className={`transition-all duration-700 ease-out transform ${getTransformClasses()} ${className}`}
+      className={`transition-[transform,opacity] duration-600 ease-out will-change-[transform,opacity] ${getTransformClasses()} ${className}`}
     >
       {children}
     </div>

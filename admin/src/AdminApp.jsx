@@ -615,72 +615,49 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
     );
   }
 
-  const themeClasses = {
-    'mint-teal': 'bg-gradient-to-br from-[#ebf5f4] via-[#f0f7f6] to-[#e4f0ee] text-[#333333]',
-    'executive-slate': 'bg-slate-900 text-slate-100',
-    'emerald-dark': 'bg-gradient-to-br from-[#062421] via-[#0b3834] to-[#041d1a] text-slate-100',
-    'pearl-white': 'bg-slate-100 text-[#333333]',
-  };
-  const activeBgClass = themeClasses[adminBgTheme] || themeClasses['mint-teal'];
-
   return (
-    <div className={`min-h-screen font-inter pb-24 transition-colors duration-300 ${activeBgClass}`}>
+    <div className="min-h-screen bg-[#f2f7f6] font-inter text-slate-800 pb-24">
       {/* Toast message */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl font-bold text-xs animate-bounce">
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl font-bold text-xs animate-bounce border border-slate-700">
           {toastMessage}
         </div>
       )}
 
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#003d39] via-[#005550] to-[#007068] text-white py-10 px-4 sm:px-8 shadow-lg">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="bg-gradient-to-r from-[#021f1c] via-[#003834] to-[#005550] text-white py-10 px-4 sm:px-8 shadow-xl relative overflow-hidden border-b border-teal-500/20">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
           <div>
-            <div className="flex items-center gap-2 text-teal-200 text-xs font-bold uppercase tracking-wider mb-2">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Synergy Medical Yoga Management Console</span>
+            <div className="flex items-center gap-3 mb-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 backdrop-blur-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                System Operational
+              </span>
+              <span className="text-teal-200/80 text-xs font-semibold">Synergy Medical Management</span>
             </div>
-            <h1 className="font-sansita text-3xl sm:text-4xl font-bold tracking-tight">
+            <h1 className="font-sansita text-3xl sm:text-4xl font-bold tracking-tight text-white flex items-center gap-3">
               Admin Control Panel
             </h1>
-            <p className="text-teal-100 text-sm mt-1">
-              Logged in as <span className="font-semibold text-white">{currentUser.name}</span> ({currentUser.email})
+            <p className="text-teal-100 text-xs sm:text-sm mt-1.5 font-medium">
+              Authorized Session: <span className="font-bold text-white bg-white/10 px-2.5 py-0.5 rounded-lg border border-white/10">{currentUser.name}</span> <span className="text-teal-200/70">({currentUser.email})</span>
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Background Theme Selector */}
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-xs px-3 py-1.5 rounded-xl border border-white/20 text-xs font-semibold text-white">
-              <Palette className="w-3.5 h-3.5 text-teal-200" />
-              <span className="hidden sm:inline">Theme:</span>
-              <select
-                value={adminBgTheme}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setAdminBgTheme(val);
-                  try { localStorage.setItem('synergy_admin_bg_theme', val); } catch (err) {}
-                }}
-                className="bg-slate-900/80 text-white rounded-lg px-2 py-1 text-xs border border-white/30 outline-none cursor-pointer font-bold"
-              >
-                <option value="mint-teal" className="bg-slate-900 text-white">Soft Mint Teal</option>
-                <option value="executive-slate" className="bg-slate-900 text-white">Executive Slate Dark</option>
-                <option value="emerald-dark" className="bg-slate-900 text-white">Deep Emerald Dark</option>
-                <option value="pearl-white" className="bg-slate-900 text-white">Classic Pearl White</option>
-              </select>
-            </div>
-
+          <div className="flex items-center gap-3">
             <button
               onClick={triggerRefresh}
-              className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 backdrop-blur-xs border border-white/20 transition-all cursor-pointer"
+              className="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 backdrop-blur-sm border border-white/20 shadow-sm transition-all cursor-pointer hover:scale-[1.02]"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-4 h-4 text-teal-200 ${loading ? 'animate-spin' : ''}`} />
               <span>Refresh Data</span>
             </button>
             <button
               onClick={handleLogout}
-              className="bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 border border-rose-400/30 transition-all cursor-pointer"
+              className="bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 border border-rose-400/30 backdrop-blur-sm shadow-sm transition-all cursor-pointer hover:scale-[1.02]"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-4 h-4 text-rose-300" />
               <span>Log Out</span>
             </button>
           </div>

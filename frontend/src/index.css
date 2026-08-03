@@ -213,6 +213,8 @@
 
 .hover-lift {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .hover-lift:hover {
@@ -220,26 +222,44 @@
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .glass-dark {
-  background: rgba(0, 47, 44, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(0, 47, 44, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Interactive Buttons & Micro Hover Effects */
+/* GPU Accelerated Smooth Scroll Performance */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+}
+
+body {
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Optimized Micro-Hover Effects (No layout repaints on scroll) */
 button, .btn {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 button:hover, .btn:hover {
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(-2px);
 }
 
 button:active, .btn:active {
@@ -248,12 +268,11 @@ button:active, .btn:active {
 
 .btn-glow-primary {
   box-shadow: 0 4px 14px 0 rgba(0, 85, 80, 0.35);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-glow-primary:hover {
   box-shadow: 0 8px 25px 0 rgba(0, 122, 115, 0.55);
-  transform: translateY(-3px) scale(1.02);
+  transform: translateY(-2px);
 }
 
 /* Image Hover Zoom Effects */
@@ -262,11 +281,12 @@ button:active, .btn:active {
 }
 
 .img-zoom-hover img {
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
 }
 
 .img-zoom-hover:hover img {
-  transform: scale(1.08);
+  transform: scale(1.06);
 }
 
 /* Custom scrollbars */
@@ -282,6 +302,15 @@ button:active, .btn:active {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Mobile Responsive Carousel & Touch Utilities */
+@media (max-width: 640px) {
+  .carousel-mobile-full {
+    height: 55vh !important;
+    min-height: 320px !important;
+    max-height: 480px !important;
+  }
 }
 
 
