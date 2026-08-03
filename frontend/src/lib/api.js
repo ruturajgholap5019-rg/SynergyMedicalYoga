@@ -163,6 +163,7 @@ export const api = {
   getPublicCarousels: () => request('/public/carousels'),
   getPublicServices: () => request('/public/services'),
   getPublicSettings: () => request('/public/settings'),
+  getBlogs: () => request('/public/content/blog'),
   getPublicContent: (type) => request(`/public/content/${type}`),
   getPublicContentItem: (type, slug) => request(`/public/content/${type}/${slug}`),
   getHealth: () => request('/'),

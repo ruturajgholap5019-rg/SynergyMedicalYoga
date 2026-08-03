@@ -160,6 +160,7 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
     } catch (e) {}
     return [];
   });
+  const [blogs, setBlogs] = useState([]);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [touchStartX, setTouchStartX] = useState(null);
 
