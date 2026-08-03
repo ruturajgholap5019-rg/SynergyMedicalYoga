@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 /**
- * ScrollReveal component that triggers smooth entrance animations on scroll down & scroll up.
+ * ScrollReveal component that smoothly reveals content when scrolled into view.
+ * Ensures text is always visible and never hidden once revealed.
  */
 export default function ScrollReveal({
   children,
-  animation = 'fade-up', // 'fade-up' | 'slide-left' | 'slide-right' | 'zoom-in' | 'bounce'
+  animation = 'fade-up',
   delay = 0,
   className = '',
-  once = false,
 }) {
   const ref = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -17,21 +17,29 @@ export default function ScrollReveal({
     const node = ref.current;
     if (!node) return;
 
+    // Safety fallback: ensure content becomes visible within 400ms under all conditions
+    const safetyTimer = setTimeout(() => {
+      setIsVisible(true);
+    }, 400);
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          if (once) observer.unobserve(entry.target);
-        } else if (!once) {
-          setIsVisible(false);
+          clearTimeout(safetyTimer);
+          observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.12, rootMargin: '0px 0px -20px 0px' }
+      { threshold: 0.05, rootMargin: '0px 0px 50px 0px' }
     );
 
     observer.observe(node);
-    return () => observer.disconnect();
-  }, [once]);
+
+    return () => {
+      clearTimeout(safetyTimer);
+      observer.disconnect();
+    };
+  }, []);
 
   const getTransformClasses = () => {
     if (isVisible) {
@@ -40,17 +48,15 @@ export default function ScrollReveal({
 
     switch (animation) {
       case 'fade-up':
-        return 'translate-y-10 opacity-0';
+        return 'translate-y-6 opacity-0';
       case 'slide-left':
-        return '-translate-x-12 opacity-0';
+        return '-translate-x-8 opacity-0';
       case 'slide-right':
-        return 'translate-x-12 opacity-0';
+        return 'translate-x-8 opacity-0';
       case 'zoom-in':
-        return 'scale-90 opacity-0';
-      case 'bounce':
-        return 'translate-y-12 opacity-0';
+        return 'scale-95 opacity-0';
       default:
-        return 'translate-y-10 opacity-0';
+        return 'translate-y-6 opacity-0';
     }
   };
 
@@ -58,7 +64,7 @@ export default function ScrollReveal({
     <div
       ref={ref}
       style={{ transitionDelay: `${delay}ms` }}
-      className={`transform transform-gpu transition-all duration-700 ease-out will-change-[transform,opacity] ${getTransformClasses()} ${className}`}
+      className={`transform transition-all duration-500 ease-out ${getTransformClasses()} ${className}`}
     >
       {children}
     </div>
