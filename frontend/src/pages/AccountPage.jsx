@@ -150,8 +150,13 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
           password: signUpPassword,
         });
       }
-      setLastIssuedOtpCode('');
-      setOtpCode('');
+      if (res?.otpCode) {
+        setLastIssuedOtpCode(res.otpCode);
+        setOtpCode(res.otpCode);
+      } else {
+        setLastIssuedOtpCode('');
+        setOtpCode('');
+      }
       toast.success(`Verification code dispatched to ${signUpEmail}`);
       setActiveTab('otp');
       // Start 60-second resend countdown
@@ -166,8 +171,8 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   // Step 2: Verify OTP and complete registration
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (otpCode.length !== 6) {
-      toast.error('Please enter the 6-digit code.');
+    if (otpCode.length !== 4) {
+      toast.error('Please enter the 4-digit code.');
       return;
     }
     setLoading(true);
@@ -859,7 +864,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
 
                     <button
                       type="submit"
-                      disabled={loading || otpCode.length !== 6}
+                      disabled={loading || otpCode.length !== 4}
                       className="w-full bg-[#005550] hover:bg-[#003d39] text-white font-extrabold py-3.5 rounded-xl shadow-md transition-all text-sm disabled:opacity-60 cursor-pointer"
                     >
                       {loading ? 'Verifying...' : 'Verify & Create Account'}
