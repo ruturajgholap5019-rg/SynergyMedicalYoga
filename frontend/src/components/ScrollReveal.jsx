@@ -1,15 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 /**
- * ScrollReveal component that triggers smooth entrance animations
- * (text sliding up, images scaling up, buttons moving into view)
- * whenever elements scroll into the user's viewport.
+ * ScrollReveal component that triggers smooth entrance animations on scroll down & scroll up.
  */
 export default function ScrollReveal({
   children,
   animation = 'fade-up', // 'fade-up' | 'slide-left' | 'slide-right' | 'zoom-in' | 'bounce'
   delay = 0,
   className = '',
+  once = false,
 }) {
   const ref = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -22,15 +21,17 @@ export default function ScrollReveal({
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.unobserve(entry.target);
+          if (once) observer.unobserve(entry.target);
+        } else if (!once) {
+          setIsVisible(false);
         }
       },
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.12, rootMargin: '0px 0px -20px 0px' }
     );
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, []);
+  }, [once]);
 
   const getTransformClasses = () => {
     if (isVisible) {
@@ -39,17 +40,17 @@ export default function ScrollReveal({
 
     switch (animation) {
       case 'fade-up':
-        return 'translate-y-12 opacity-0';
+        return 'translate-y-10 opacity-0';
       case 'slide-left':
-        return '-translate-x-16 opacity-0';
+        return '-translate-x-12 opacity-0';
       case 'slide-right':
-        return 'translate-x-16 opacity-0';
+        return 'translate-x-12 opacity-0';
       case 'zoom-in':
         return 'scale-90 opacity-0';
       case 'bounce':
-        return 'translate-y-16 opacity-0';
-      default:
         return 'translate-y-12 opacity-0';
+      default:
+        return 'translate-y-10 opacity-0';
     }
   };
 
@@ -57,7 +58,7 @@ export default function ScrollReveal({
     <div
       ref={ref}
       style={{ transitionDelay: `${delay}ms` }}
-      className={`transition-[transform,opacity] duration-600 ease-out will-change-[transform,opacity] ${getTransformClasses()} ${className}`}
+      className={`transform transform-gpu transition-all duration-700 ease-out will-change-[transform,opacity] ${getTransformClasses()} ${className}`}
     >
       {children}
     </div>
