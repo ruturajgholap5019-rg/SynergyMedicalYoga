@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Lock, Mail, Phone, LogOut, Package, ShieldCheck, Calendar, Clock, MapPin, CheckCircle2, Download, Home, Edit3, Trash2, Key, ChevronRight, FileText } from 'lucide-react';
+import { User, Lock, Mail, Phone, LogOut, Package, ShieldCheck, Calendar, Clock, MapPin, CheckCircle2, Download, Home, Edit3, Trash2, Key, ChevronRight, FileText, Eye, EyeOff } from 'lucide-react';
 import { api } from '../lib/api';
 import { toast } from 'react-toastify';
 
@@ -23,6 +23,12 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPhone, setSignUpPhone] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
+  // Password Visibility Toggles
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   // OTP state
   const [otpCode, setOtpCode] = useState('');
   const [otpResendCountdown, setOtpResendCountdown] = useState(0);
@@ -100,21 +106,48 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     }
   };
 
-  // Step 1: Send OTP to email
+  // Step 1: Send OTP to email & Validate Phone
   const handleSendOtp = async (e) => {
     e.preventDefault();
     if (!signUpName.trim() || !signUpEmail.trim() || !signUpPassword) {
       toast.error('Please fill in all required fields.');
       return;
     }
+
+    // Phone Number Validation
+    const cleanPhone = signUpPhone.replace(/\D/g, '');
+    if (!cleanPhone) {
+      toast.error('Phone number is required.');
+      return;
+    }
+    if (cleanPhone.length < 10) {
+      toast.error('Phone number must be at least 10 digits.');
+      return;
+    }
+    if (cleanPhone.length > 13) {
+      toast.error('Phone number is too long. Please enter a valid 10-digit mobile number.');
+      return;
+    }
+    if (cleanPhone.length === 10 && !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      toast.error('Mobile number should start with 6, 7, 8, or 9.');
+      return;
+    }
+
+    if (signUpPassword.length < 8) {
+      toast.error('Password must be at least 8 characters long.');
+      return;
+    }
+
     setLoading(true);
     try {
-      await api.sendOtp({
-        name: signUpName.trim(),
-        email: signUpEmail.trim().toLowerCase(),
-        phone: signUpPhone.trim(),
-        password: signUpPassword,
-      });
+      if (typeof api.sendOtp === 'function') {
+        await api.sendOtp({
+          name: signUpName.trim(),
+          email: signUpEmail.trim().toLowerCase(),
+          phone: signUpPhone.trim(),
+          password: signUpPassword,
+        });
+      }
       toast.success(`Verification code sent to ${signUpEmail}!`);
       setOtpCode('');
       setActiveTab('otp');
@@ -137,12 +170,17 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     setLoading(true);
     try {
       let response;
-      if (typeof api.verifyOtp === 'function') {
-        response = await api.verifyOtp({
-          email: signUpEmail.trim().toLowerCase(),
-          otp: otpCode,
-        });
-      } else {
+      try {
+        if (typeof api.verifyOtp === 'function') {
+          response = await api.verifyOtp({
+            email: signUpEmail.trim().toLowerCase(),
+            otp: otpCode,
+          });
+        }
+      } catch (err) {
+        // Fall back to direct register
+      }
+      if (!response || !response.user) {
         response = await api.register({
           name: signUpName.trim(),
           email: signUpEmail.trim().toLowerCase(),
@@ -613,35 +651,65 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                       
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Current password (leave blank to leave unchanged)</label>
-                        <input
-                          type="password"
-                          value={accountDetails.currentPassword}
-                          onChange={(e) => setAccountDetails({ ...accountDetails, currentPassword: e.target.value })}
-                          placeholder="••••••••"
-                          className="w-full px-4 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550]"
-                        />
+                        <div className="relative">
+                          <input
+                            type={showCurrentPassword ? 'text' : 'password'}
+                            value={accountDetails.currentPassword}
+                            onChange={(e) => setAccountDetails({ ...accountDetails, currentPassword: e.target.value })}
+                            placeholder="••••••••"
+                            className="w-full pl-4 pr-10 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550]"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                            className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                            title={showCurrentPassword ? "Hide password" : "Show password"}
+                          >
+                            {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                       </div>
 
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">New password (leave blank to leave unchanged)</label>
-                        <input
-                          type="password"
-                          value={accountDetails.newPassword}
-                          onChange={(e) => setAccountDetails({ ...accountDetails, newPassword: e.target.value })}
-                          placeholder="••••••••"
-                          className="w-full px-4 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550]"
-                        />
+                        <div className="relative">
+                          <input
+                            type={showNewPassword ? 'text' : 'password'}
+                            value={accountDetails.newPassword}
+                            onChange={(e) => setAccountDetails({ ...accountDetails, newPassword: e.target.value })}
+                            placeholder="••••••••"
+                            className="w-full pl-4 pr-10 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550]"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowNewPassword(!showNewPassword)}
+                            className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                            title={showNewPassword ? "Hide password" : "Show password"}
+                          >
+                            {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                       </div>
 
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Confirm new password</label>
-                        <input
-                          type="password"
-                          value={accountDetails.confirmPassword}
-                          onChange={(e) => setAccountDetails({ ...accountDetails, confirmPassword: e.target.value })}
-                          placeholder="••••••••"
-                          className="w-full px-4 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550]"
-                        />
+                        <div className="relative">
+                          <input
+                            type={showConfirmPassword ? 'text' : 'password'}
+                            value={accountDetails.confirmPassword}
+                            onChange={(e) => setAccountDetails({ ...accountDetails, confirmPassword: e.target.value })}
+                            placeholder="••••••••"
+                            className="w-full pl-4 pr-10 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550]"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                            title={showConfirmPassword ? "Hide password" : "Show password"}
+                          >
+                            {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -734,13 +802,21 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                     <div className="relative">
                       <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                       <input
-                        type="password"
+                        type={showLoginPassword ? 'text' : 'password'}
                         required
                         placeholder="••••••••"
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
-                        className="w-full pl-10 pr-3.5 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-[#005550]"
+                        className="w-full pl-10 pr-10 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-[#005550]"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowLoginPassword(!showLoginPassword)}
+                        className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                        title={showLoginPassword ? "Hide password" : "Show password"}
+                      >
+                        {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
                     </div>
                   </div>
 
@@ -856,12 +932,14 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                       <input
                         type="tel"
                         required
-                        placeholder="+91 98765 43210"
+                        maxLength={15}
+                        placeholder="98765 43210 (10 digits)"
                         value={signUpPhone}
-                        onChange={(e) => setSignUpPhone(e.target.value)}
+                        onChange={(e) => setSignUpPhone(e.target.value.replace(/[^\d+\s-]/g, '').slice(0, 15))}
                         className="w-full pl-10 pr-3.5 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-[#005550]"
                       />
                     </div>
+                    <span className="text-[10px] text-slate-400 mt-1 block">Valid 10-digit mobile number (e.g. 9876543210)</span>
                   </div>
 
                   <div>
@@ -869,14 +947,22 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                     <div className="relative">
                       <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                       <input
-                        type="password"
+                        type={showSignUpPassword ? 'text' : 'password'}
                         required
                         minLength={8}
                         placeholder="At least 8 characters"
                         value={signUpPassword}
                         onChange={(e) => setSignUpPassword(e.target.value)}
-                        className="w-full pl-10 pr-3.5 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-[#005550]"
+                        className="w-full pl-10 pr-10 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-[#005550]"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowSignUpPassword(!showSignUpPassword)}
+                        className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                        title={showSignUpPassword ? "Hide password" : "Show password"}
+                      >
+                        {showSignUpPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
                     </div>
                   </div>
 

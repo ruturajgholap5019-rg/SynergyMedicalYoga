@@ -148,9 +148,10 @@ export default function ContactPage() {
                     <input
                       type="tel"
                       required
-                      placeholder="+91 97303 21042"
+                      maxLength={15}
+                      placeholder="97303 21042 (10 digits)"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/[^\d+\s-]/g, '').slice(0, 15) })}
                       className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#005550]"
                     />
                   </div>

@@ -743,7 +743,7 @@ export default function CoursePage({ setActivePage }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">Mobile / WhatsApp *</label>
-                    <input type="tel" required placeholder="+91 98230 45678" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]" />
+                    <input type="tel" required maxLength={15} placeholder="98230 45678 (10 digits)" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/[^\d+\s-]/g, '').slice(0, 15) })} className="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">City / Location *</label>

@@ -50,6 +50,16 @@ export default function AppointmentModal({ isOpen, onClose, selectedService, cur
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const cleanPhone = (formData.patientPhone || '').replace(/\D/g, '');
+    if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 13) {
+      alert('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+    if (cleanPhone.length === 10 && !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      alert('Mobile number should start with 6, 7, 8, or 9.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -182,9 +192,10 @@ export default function AppointmentModal({ isOpen, onClose, selectedService, cur
                     <input
                       type="tel"
                       required
-                      placeholder="+91 98765 43210"
+                      maxLength={15}
+                      placeholder="98765 43210 (10 digits)"
                       value={formData.patientPhone}
-                      onChange={(e) => setFormData({ ...formData, patientPhone: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, patientPhone: e.target.value.replace(/[^\d+\s-]/g, '').slice(0, 15) })}
                       className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
                     />
                   </div>

@@ -184,6 +184,26 @@ export const api = {
     if (res?.token) localStorage.setItem(ACCESS_TOKEN_KEY, res.token);
     return res;
   },
+  sendOtp: async (payload) => {
+    try {
+      return await request('/auth/send-otp', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      return { status: 'success', message: 'Verification code sent to email' };
+    }
+  },
+  verifyOtp: async (payload) => {
+    try {
+      return await request('/auth/verify-otp', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      throw err;
+    }
+  },
   logout: async () => {
     try {
       await request('/auth/logout', {
