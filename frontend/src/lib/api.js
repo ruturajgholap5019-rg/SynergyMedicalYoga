@@ -1,4 +1,8 @@
-const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+let rawApiUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+if (rawApiUrl.startsWith('http') && !rawApiUrl.endsWith('/api')) {
+  rawApiUrl = `${rawApiUrl}/api`;
+}
+const API_BASE_URL = rawApiUrl;
 const FALLBACK_IMAGE = '/favicon.svg';
 const ACCESS_TOKEN_KEY = 'synergy_access_token';
 const USER_KEY = 'synergyUser';

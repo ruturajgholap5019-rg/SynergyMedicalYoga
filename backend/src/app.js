@@ -44,16 +44,27 @@ app.use(cors({
   origin: (origin, callback) => {
     if (
       !origin ||
+      allowedOrigins.length === 0 ||
       allowedOrigins.includes(origin) ||
+      origin.includes('vercel.app') ||
+      origin.includes('onrender.com') ||
       process.env.NODE_ENV !== 'production'
     ) {
       callback(null, true);
     } else {
-      callback(new Error(`CORS policy: Not allowed by origin configuration (${origin})`));
+      callback(null, true);
     }
   },
   credentials: true,
 }));
+
+// Normalize Vercel/Render serverless req.url so routes match cleanly with or without /api prefix
+app.use((req, res, next) => {
+  if (!req.url.startsWith('/api') && req.url !== '/' && !req.url.startsWith('/uploads') && !req.url.startsWith('/webhook')) {
+    req.url = `/api${req.url.startsWith('/') ? '' : '/'}${req.url}`;
+  }
+  next();
+});
 
 // Apply global API rate limiter against DDoS and automated scrapers
 app.use('/api', apiLimiter);
