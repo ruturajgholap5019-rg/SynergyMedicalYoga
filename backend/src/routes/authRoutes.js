@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, refresh, logout, getProfile, deleteAccount } = require('../controllers/authController');
+const { register, login, sendOtp, verifyOtp, refresh, logout, getProfile, deleteAccount } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const { authLimiter } = require('../middleware/rateLimiter');
 const { validate } = require('../middleware/validate');
@@ -7,6 +7,8 @@ const { auth } = require('../validators/schemas');
 
 const router = express.Router();
 
+router.post('/send-otp', authLimiter, sendOtp);
+router.post('/verify-otp', authLimiter, verifyOtp);
 router.post('/register', authLimiter, validate(auth.register), register);
 router.post('/login', authLimiter, validate(auth.login), login);
 router.post('/refresh', refresh);

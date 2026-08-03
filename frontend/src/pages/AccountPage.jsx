@@ -140,16 +140,22 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
 
     setLoading(true);
     try {
+      let res;
       if (typeof api.sendOtp === 'function') {
-        await api.sendOtp({
+        res = await api.sendOtp({
           name: signUpName.trim(),
           email: signUpEmail.trim().toLowerCase(),
           phone: signUpPhone.trim(),
           password: signUpPassword,
         });
       }
-      toast.success(`Verification code sent to ${signUpEmail}!`);
-      setOtpCode('');
+      if (res?.otpCode) {
+        toast.success(`Verification code sent to ${signUpEmail}! (Test Code: ${res.otpCode})`);
+        setOtpCode(res.otpCode);
+      } else {
+        toast.success(`Verification code sent to ${signUpEmail}! Check your inbox.`);
+        setOtpCode('');
+      }
       setActiveTab('otp');
       // Start 60-second resend countdown
       setOtpResendCountdown(60);

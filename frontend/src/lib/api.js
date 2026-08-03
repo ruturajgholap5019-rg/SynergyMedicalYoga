@@ -53,7 +53,7 @@ async function request(path, options = {}, isRetry = false) {
   };
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), options.timeout || 7000);
+  const timeoutId = setTimeout(() => controller.abort(), options.timeout || 20000);
 
   try {
     const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -191,6 +191,9 @@ export const api = {
         body: JSON.stringify(payload),
       });
     } catch (err) {
+      if (err.message && (err.message.includes('registered') || err.message.includes('deleted') || err.message.includes('required'))) {
+        throw err;
+      }
       return { status: 'success', message: 'Verification code sent to email' };
     }
   },

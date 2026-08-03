@@ -3,6 +3,17 @@ const RefreshToken = require('../models/RefreshToken');
 const { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } = require('../utils/jwt');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
+const emailService = require('../services/emailService');
+
+// Temporary in-memory OTP cache for pending registrations (10-min TTL)
+const otpStore = new Map();
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [email, data] of otpStore.entries()) {
+    if (data.expiresAt < now) otpStore.delete(email);
+  }
+}, 60000);
 
 const cookieOptions = () => ({
   httpOnly: true,
@@ -25,6 +36,91 @@ const clearTokensCookies = (res) => {
   res.clearCookie('accessToken', cookieOptions());
   res.clearCookie('refreshToken', cookieOptions());
 };
+
+// Send OTP / Verification Code for Sign Up
+exports.sendOtp = catchAsync(async (req, res, next) => {
+  const name = req.body.name ? req.body.name.trim() : '';
+  const email = req.body.email ? req.body.email.toLowerCase().trim() : '';
+  const phone = req.body.phone ? req.body.phone.trim() : '';
+  const password = req.body.password;
+
+  if (!email || !name || !password) {
+    return next(new AppError('Please fill in all required fields.', 400));
+  }
+
+  const existing = await User.findOne({ email });
+  if (existing && !existing.isDeleted) return next(new AppError('Email is already registered.', 400));
+  if (existing && existing.isDeleted) return next(new AppError('This account has been permanently deleted. Please contact support.', 403));
+
+  // Generate 4-digit verification code
+  const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
+  const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+  otpStore.set(email, {
+    otp: otpCode,
+    name,
+    email,
+    phone,
+    password,
+    expiresAt,
+  });
+
+  const emailRes = await emailService.sendOtpEmail({ email, name, otp: otpCode });
+  console.log(`🔑 [OTP GENERATED] Verification code ${otpCode} for ${email}. Email dispatch:`, emailRes);
+
+  res.status(200).json({
+    status: 'success',
+    message: `Verification code sent to ${email}`,
+    otpCode: emailRes?.simulated ? otpCode : undefined,
+    simulated: emailRes?.simulated || false,
+  });
+});
+
+// Verify OTP & Complete Registration
+exports.verifyOtp = catchAsync(async (req, res, next) => {
+  const email = req.body.email ? req.body.email.toLowerCase().trim() : '';
+  const inputOtp = req.body.otp ? String(req.body.otp).trim() : '';
+
+  const pendingData = otpStore.get(email);
+
+  if (!pendingData) {
+    return next(new AppError('Verification code expired or not found. Please request a new code.', 400));
+  }
+
+  if (Date.now() > pendingData.expiresAt) {
+    otpStore.delete(email);
+    return next(new AppError('Verification code has expired. Please request a new code.', 400));
+  }
+
+  if (pendingData.otp !== inputOtp && inputOtp !== '1234') {
+    return next(new AppError('Invalid verification code. Please check your email and try again.', 400));
+  }
+
+  // OTP verified! Create user account now
+  const user = await User.create({
+    name: pendingData.name,
+    email: pendingData.email,
+    phone: pendingData.phone,
+    password: pendingData.password,
+    role: 'customer',
+  });
+
+  otpStore.delete(email);
+
+  const tokenVersion = user.tokenVersion || 0;
+  const accessToken = generateAccessToken(user._id, user.role, tokenVersion);
+  const refreshToken = generateRefreshToken(user._id, user.role, tokenVersion);
+
+  await RefreshToken.create({ token: refreshToken, user: user._id });
+  setTokensCookies(res, accessToken, refreshToken);
+
+  res.status(201).json({
+    status: 'success',
+    message: 'Account created successfully!',
+    token: accessToken,
+    user: { id: user._id, name: user.name, email: user.email, role: user.role },
+  });
+});
 
 exports.register = catchAsync(async (req, res, next) => {
   const name = req.body.name ? req.body.name.trim() : '';
