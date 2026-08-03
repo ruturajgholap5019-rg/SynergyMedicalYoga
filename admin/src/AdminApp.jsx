@@ -970,23 +970,24 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       )}
 
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#003D39] via-[#005550] to-[#007A73] text-white py-10 px-4 sm:px-8 shadow-xl relative overflow-hidden border-b border-teal-500/20">
+      <div className="bg-[#003D39] text-white py-10 px-4 sm:px-8 shadow-xl relative overflow-hidden border-b border-teal-500/30">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#002d2a] via-[#004d47] to-[#003834] opacity-95"></div>
         <div className="absolute top-0 right-0 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl pointer-events-none"></div>
         
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 backdrop-blur-xs">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 backdrop-blur-xs">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 System Operational
               </span>
-              <span className="text-teal-200/80 text-xs font-semibold">Synergy Medical Management</span>
+              <span className="text-teal-200 font-semibold text-xs">Synergy Medical Management</span>
             </div>
-            <h1 className="font-sansita text-3xl sm:text-4xl font-bold tracking-tight text-white flex items-center gap-3">
+            <h1 className="font-sansita text-3xl sm:text-4xl font-bold tracking-tight text-white flex items-center gap-3 drop-shadow-sm">
               Admin Control Panel
             </h1>
             <p className="text-teal-100 text-xs sm:text-sm mt-1.5 font-medium">
-              Authorized Session: <span className="font-bold text-white bg-white/10 px-2.5 py-0.5 rounded-lg border border-white/10">{currentUser.name}</span> <span className="text-teal-200/70">({currentUser.email})</span>
+              Authorized Session: <span className="font-bold text-white bg-white/15 px-2.5 py-0.5 rounded-lg border border-white/20">{currentUser.name}</span> <span className="text-teal-200">({currentUser.email})</span>
             </p>
           </div>
 
@@ -995,7 +996,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white text-[#005550] hover:bg-teal-50 px-4 py-2.5 rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-md transition-all cursor-pointer hover:scale-[1.02]"
+              className="bg-white text-[#005550] hover:bg-teal-50 px-4.5 py-2.5 rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-md transition-all cursor-pointer hover:scale-[1.02]"
             >
               <ExternalLink className="w-4 h-4 text-[#005550]" />
               <span>Go to Website</span>
