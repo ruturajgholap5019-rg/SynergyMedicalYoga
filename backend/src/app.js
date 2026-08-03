@@ -18,11 +18,12 @@ const adminRoutes = require('./routes/adminRoutes');
 const publicRoutes = require('./routes/publicRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const contactRoutes = require('./routes/contactRoutes');
-const { stripeWebhook } = require('./controllers/orderController');
+const { stripeWebhook, cashfreeWebhook } = require('./controllers/orderController');
 
 const app = express();
 
 app.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
+app.post('/api/orders/cashfree-webhook', express.raw({ type: 'application/json' }), cashfreeWebhook);
 
 app.use(
   helmet({

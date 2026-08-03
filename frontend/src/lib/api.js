@@ -314,6 +314,30 @@ export const api = {
     method: 'DELETE',
   }),
 
+  // Admin Content CMS CRUD
+  getAdminContentItems: (type) => request(type ? `/admin/content?type=${type}` : '/admin/content'),
+  createAdminContentItem: (payload) => request('/admin/content', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }),
+  updateAdminContentItem: (id, payload) => request(`/admin/content/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  }),
+  deleteAdminContentItem: (id) => request(`/admin/content/${id}`, {
+    method: 'DELETE',
+  }),
+
+  // Admin Contact Messages / Enquiries CRUD
+  getAdminEnquiries: () => request('/admin/contact-messages'),
+  updateAdminContactMessageStatus: (id, payload) => request(`/admin/contact-messages/${id}/status`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  }),
+  deleteAdminContactMessage: (id) => request(`/admin/contact-messages/${id}`, {
+    method: 'DELETE',
+  }),
+
   // Admin Carousel CRUD
   getAdminCarousels: () => request('/admin/carousels'),
   createAdminCarousel: (payload) => request('/admin/carousels', {

@@ -4,6 +4,7 @@ const { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefr
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 const emailService = require('../services/emailService');
+const crypto = require('crypto');
 
 // Temporary in-memory OTP cache for pending registrations (10-min TTL)
 const otpStore = new Map();
@@ -52,12 +53,12 @@ exports.sendOtp = catchAsync(async (req, res, next) => {
   if (existing && !existing.isDeleted) return next(new AppError('Email is already registered.', 400));
   if (existing && existing.isDeleted) return next(new AppError('This account has been permanently deleted. Please contact support.', 403));
 
-  // Generate 4-digit verification code
-  const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
+  // Never return or log an OTP. Store only a hash until verification.
+  const otpCode = crypto.randomInt(100000, 1000000).toString();
   const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
 
   otpStore.set(email, {
-    otp: otpCode,
+    otpHash: crypto.createHash('sha256').update(otpCode).digest('hex'),
     name,
     email,
     phone,
@@ -66,13 +67,14 @@ exports.sendOtp = catchAsync(async (req, res, next) => {
   });
 
   const emailRes = await emailService.sendOtpEmail({ email, name, otp: otpCode });
-  console.log(`🔑 [OTP GENERATED] Verification code ${otpCode} for ${email}. Email dispatch:`, emailRes);
+  if (!emailRes?.success) {
+    otpStore.delete(email);
+    return next(new AppError('Unable to send verification code. Please try again later.', 503));
+  }
 
   res.status(200).json({
     status: 'success',
     message: `Verification code sent to ${email}`,
-    otpCode: emailRes?.simulated ? otpCode : undefined,
-    simulated: emailRes?.simulated || false,
   });
 });
 
@@ -92,7 +94,8 @@ exports.verifyOtp = catchAsync(async (req, res, next) => {
     return next(new AppError('Verification code has expired. Please request a new code.', 400));
   }
 
-  if (pendingData.otp !== inputOtp && inputOtp !== '1234') {
+  const receivedHash = crypto.createHash('sha256').update(inputOtp).digest('hex');
+  if (!crypto.timingSafeEqual(Buffer.from(pendingData.otpHash), Buffer.from(receivedHash))) {
     return next(new AppError('Invalid verification code. Please check your email and try again.', 400));
   }
 

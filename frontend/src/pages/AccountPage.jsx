@@ -150,10 +150,9 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
           password: signUpPassword,
         });
       }
-      const issuedCode = res?.otpCode || '1234';
-      setLastIssuedOtpCode(issuedCode);
-      setOtpCode(issuedCode);
-      toast.success(`Verification code dispatched to ${signUpEmail} & ruturajgholap5019@gmail.com`);
+      setLastIssuedOtpCode('');
+      setOtpCode('');
+      toast.success(`Verification code dispatched to ${signUpEmail}`);
       setActiveTab('otp');
       // Start 60-second resend countdown
       setOtpResendCountdown(60);
@@ -167,31 +166,16 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   // Step 2: Verify OTP and complete registration
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (otpCode.length !== 4) {
-      toast.error('Please enter the 4-digit code.');
+    if (otpCode.length !== 6) {
+      toast.error('Please enter the 6-digit code.');
       return;
     }
     setLoading(true);
     try {
-      let response;
-      try {
-        if (typeof api.verifyOtp === 'function') {
-          response = await api.verifyOtp({
-            email: signUpEmail.trim().toLowerCase(),
-            otp: otpCode,
-          });
-        }
-      } catch (err) {
-        // Fall back to direct register
-      }
-      if (!response || !response.user) {
-        response = await api.register({
-          name: signUpName.trim(),
-          email: signUpEmail.trim().toLowerCase(),
-          phone: signUpPhone.trim(),
-          password: signUpPassword,
-        });
-      }
+      const response = await api.verifyOtp({
+        email: signUpEmail.trim().toLowerCase(),
+        otp: otpCode,
+      });
       toast.success('Account created successfully! Welcome to Synergy Medical Yoga!');
       onAuthSuccess?.(response.user);
     } catch (error) {
@@ -863,7 +847,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                         type="text"
                         inputMode="numeric"
                         pattern="[0-9]{4}"
-                        maxLength={4}
+                        maxLength={6}
                         required
                         autoFocus
                         placeholder="0000"
@@ -875,7 +859,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
 
                     <button
                       type="submit"
-                      disabled={loading || otpCode.length !== 4}
+                      disabled={loading || otpCode.length !== 6}
                       className="w-full bg-[#005550] hover:bg-[#003d39] text-white font-extrabold py-3.5 rounded-xl shadow-md transition-all text-sm disabled:opacity-60 cursor-pointer"
                     >
                       {loading ? 'Verifying...' : 'Verify & Create Account'}

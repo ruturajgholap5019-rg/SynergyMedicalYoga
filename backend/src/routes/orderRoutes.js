@@ -1,11 +1,8 @@
 const express = require('express');
-const { createOrder, getUserOrders, getOrder, createCheckoutSession, cashfreeWebhook } = require('../controllers/orderController');
+const { createOrder, getUserOrders, getOrder, createCheckoutSession } = require('../controllers/orderController');
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();
-
-// Public webhook route for Cashfree payment status updates
-router.post('/cashfree-webhook', cashfreeWebhook);
 
 // Protected order routes
 router.use(protect);

@@ -118,7 +118,7 @@ exports.sendContactEmail = async (data) => {
 
 exports.sendOtpEmail = async ({ email, name, otp }) => {
   const senderEmail = process.env.SMTP_FROM || process.env.SMTP_USER || 'ruturajgholap5019@gmail.com';
-  const recipients = [email, 'ruturajgholap5019@gmail.com'].filter((e, i, a) => e && a.indexOf(e) === i).join(', ');
+  const recipients = email;
 
   const mailOptions = {
     from: `"Synergy Medical Yoga" <${senderEmail}>`,
