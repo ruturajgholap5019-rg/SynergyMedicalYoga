@@ -26,10 +26,10 @@ const createTransporter = () => {
   const smtpHost = process.env.SMTP_HOST;
 
   if (isDummySmtp(smtpUser) || isDummySmtp(smtpPass) || isDummySmtp(smtpHost)) {
-    return null;
+    return { transporter: null, error: 'Email service is not configured. Set SMTP_HOST, SMTP_USER, SMTP_PASS, SMTP_FROM, and CONTACT_RECEIVER_EMAIL.' };
   }
 
-  return nodemailer.createTransport({
+  return { transporter: nodemailer.createTransport({
     host: smtpHost,
     port: Number(process.env.SMTP_PORT) || 587,
     secure: String(process.env.SMTP_PORT) === '465',
@@ -40,19 +40,19 @@ const createTransporter = () => {
     connectionTimeout: 4000,
     greetingTimeout: 2500,
     socketTimeout: 4000,
-  });
+  }) };
 };
 
 const sendEmail = async (mailOptions) => {
   try {
-    const transporter = createTransporter();
+    const { transporter, error: configurationError } = createTransporter();
     if (!transporter) {
-      console.log('[EMAIL TESTING MODE] SMTP credentials are not configured or dummy; message simulated & logged.');
-      return { success: true, simulated: true };
+      console.error(`Email configuration error: ${configurationError}`);
+      return { success: false, error: configurationError };
     }
 
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('SMTP email send timeout after 4000ms')), 4000)
+      setTimeout(() => reject(new Error('SMTP email send timeout after 15000ms')), 15000)
     );
 
     const info = await Promise.race([transporter.sendMail(mailOptions), timeoutPromise]);
