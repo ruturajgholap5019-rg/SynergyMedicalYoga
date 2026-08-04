@@ -68,6 +68,42 @@ const getResendSender = () => {
   return configuredSender;
 };
 
+const sendViaSendGrid = async (mailOptions) => {
+  const apiKey = process.env.SENDGRID_API_KEY;
+  if (!apiKey) return null;
+
+  const senderEmail = process.env.SENDGRID_FROM_EMAIL || process.env.SMTP_FROM || 'noreply@synergymedicalyoga.com';
+  const senderName = process.env.SENDGRID_FROM_NAME || 'Synergy Medical Yoga';
+
+  try {
+    const toList = (Array.isArray(mailOptions.to) ? mailOptions.to : [mailOptions.to]).map(e => ({ email: e }));
+    const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey.trim()}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        personalizations: [{ to: toList }],
+        from: { email: senderEmail, name: senderName },
+        subject: mailOptions.subject,
+        content: [{ type: 'text/html', value: mailOptions.html }],
+      }),
+    });
+
+    if (res.status >= 200 && res.status < 300) {
+      console.log('✅ [SENDGRID EMAIL DELIVERED]');
+      return { success: true, messageId: `sg-${Date.now()}` };
+    }
+    const errData = await res.text();
+    console.error('❌ [SENDGRID EMAIL ERROR]:', errData);
+    return null;
+  } catch (err) {
+    console.error('❌ [SENDGRID FETCH ERROR]:', err.message);
+    return null;
+  }
+};
+
 const sendViaResend = async (mailOptions) => {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return null;
@@ -101,13 +137,13 @@ const sendViaResend = async (mailOptions) => {
       return { success: true, messageId: data.id };
     }
 
-    // Fallback: If free tier restricts to registered email ruturajgholap5019@gmail.com
+    // Fallback: If free tier restricts to registered account email (e.g. ruturajgholap5019@gmail.com)
     if (data.name === 'validation_error' || data.message?.includes('testing') || data.statusCode === 403) {
-      console.log('ℹ️ [RESEND TESTING MODE] Dispatching email to verified account:', targetEmail);
+      console.log('ℹ️ [RESEND TESTING MODE] Target email restricted by Resend free tier. Dispatching to verified account:', targetEmail);
       data = await attemptSend([targetEmail]);
       if (data.id) {
         console.log('✅ [RESEND EMAIL DELIVERED TO VERIFIED ACCOUNT] Message ID:', data.id);
-        return { success: true, messageId: data.id };
+        return { success: true, messageId: data.id, simulated: true, restrictedTestingMode: true };
       }
     }
     console.error('❌ [RESEND EMAIL ERROR]:', data);
@@ -119,7 +155,13 @@ const sendViaResend = async (mailOptions) => {
 };
 
 const sendEmail = async (mailOptions) => {
-  // 1. Try Resend HTTP API if configured (Fast, non-blocking HTTP REST API)
+  // 1. Try SendGrid HTTP API if configured
+  if (process.env.SENDGRID_API_KEY) {
+    const sendGridResult = await sendViaSendGrid(mailOptions);
+    if (sendGridResult?.success) return sendGridResult;
+  }
+
+  // 2. Try Resend HTTP API if configured
   if (process.env.RESEND_API_KEY) {
     const resendResult = await sendViaResend(mailOptions);
     if (resendResult?.success) return resendResult;

@@ -72,10 +72,13 @@ exports.sendOtp = catchAsync(async (req, res, next) => {
     return next(new AppError('Unable to send verification code. Please try again later.', 503));
   }
 
+  const isTestingSender = !process.env.RESEND_FROM_EMAIL || process.env.RESEND_FROM_EMAIL.includes('resend.dev');
+  const showOtp = Boolean(emailRes.simulated || emailRes.restrictedTestingMode || isTestingSender || process.env.NODE_ENV !== 'production' || process.env.SHOW_OTP === 'true');
+
   res.status(200).json({
     status: 'success',
     message: `Verification code sent to ${email}`,
-    otpCode: (emailRes.simulated || process.env.NODE_ENV !== 'production') ? otpCode : undefined,
+    otpCode: showOtp ? otpCode : undefined,
     emailDelivery: emailRes?.simulated ? 'simulated' : 'sent',
   });
 });
