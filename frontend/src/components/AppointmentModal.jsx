@@ -50,13 +50,12 @@ export default function AppointmentModal({ isOpen, onClose, selectedService, cur
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const cleanPhone = (formData.patientPhone || '').replace(/\D/g, '');
-    if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 13) {
-      alert('Please enter a valid 10-digit mobile number.');
-      return;
+    let cleanPhone = (formData.patientPhone || '').replace(/\D/g, '');
+    if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) {
+      cleanPhone = cleanPhone.slice(2);
     }
-    if (cleanPhone.length === 10 && !/^[6-9]\d{9}$/.test(cleanPhone)) {
-      alert('Mobile number should start with 6, 7, 8, or 9.');
+    if (!cleanPhone || cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      alert('Please enter a valid 10-digit mobile number (e.g. 9876543210).');
       return;
     }
 

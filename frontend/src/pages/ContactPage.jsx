@@ -21,7 +21,16 @@ export default function ContactPage() {
     e.preventDefault();
     setIsSubmitting(true);
     setErrorMessage('');
-    try {
+
+    let cleanPhone = (formData.phone || '').replace(/\D/g, '');
+    if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) {
+      cleanPhone = cleanPhone.slice(2);
+    }
+    if (!cleanPhone || cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setErrorMessage('Please enter a valid 10-digit mobile number (e.g. 9876543210).');
+      setIsSubmitting(false);
+      return;
+    }
       await api.submitContactForm(formData);
       setSubmitted(true);
       setFormData({ name: '', phone: '', email: '', subject: 'General Inquiry / Consultation', message: '' });
