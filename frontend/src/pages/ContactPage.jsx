@@ -31,6 +31,8 @@ export default function ContactPage() {
       setIsSubmitting(false);
       return;
     }
+
+    try {
       await api.submitContactForm(formData);
       setSubmitted(true);
       setFormData({ name: '', phone: '', email: '', subject: 'General Inquiry / Consultation', message: '' });
