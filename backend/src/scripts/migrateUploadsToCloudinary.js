@@ -1,8 +1,8 @@
 const path = require('path');
 const fs = require('fs');
-const { uploadToCloudinary } = require('../../utils/cloudinary');
+const { uploadToCloudinary } = require('../utils/cloudinary');
 
-const uploadsDir = path.join(__dirname, '../../../uploads');
+const uploadsDir = path.join(__dirname, '../../uploads');
 const outFile = path.join(__dirname, 'uploads-to-cloudinary.json');
 
 async function fileList(dir) {
