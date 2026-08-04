@@ -20,6 +20,18 @@ const isDummySmtp = (val) => {
   );
 };
 
+const isLikelyUnverifiedMailbox = (val) => {
+  if (!val) return true;
+  const s = String(val).trim().toLowerCase();
+  return (
+    s.endsWith('@gmail.com') ||
+    s.endsWith('@yahoo.com') ||
+    s.endsWith('@outlook.com') ||
+    s.endsWith('@hotmail.com') ||
+    s.includes('mail.google.com')
+  );
+};
+
 const createTransporter = () => {
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
@@ -48,6 +60,11 @@ const getResendSender = () => {
   if (!configuredSender || isDummySmtp(configuredSender)) {
     return 'onboarding@resend.dev';
   }
+
+  if (isLikelyUnverifiedMailbox(configuredSender)) {
+    return 'onboarding@resend.dev';
+  }
+
   return configuredSender;
 };
 
