@@ -9,7 +9,9 @@
     "seed": "node src/scripts/seedAdmin.js",
     "seed:admin": "node src/scripts/seedAdmin.js",
     "rotate:legacy-admin": "node src/scripts/rotateLegacyAdmin.js",
-    "build": "echo 'No build required for backend'"
+    "build": "echo 'No build required for backend'",
+    "test": "node --test",
+    "migrate:uploads": "node src/scripts/migrateUploadsToCloudinary.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

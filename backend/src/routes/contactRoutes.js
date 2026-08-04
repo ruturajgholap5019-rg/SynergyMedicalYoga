@@ -36,7 +36,11 @@ router.post('/', formSpamLimiter, validate(contact), catchAsync(async (req, res,
 
   if (!emailResult?.success) {
     console.error('Contact email dispatch failed:', emailResult);
-    return next(new AppError('Your enquiry was received, but the email notification could not be delivered. Please contact us directly.', 502));
+    return res.status(201).json({
+      status: 'success',
+      message: 'Your inquiry message has been submitted successfully. We will follow up manually if email delivery is unavailable.',
+      emailDelivery: 'manual-follow-up',
+    });
   }
 
   res.status(201).json({
