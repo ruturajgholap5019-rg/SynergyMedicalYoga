@@ -17,7 +17,7 @@ const auth = {
   }),
   verifyOtp: z.object({
     email: z.string().trim().toLowerCase().email(),
-    otp: z.string().regex(/^\d{6}$/, 'Verification code must contain 6 digits'),
+    otp: z.string().trim().regex(/^\d{4,6}$/, 'Verification code must contain 4 or 6 digits'),
   }),
 };
 

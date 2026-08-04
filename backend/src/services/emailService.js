@@ -116,7 +116,11 @@ const sendEmail = async (mailOptions) => {
     console.log(`ℹ️ [EMAIL TESTING MODE]: ${configurationError}`);
   }
 
-  // 3. Testing Mode Fallback (returns simulated success so app never breaks or blocks user)
+  if (process.env.NODE_ENV === 'production') {
+    return { success: false, error: 'Email delivery is unavailable right now.' };
+  }
+
+  // 3. Testing Mode Fallback (keeps local/dev flows working without blocking the app)
   console.log('🔑 [SIMULATED EMAIL DISPATCH] Recipient:', mailOptions.to, 'Subject:', mailOptions.subject);
   return { success: true, simulated: true };
 };

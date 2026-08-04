@@ -75,8 +75,8 @@ exports.sendOtp = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     message: `Verification code sent to ${email}`,
-    // In development or when simulated, include code so testing works 100% effortlessly
     otpCode: (emailRes.simulated || process.env.NODE_ENV !== 'production') ? otpCode : undefined,
+    emailDelivery: emailRes?.simulated ? 'simulated' : 'sent',
   });
 });
 

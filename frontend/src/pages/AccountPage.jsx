@@ -171,8 +171,8 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   // Step 2: Verify OTP and complete registration
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (otpCode.length !== 4) {
-      toast.error('Please enter the 4-digit code.');
+    if (!/^\d{4,6}$/.test(otpCode)) {
+      toast.error('Please enter the 4-digit or 6-digit code sent to your email.');
       return;
     }
     setLoading(true);
@@ -327,7 +327,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
             </div>
 
             {/* Right Content Area (Col 8 / 9) */}
-            <div className="md:col-span-8 lg:col-span-9 bg-white min-h-[420px]">
+            <div className="md:col-span-8 lg:col-span-9 bg-white min-h-105  ">
               
               {/* 1. DASHBOARD TAB (Exact Replica of Photo) */}
               {userTab === 'dashboard' && (
@@ -851,20 +851,20 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                       <input
                         type="text"
                         inputMode="numeric"
-                        pattern="[0-9]{4}"
+                        pattern="[0-9]{4,6}"
                         maxLength={6}
                         required
                         autoFocus
                         placeholder="0000"
                         value={otpCode}
-                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                         className="w-full text-center text-4xl font-black tracking-[16px] py-4 bg-[#f8fbfb] border-2 border-slate-200 rounded-2xl text-[#005550] focus:outline-none focus:border-[#005550] transition-all shadow-inner"
                       />
                     </div>
 
                     <button
                       type="submit"
-                      disabled={loading || otpCode.length !== 4}
+                      disabled={loading || otpCode.length < 4}
                       className="w-full bg-[#005550] hover:bg-[#003d39] text-white font-extrabold py-3.5 rounded-xl shadow-md transition-all text-sm disabled:opacity-60 cursor-pointer"
                     >
                       {loading ? 'Verifying...' : 'Verify & Create Account'}
