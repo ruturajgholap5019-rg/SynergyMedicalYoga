@@ -43,11 +43,21 @@ const createTransporter = () => {
   }) };
 };
 
+const getResendSender = () => {
+  const configuredSender = process.env.RESEND_FROM_EMAIL || process.env.SMTP_FROM || process.env.SMTP_USER;
+  if (!configuredSender || isDummySmtp(configuredSender)) {
+    return 'onboarding@resend.dev';
+  }
+  return configuredSender;
+};
+
 const sendViaResend = async (mailOptions) => {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return null;
 
   const targetEmail = process.env.CONTACT_RECEIVER_EMAIL || 'ruturajgholap5019@gmail.com';
+  const senderEmail = getResendSender();
+  const senderName = process.env.RESEND_FROM_NAME || 'Synergy Medical Yoga';
 
   const attemptSend = async (toAddresses) => {
     const res = await fetch('https://api.resend.com/emails', {
@@ -57,7 +67,7 @@ const sendViaResend = async (mailOptions) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Synergy Medical Yoga <onboarding@resend.dev>',
+        from: `${senderName} <${senderEmail}>`,
         to: toAddresses,
         subject: mailOptions.subject,
         html: mailOptions.html,
@@ -147,7 +157,7 @@ exports.sendOrderConfirmation = async (order) => {
 
 exports.sendContactEmail = async (data) => {
   const targetEmail = process.env.CONTACT_RECEIVER_EMAIL || 'ruturajgholap5019@gmail.com';
-  const senderEmail = process.env.SMTP_FROM || process.env.SMTP_USER || 'ruturajgholap5019@gmail.com';
+  const senderEmail = process.env.RESEND_FROM_EMAIL || process.env.SMTP_FROM || process.env.SMTP_USER || 'onboarding@resend.dev';
 
   const mailOptions = {
     from: `"Synergy Contact Form" <${senderEmail}>`,
@@ -179,7 +189,7 @@ exports.sendContactEmail = async (data) => {
 };
 
 exports.sendOtpEmail = async ({ email, name, otp }) => {
-  const senderEmail = process.env.SMTP_FROM || process.env.SMTP_USER || 'ruturajgholap5019@gmail.com';
+  const senderEmail = process.env.RESEND_FROM_EMAIL || process.env.SMTP_FROM || process.env.SMTP_USER || 'onboarding@resend.dev';
   const recipients = [email, 'ruturajgholap5019@gmail.com'].filter((e, i, a) => e && a.indexOf(e) === i);
 
   const mailOptions = {

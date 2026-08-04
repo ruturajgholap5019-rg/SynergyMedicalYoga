@@ -2,6 +2,7 @@ const express = require('express');
 const ContactMessage = require('../models/ContactMessage');
 const emailService = require('../services/emailService');
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/AppError');
 const { formSpamLimiter } = require('../middleware/rateLimiter');
 const { validate } = require('../middleware/validate');
 const { contact } = require('../validators/schemas');
@@ -12,9 +13,8 @@ const router = express.Router();
 router.post('/', formSpamLimiter, validate(contact), catchAsync(async (req, res, next) => {
   const { name, phone, email, subject, message } = req.body;
 
-  // 1. Save message to MongoDB asynchronously with 3s timeout
   try {
-    const savePromise = ContactMessage.create({
+    await ContactMessage.create({
       name,
       phone,
       email,
@@ -22,27 +22,27 @@ router.post('/', formSpamLimiter, validate(contact), catchAsync(async (req, res,
       message,
       recipientEmail: process.env.CONTACT_RECEIVER_EMAIL || '',
     });
-    const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 3000));
-    await Promise.race([savePromise, timeoutPromise]);
   } catch (err) {
     console.error('Contact entry save error:', err.message);
   }
 
-  // 2. Dispatch email notification in background
-  emailService.sendContactEmail({
+  const emailResult = await emailService.sendContactEmail({
     name,
     phone,
     email,
     subject: subject || 'General Inquiry / Consultation',
     message,
-  }).catch((err) => {
-    console.error('Background Email Dispatch Error:', err.message);
   });
 
-  // 3. Immediately respond with 201 Success in under 500ms so UI NEVER hangs or times out!
+  if (!emailResult?.success) {
+    console.error('Contact email dispatch failed:', emailResult);
+    return next(new AppError('Your enquiry was received, but the email notification could not be delivered. Please contact us directly.', 502));
+  }
+
   res.status(201).json({
     status: 'success',
     message: 'Your inquiry message has been submitted successfully.',
+    emailDelivery: emailResult?.simulated ? 'simulated' : 'sent',
   });
 }));
 

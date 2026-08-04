@@ -106,6 +106,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/contact', contactRoutes);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
