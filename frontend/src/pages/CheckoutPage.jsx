@@ -583,31 +583,77 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
               {/* 3. Payment status card: payment gateways are intentionally disabled for staging */}
             <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-[0_6px_30px_-5px_rgba(0,0,0,0.07)] border border-slate-100/80 space-y-6">
               
-              {/* Gateway Selector Toggles - Sole Cashfree option exactly matching original website */}
+              {/* Gateway Selector Toggles - Cashfree Online Payment (Cards, UPI, Netbanking) & COD */}
               <div className="space-y-3">
-                <div className="p-4 rounded-2xl border border-[#005550] bg-[#f8fbfa] shadow-sm transition-all select-none">
+                
+                {/* 1. Cashfree Online Payment (Primary Gateway) */}
+                <div
+                  onClick={() => setPaymentMethod('cashfree')}
+                  className={`p-4.5 rounded-2xl border transition-all cursor-pointer select-none ${
+                    paymentMethod === 'cashfree'
+                      ? 'border-[#005550] bg-[#f8fbfa] shadow-sm ring-1 ring-[#005550]'
+                      : 'border-slate-200 bg-white hover:border-slate-300'
+                  }`}
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <input
                         type="radio"
+                        id="cashfree"
                         name="pay_method"
-                        checked={true}
-                        readOnly
+                        checked={paymentMethod === 'cashfree'}
+                        onChange={() => setPaymentMethod('cashfree')}
                         className="w-4 h-4 text-[#005550] focus:ring-[#005550] cursor-pointer"
                       />
-                      <span className="font-bold text-sm text-slate-800">Order Pending Manual Confirmation</span>
+                      <div>
+                        <label htmlFor="cashfree" className="font-bold text-sm text-slate-800 block cursor-pointer">
+                          Online Payment (Cashfree)
+                        </label>
+                        <span className="text-xs text-slate-500 font-medium">Google Pay, PhonePe, Paytm, Cards &amp; Netbanking</span>
+                      </div>
                     </div>
                     
-                    <div className="flex items-center gap-1 font-black text-[11px] tracking-tight px-2.5 py-1 bg-white rounded-lg border border-slate-200/80 shadow-3xs">
-                      <span className="text-slate-700">Staging checkout</span>
+                    <div className="hidden sm:flex items-center gap-1 font-extrabold text-[10px] uppercase tracking-wider px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-lg border border-emerald-200">
+                      <span>UPI / Cards</span>
                     </div>
                   </div>
 
-                  {/* Staging payment explanation */}
-                  <div className="mt-3 bg-white p-3.5 rounded-xl border border-slate-200/60 text-xs text-slate-600 font-medium shadow-3xs">
-                    Online payment integration is under review. Submit the order and the Synergy team will confirm payment and fulfilment manually.
+                  {paymentMethod === 'cashfree' && (
+                    <div className="mt-3 bg-white p-3.5 rounded-xl border border-teal-100 text-xs text-slate-600 font-medium shadow-2xs space-y-1">
+                      <p>✨ After clicking <strong>"Pay Now via Cashfree"</strong>, a secure window will open where you can pay using <strong>GPay, PhonePe, Paytm, Credit/Debit Cards or Netbanking</strong>.</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. Cash on Delivery (COD) Option */}
+                <div
+                  onClick={() => setPaymentMethod('cod')}
+                  className={`p-4.5 rounded-2xl border transition-all cursor-pointer select-none ${
+                    paymentMethod === 'cod'
+                      ? 'border-[#005550] bg-[#f8fbfa] shadow-sm ring-1 ring-[#005550]'
+                      : 'border-slate-200 bg-white hover:border-slate-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        id="cod"
+                        name="pay_method"
+                        checked={paymentMethod === 'cod'}
+                        onChange={() => setPaymentMethod('cod')}
+                        className="w-4 h-4 text-[#005550] focus:ring-[#005550] cursor-pointer"
+                      />
+                      <div>
+                        <label htmlFor="cod" className="font-bold text-sm text-slate-800 block cursor-pointer">
+                          Cash on Delivery (COD)
+                        </label>
+                        <span className="text-xs text-slate-500 font-medium">Pay cash upon delivery at your doorstep</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
               </div>
 
               {/* Privacy Legal Notice from original website */}
@@ -662,7 +708,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
                 ) : (
                   <>
                     <Lock className="w-4 h-4 text-emerald-300" />
-                    <span>Submit Order for Confirmation</span>
+                    <span>{paymentMethod === 'cashfree' ? 'Pay Now via Cashfree' : 'Place Order'}</span>
                   </>
                 )}
               </button>
