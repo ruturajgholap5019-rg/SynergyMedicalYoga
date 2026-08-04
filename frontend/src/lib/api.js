@@ -402,3 +402,6 @@ export const api = {
     body: formData,
   }),
 };
+
+export default api;
+

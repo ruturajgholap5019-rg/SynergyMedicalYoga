@@ -142,13 +142,28 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     setLoading(true);
     try {
       let res;
-      if (typeof api.sendOtp === 'function') {
+      if (typeof api?.sendOtp === 'function') {
         res = await api.sendOtp({
           name: signUpName.trim(),
           email: signUpEmail.trim().toLowerCase(),
           phone: signUpPhone.trim(),
           password: signUpPassword,
         });
+      } else {
+        const rawApiUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+        const baseUrl = rawApiUrl.startsWith('http') && !rawApiUrl.endsWith('/api') ? `${rawApiUrl}/api` : rawApiUrl;
+        const fetchRes = await fetch(`${baseUrl}/auth/send-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: signUpName.trim(),
+            email: signUpEmail.trim().toLowerCase(),
+            phone: signUpPhone.trim(),
+            password: signUpPassword,
+          }),
+        });
+        res = await fetchRes.json();
+        if (!fetchRes.ok) throw new Error(res?.message || 'Failed to send OTP.');
       }
       if (res?.otpCode) {
         setLastIssuedOtpCode(res.otpCode);
@@ -177,10 +192,26 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     }
     setLoading(true);
     try {
-      const response = await api.verifyOtp({
-        email: signUpEmail.trim().toLowerCase(),
-        otp: otpCode,
-      });
+      let response;
+      if (typeof api?.verifyOtp === 'function') {
+        response = await api.verifyOtp({
+          email: signUpEmail.trim().toLowerCase(),
+          otp: otpCode,
+        });
+      } else {
+        const rawApiUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+        const baseUrl = rawApiUrl.startsWith('http') && !rawApiUrl.endsWith('/api') ? `${rawApiUrl}/api` : rawApiUrl;
+        const fetchRes = await fetch(`${baseUrl}/auth/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: signUpEmail.trim().toLowerCase(),
+            otp: otpCode,
+          }),
+        });
+        response = await fetchRes.json();
+        if (!fetchRes.ok) throw new Error(response?.message || 'Failed to verify OTP.');
+      }
       toast.success('Account created successfully! Welcome to Synergy Medical Yoga!');
       onAuthSuccess?.(response.user);
     } catch (error) {
