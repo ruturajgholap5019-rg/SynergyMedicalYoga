@@ -168,15 +168,22 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
       const response = await api.createCheckoutSession(payload);
 
       // 1. Process Cashfree PG Checkout (Primary Gateway - Original Website Parity)
-      if (paymentMethod === 'cashfree' && response?.paymentSessionId) {
+      if (paymentMethod === 'cashfree') {
+        if (!response?.paymentSessionId) {
+          toast.error('Unable to initialize Cashfree payment. Please check Cashfree App ID & Secret Key in settings.');
+          return;
+        }
         toast.info('⏳ Launching secure Cashfree payment portal...', { autoClose: 2000, toastId: 'cf-launch' });
         const CashfreeSDK = await loadCashfreeSdk();
         if (CashfreeSDK) {
           const cashfree = CashfreeSDK({ mode: response.cfMode || 'sandbox' });
-          await cashfree.checkout({
+          cashfree.checkout({
             paymentSessionId: response.paymentSessionId,
             redirectTarget: '_self',
           });
+          return;
+        } else {
+          toast.error('Failed to load Cashfree Payment SDK. Please try again.');
           return;
         }
       }
@@ -191,7 +198,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
       // 3. Fallback / UPI / Cash on Delivery / Offline test mode confirmation
       const createdOrderId = response?.order?._id || response?.data?.orderId || response?.orderId || 'ORD-' + Math.floor(100000 + Math.random() * 900000);
       setOrderSuccessId(createdOrderId);
-      toast.success('Your order has been submitted and is pending confirmation.');
+      toast.success('Order placed successfully!', { toastId: 'order-success' });
 
     } catch (err) {
       toast.error(err.message || 'Failed to process checkout. Please verify your details and try again.');
@@ -214,15 +221,15 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
           <div className="w-20 h-20 bg-emerald-100 text-[#005550] rounded-full flex items-center justify-center mx-auto shadow-inner">
             <CheckCircle2 className="w-12 h-12 text-[#005550]" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Order Pending Confirmation</h2>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Order Placed Successfully!</h2>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Your order details have been received by <strong className="text-[#005550]">Synergy Medical Yoga</strong>. Payment integration is under review for this staging phase, so the team will confirm payment and fulfilment manually. Your order reference is:
+            Thank you for your purchase with <strong className="text-[#005550]">Synergy Medical Yoga</strong>. Your order has been placed and is currently being processed. Your order reference is:
           </p>
           <div className="bg-slate-50 border-2 border-dashed border-[#005550] py-3.5 px-6 rounded-2xl inline-block font-mono font-bold text-lg text-[#005550]">
             #{orderSuccessId}
           </div>
           <p className="text-xs text-slate-400">
-            A confirmation email may be sent to <span className="font-medium text-slate-700">{email}</span> once the team reviews the order.
+            A confirmation email will be sent to <span className="font-medium text-slate-700">{email}</span> with order and tracking details.
           </p>
           <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
             <button

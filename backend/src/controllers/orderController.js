@@ -150,17 +150,8 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
         order,
       });
     } catch (cfError) {
-      console.error('Cashfree PG error (fallback to local order):', cfError.message);
-      await Cart.findOneAndDelete({ user: req.user._id });
-      return res.status(201).json({
-        status: 'success',
-        order,
-        data: {
-          orderId: order._id,
-          order,
-          message: 'Order created with pending payment',
-        },
-      });
+      console.error('Cashfree PG error:', cfError.message);
+      return next(new AppError(`Cashfree Payment Failed: ${cfError.message}`, 400));
     }
   }
 
