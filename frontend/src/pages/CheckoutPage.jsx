@@ -167,9 +167,18 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
 
       const response = await api.createCheckoutSession(payload);
 
-      // Payment gateways are intentionally disabled in this staging phase.
+      // 1. Process Cashfree PG Checkout (Primary Gateway - Original Website Parity)
       if (paymentMethod === 'cashfree' && response?.paymentSessionId) {
-        toast.info('Payment integration is under review. Your order is pending confirmation.');
+        toast.info('⏳ Launching secure Cashfree payment portal...', { autoClose: 2000, toastId: 'cf-launch' });
+        const CashfreeSDK = await loadCashfreeSdk();
+        if (CashfreeSDK) {
+          const cashfree = CashfreeSDK({ mode: response.cfMode || 'sandbox' });
+          await cashfree.checkout({
+            paymentSessionId: response.paymentSessionId,
+            redirectTarget: '_self',
+          });
+          return;
+        }
       }
 
       // 2. Process Stripe Checkout Gateway

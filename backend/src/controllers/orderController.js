@@ -88,9 +88,6 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 const cashfreeService = require('../services/cashfreeService');
 
 exports.createCheckoutSession = catchAsync(async (req, res, next) => {
-  if (process.env.PAYMENTS_ENABLED !== 'true') {
-    return next(new AppError('Online payments are temporarily unavailable.', 503));
-  }
   const { shippingAddress = {}, paymentMethod = 'cashfree', upiId, customerInfo } = req.body;
   const items = await extractValidItems(req);
 
@@ -122,12 +119,10 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
   // 1. Handle Cashfree Payments (Primary Gateway)
   if (paymentMethod === 'cashfree') {
     try {
-      const clientUrl = process.env.CLIENT_URL || req.headers.origin;
-      if (!clientUrl || !process.env.BACKEND_URL) {
-        return next(new AppError('Payment redirect URLs are not configured.', 503));
-      }
+      const clientUrl = process.env.CLIENT_URL || req.headers.origin || 'https://synergymedicalyoga.com';
+      const backendDomain = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
       const returnUrl = `${clientUrl}/order-success?order_id={order_id}&session_id={order_token}`;
-      const notifyUrl = `${process.env.BACKEND_URL}/api/orders/cashfree-webhook`;
+      const notifyUrl = `${backendDomain}/api/orders/cashfree-webhook`;
 
       const cfSession = await cashfreeService.createCashfreeOrderSession({
         orderId: order._id.toString(),
@@ -150,6 +145,7 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
         status: 'success',
         paymentSessionId: cfSession.paymentSessionId,
         cashfreeOrderId: cfSession.cashfreeOrderId,
+        cfMode: cfSession.cfMode || 'sandbox',
         orderId: order._id,
         order,
       });
