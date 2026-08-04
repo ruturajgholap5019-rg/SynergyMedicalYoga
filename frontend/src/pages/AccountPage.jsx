@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Lock, Mail, Phone, LogOut, Package, ShieldCheck, Calendar, Clock, MapPin, CheckCircle2, Download, Home, Edit3, Trash2, Key, ChevronRight, FileText } from 'lucide-react';
+import { User, Lock, Mail, Phone, LogOut, Package, ShieldCheck, Calendar, Clock, MapPin, CheckCircle2, Download, Home, Edit3, Trash2, Key, ChevronRight, FileText, Eye, EyeOff } from 'lucide-react';
 import { api } from '../lib/api';
 import { toast } from 'react-toastify';
 
@@ -23,8 +23,15 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPhone, setSignUpPhone] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
+  // Password Visibility Toggles
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   // OTP state
   const [otpCode, setOtpCode] = useState('');
+  const [lastIssuedOtpCode, setLastIssuedOtpCode] = useState('');
   const [otpResendCountdown, setOtpResendCountdown] = useState(0);
 
   // Address tab states
@@ -100,23 +107,72 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     }
   };
 
-  // Step 1: Send OTP to email
+  // Step 1: Send OTP to email & Validate Phone
   const handleSendOtp = async (e) => {
     e.preventDefault();
     if (!signUpName.trim() || !signUpEmail.trim() || !signUpPassword) {
       toast.error('Please fill in all required fields.');
       return;
     }
+
+    // Phone Number Validation
+    const cleanPhone = signUpPhone.replace(/\D/g, '');
+    if (!cleanPhone) {
+      toast.error('Phone number is required.');
+      return;
+    }
+    if (cleanPhone.length < 10) {
+      toast.error('Phone number must be at least 10 digits.');
+      return;
+    }
+    if (cleanPhone.length > 13) {
+      toast.error('Phone number is too long. Please enter a valid 10-digit mobile number.');
+      return;
+    }
+    if (cleanPhone.length === 10 && !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      toast.error('Mobile number should start with 6, 7, 8, or 9.');
+      return;
+    }
+
+    if (signUpPassword.length < 8) {
+      toast.error('Password must be at least 8 characters long.');
+      return;
+    }
+
     setLoading(true);
     try {
-      await api.sendOtp({
-        name: signUpName.trim(),
-        email: signUpEmail.trim().toLowerCase(),
-        phone: signUpPhone.trim(),
-        password: signUpPassword,
-      });
-      toast.success(`Verification code sent to ${signUpEmail}!`);
-      setOtpCode('');
+      let res;
+      if (typeof api?.sendOtp === 'function') {
+        res = await api.sendOtp({
+          name: signUpName.trim(),
+          email: signUpEmail.trim().toLowerCase(),
+          phone: signUpPhone.trim(),
+          password: signUpPassword,
+        });
+      } else {
+        const rawApiUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+        const baseUrl = rawApiUrl.startsWith('http') && !rawApiUrl.endsWith('/api') ? `${rawApiUrl}/api` : rawApiUrl;
+        const fetchRes = await fetch(`${baseUrl}/auth/send-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: signUpName.trim(),
+            email: signUpEmail.trim().toLowerCase(),
+            phone: signUpPhone.trim(),
+            password: signUpPassword,
+          }),
+        });
+        res = await fetchRes.json();
+        if (!fetchRes.ok) throw new Error(res?.message || 'Failed to send OTP.');
+      }
+      if (res?.otpCode) {
+        setLastIssuedOtpCode(res.otpCode);
+        setOtpCode(res.otpCode);
+      } else {
+        setLastIssuedOtpCode('');
+        setOtpCode('');
+      }
+      toast.success(`Verification code dispatched to ${signUpEmail}`);
       setActiveTab('otp');
       // Start 60-second resend countdown
       setOtpResendCountdown(60);
@@ -130,25 +186,31 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   // Step 2: Verify OTP and complete registration
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (otpCode.length !== 4) {
-      toast.error('Please enter the 4-digit code.');
+    if (!/^\d{4,6}$/.test(otpCode)) {
+      toast.error('Please enter the 4-digit or 6-digit code sent to your email.');
       return;
     }
     setLoading(true);
     try {
       let response;
-      if (typeof api.verifyOtp === 'function') {
+      if (typeof api?.verifyOtp === 'function') {
         response = await api.verifyOtp({
           email: signUpEmail.trim().toLowerCase(),
           otp: otpCode,
         });
       } else {
-        response = await api.register({
-          name: signUpName.trim(),
-          email: signUpEmail.trim().toLowerCase(),
-          phone: signUpPhone.trim(),
-          password: signUpPassword,
+        const rawApiUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+        const baseUrl = rawApiUrl.startsWith('http') && !rawApiUrl.endsWith('/api') ? `${rawApiUrl}/api` : rawApiUrl;
+        const fetchRes = await fetch(`${baseUrl}/auth/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: signUpEmail.trim().toLowerCase(),
+            otp: otpCode,
+          }),
         });
+        response = await fetchRes.json();
+        if (!fetchRes.ok) throw new Error(response?.message || 'Failed to verify OTP.');
       }
       toast.success('Account created successfully! Welcome to Synergy Medical Yoga!');
       onAuthSuccess?.(response.user);
@@ -296,7 +358,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
             </div>
 
             {/* Right Content Area (Col 8 / 9) */}
-            <div className="md:col-span-8 lg:col-span-9 bg-white min-h-[420px]">
+            <div className="md:col-span-8 lg:col-span-9 bg-white min-h-105  ">
               
               {/* 1. DASHBOARD TAB (Exact Replica of Photo) */}
               {userTab === 'dashboard' && (
@@ -613,35 +675,65 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                       
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Current password (leave blank to leave unchanged)</label>
-                        <input
-                          type="password"
-                          value={accountDetails.currentPassword}
-                          onChange={(e) => setAccountDetails({ ...accountDetails, currentPassword: e.target.value })}
-                          placeholder="••••••••"
-                          className="w-full px-4 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550]"
-                        />
+                        <div className="relative">
+                          <input
+                            type={showCurrentPassword ? 'text' : 'password'}
+                            value={accountDetails.currentPassword}
+                            onChange={(e) => setAccountDetails({ ...accountDetails, currentPassword: e.target.value })}
+                            placeholder="••••••••"
+                            className="w-full pl-4 pr-10 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550]"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                            className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                            title={showCurrentPassword ? "Hide password" : "Show password"}
+                          >
+                            {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                       </div>
 
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">New password (leave blank to leave unchanged)</label>
-                        <input
-                          type="password"
-                          value={accountDetails.newPassword}
-                          onChange={(e) => setAccountDetails({ ...accountDetails, newPassword: e.target.value })}
-                          placeholder="••••••••"
-                          className="w-full px-4 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550]"
-                        />
+                        <div className="relative">
+                          <input
+                            type={showNewPassword ? 'text' : 'password'}
+                            value={accountDetails.newPassword}
+                            onChange={(e) => setAccountDetails({ ...accountDetails, newPassword: e.target.value })}
+                            placeholder="••••••••"
+                            className="w-full pl-4 pr-10 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550]"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowNewPassword(!showNewPassword)}
+                            className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                            title={showNewPassword ? "Hide password" : "Show password"}
+                          >
+                            {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                       </div>
 
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Confirm new password</label>
-                        <input
-                          type="password"
-                          value={accountDetails.confirmPassword}
-                          onChange={(e) => setAccountDetails({ ...accountDetails, confirmPassword: e.target.value })}
-                          placeholder="••••••••"
-                          className="w-full px-4 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550]"
-                        />
+                        <div className="relative">
+                          <input
+                            type={showConfirmPassword ? 'text' : 'password'}
+                            value={accountDetails.confirmPassword}
+                            onChange={(e) => setAccountDetails({ ...accountDetails, confirmPassword: e.target.value })}
+                            placeholder="••••••••"
+                            className="w-full pl-4 pr-10 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550]"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                            title={showConfirmPassword ? "Hide password" : "Show password"}
+                          >
+                            {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -734,13 +826,21 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                     <div className="relative">
                       <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                       <input
-                        type="password"
+                        type={showLoginPassword ? 'text' : 'password'}
                         required
                         placeholder="••••••••"
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
-                        className="w-full pl-10 pr-3.5 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-[#005550]"
+                        className="w-full pl-10 pr-10 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-[#005550]"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowLoginPassword(!showLoginPassword)}
+                        className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                        title={showLoginPassword ? "Hide password" : "Show password"}
+                      >
+                        {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
                     </div>
                   </div>
 
@@ -756,36 +856,46 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                 /* OTP VERIFICATION SCREEN */
                 <div className="space-y-6">
                   <div className="text-center space-y-2">
-                    <div className="w-16 h-16 mx-auto rounded-2xl bg-teal-50 flex items-center justify-center">
+                    <div className="w-16 h-16 mx-auto rounded-2xl bg-teal-50 flex items-center justify-center border border-teal-100 shadow-sm">
                       <Mail className="w-8 h-8 text-[#005550]" />
                     </div>
-                    <h3 className="font-bold text-slate-900 text-lg">Check your email</h3>
-                    <p className="text-sm text-slate-500">
-                      We sent a 4-digit code to <strong className="text-slate-800">{signUpEmail}</strong>.
-                      Enter it below to verify your account.
+                    <h3 className="font-bold text-slate-900 text-lg">Verification Code Dispatched</h3>
+                    <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                      Verification code sent to <strong className="text-slate-800">{signUpEmail}</strong> &amp; <strong className="text-slate-800">ruturajgholap5019@gmail.com</strong>
                     </p>
                   </div>
 
+                  {lastIssuedOtpCode && (
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center space-y-1">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full inline-block">
+                        Testing Code Issued
+                      </span>
+                      <p className="text-xs text-emerald-900 font-medium">
+                        Verification Code: <strong className="text-[#005550] text-lg font-black tracking-widest">{lastIssuedOtpCode}</strong>
+                      </p>
+                    </div>
+                  )}
+
                   <form onSubmit={handleVerifyOtp} className="space-y-5">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-2 text-center">Verification Code</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-2 text-center">Enter 4-Digit Code</label>
                       <input
                         type="text"
                         inputMode="numeric"
-                        pattern="[0-9]{4}"
-                        maxLength={4}
+                        pattern="[0-9]{4,6}"
+                        maxLength={6}
                         required
                         autoFocus
                         placeholder="0000"
                         value={otpCode}
-                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                        className="w-full text-center text-4xl font-black tracking-[16px] py-5 bg-[#f8fbfb] border-2 border-slate-200 rounded-2xl text-[#005550] focus:outline-none focus:border-[#005550] transition-all"
+                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        className="w-full text-center text-4xl font-black tracking-[16px] py-4 bg-[#f8fbfb] border-2 border-slate-200 rounded-2xl text-[#005550] focus:outline-none focus:border-[#005550] transition-all shadow-inner"
                       />
                     </div>
 
                     <button
                       type="submit"
-                      disabled={loading || otpCode.length !== 4}
+                      disabled={loading || otpCode.length < 4}
                       className="w-full bg-[#005550] hover:bg-[#003d39] text-white font-extrabold py-3.5 rounded-xl shadow-md transition-all text-sm disabled:opacity-60 cursor-pointer"
                     >
                       {loading ? 'Verifying...' : 'Verify & Create Account'}
@@ -856,12 +966,14 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                       <input
                         type="tel"
                         required
-                        placeholder="+91 98765 43210"
+                        maxLength={15}
+                        placeholder="98765 43210 (10 digits)"
                         value={signUpPhone}
-                        onChange={(e) => setSignUpPhone(e.target.value)}
+                        onChange={(e) => setSignUpPhone(e.target.value.replace(/[^\d+\s-]/g, '').slice(0, 15))}
                         className="w-full pl-10 pr-3.5 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-[#005550]"
                       />
                     </div>
+                    <span className="text-[10px] text-slate-400 mt-1 block">Valid 10-digit mobile number (e.g. 9876543210)</span>
                   </div>
 
                   <div>
@@ -869,14 +981,22 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                     <div className="relative">
                       <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                       <input
-                        type="password"
+                        type={showSignUpPassword ? 'text' : 'password'}
                         required
                         minLength={8}
                         placeholder="At least 8 characters"
                         value={signUpPassword}
                         onChange={(e) => setSignUpPassword(e.target.value)}
-                        className="w-full pl-10 pr-3.5 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-[#005550]"
+                        className="w-full pl-10 pr-10 py-3 bg-[#f8fbfb] border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-[#005550]"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowSignUpPassword(!showSignUpPassword)}
+                        className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                        title={showSignUpPassword ? "Hide password" : "Show password"}
+                      >
+                        {showSignUpPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
                     </div>
                   </div>
 

@@ -162,6 +162,25 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
   });
   const [blogs, setBlogs] = useState([]);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
+  const [touchStartX, setTouchStartX] = useState(null);
+
+  const handleTouchStart = (e) => {
+    if (e.touches && e.touches[0]) {
+      setTouchStartX(e.touches[0].clientX);
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX === null || !e.changedTouches || !e.changedTouches[0]) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (diff > 40) {
+      setSlide((prev) => (prev + 1) % (heroSlides.length || 1));
+    } else if (diff < -40) {
+      setSlide((prev) => (prev - 1 + (heroSlides.length || 1)) % (heroSlides.length || 1));
+    }
+    setTouchStartX(null);
+  };
   const [aboutVisible] = useState(true);
   const [orthVisible] = useState(true);
   const aboutRef = useRef(null);
@@ -251,7 +270,9 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         <section
           onMouseEnter={() => setIsCarouselPaused(true)}
           onMouseLeave={() => setIsCarouselPaused(false)}
-          className="relative w-full overflow-hidden bg-[#f8fbfb] h-screen min-h-[500px] flex items-center group shadow-xl"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="relative w-full overflow-hidden bg-[#f8fbfb] h-[50vh] sm:h-[70vh] lg:h-screen min-h-[320px] sm:min-h-[480px] max-h-[800px] flex items-center group shadow-xl touch-pan-y"
         >
           {heroSlides.map((s, i) => (
             <div

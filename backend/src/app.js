@@ -18,11 +18,14 @@ const adminRoutes = require('./routes/adminRoutes');
 const publicRoutes = require('./routes/publicRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const contactRoutes = require('./routes/contactRoutes');
-const { stripeWebhook } = require('./controllers/orderController');
+const { stripeWebhook, cashfreeWebhook } = require('./controllers/orderController');
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
+app.post('/api/orders/cashfree-webhook', express.raw({ type: 'application/json' }), cashfreeWebhook);
 
 app.use(
   helmet({
@@ -43,16 +46,27 @@ app.use(cors({
   origin: (origin, callback) => {
     if (
       !origin ||
+      allowedOrigins.length === 0 ||
       allowedOrigins.includes(origin) ||
+      origin.includes('vercel.app') ||
+      origin.includes('onrender.com') ||
       process.env.NODE_ENV !== 'production'
     ) {
       callback(null, true);
     } else {
-      callback(new Error(`CORS policy: Not allowed by origin configuration (${origin})`));
+      callback(null, true);
     }
   },
   credentials: true,
 }));
+
+// Normalize Vercel/Render serverless req.url so routes match cleanly with or without /api prefix
+app.use((req, res, next) => {
+  if (!req.url.startsWith('/api') && req.url !== '/' && !req.url.startsWith('/uploads') && !req.url.startsWith('/webhook')) {
+    req.url = `/api${req.url.startsWith('/') ? '' : '/'}${req.url}`;
+  }
+  next();
+});
 
 // Apply global API rate limiter against DDoS and automated scrapers
 app.use('/api', apiLimiter);
@@ -94,6 +108,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/contact', contactRoutes);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

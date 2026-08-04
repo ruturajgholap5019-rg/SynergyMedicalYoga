@@ -404,8 +404,9 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
                     </label>
                     <input
                       type="tel"
+                      maxLength={15}
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => setPhone(e.target.value.replace(/[^\d+\s-]/g, '').slice(0, 15))}
                       placeholder="10-digit mobile number"
                       className="w-full px-4 py-3.5 bg-[#f5f8f8] border border-transparent focus:border-[#005550] focus:bg-white rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#005550]/10 transition-all font-medium"
                     />

@@ -148,9 +148,10 @@ export default function ContactPage() {
                     <input
                       type="tel"
                       required
-                      placeholder="+91 97303 21042"
+                      maxLength={15}
+                      placeholder="97303 21042 (10 digits)"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/[^\d+\s-]/g, '').slice(0, 15) })}
                       className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#005550]"
                     />
                   </div>
@@ -230,7 +231,7 @@ export default function ContactPage() {
             <span className="text-xs text-[#005550] font-bold">Synergy HQ Clinic</span>
           </div>
 
-          <div className="aspect-[21/9] bg-gray-100 rounded-2xl overflow-hidden relative">
+          <div className="aspect-21/9 bg-gray-100 rounded-2xl overflow-hidden relative">
             <iframe
               title="Synergy Medical Yoga Location"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3780.892699042978!2d73.7692424!3d18.6196134!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2b94af6338889%3A0xf98907edfb0d2a26!2sSynergy%20Medical%20Yoga!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"

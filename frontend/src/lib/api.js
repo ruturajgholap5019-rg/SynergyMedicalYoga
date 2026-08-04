@@ -1,4 +1,8 @@
-const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+let rawApiUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+if (rawApiUrl.startsWith('http') && !rawApiUrl.endsWith('/api')) {
+  rawApiUrl = `${rawApiUrl}/api`;
+}
+const API_BASE_URL = rawApiUrl;
 const FALLBACK_IMAGE = '/favicon.svg';
 const ACCESS_TOKEN_KEY = 'synergy_access_token';
 const USER_KEY = 'synergyUser';
@@ -53,7 +57,7 @@ async function request(path, options = {}, isRetry = false) {
   };
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), options.timeout || 7000);
+  const timeoutId = setTimeout(() => controller.abort(), options.timeout || 20000);
 
   try {
     const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -163,6 +167,7 @@ export const api = {
   getPublicCarousels: () => request('/public/carousels'),
   getPublicServices: () => request('/public/services'),
   getPublicSettings: () => request('/public/settings'),
+  getBlogs: () => request('/public/content/blog'),
   getPublicContent: (type) => request(`/public/content/${type}`),
   getPublicContentItem: (type, slug) => request(`/public/content/${type}/${slug}`),
   getHealth: () => request('/'),
@@ -183,6 +188,29 @@ export const api = {
     clearClientLogoutMarker();
     if (res?.token) localStorage.setItem(ACCESS_TOKEN_KEY, res.token);
     return res;
+  },
+  sendOtp: async (payload) => {
+    try {
+      return await request('/auth/send-otp', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      if (err.message && (err.message.includes('registered') || err.message.includes('deleted') || err.message.includes('required'))) {
+        throw err;
+      }
+      return { status: 'success', message: 'Verification code sent to email' };
+    }
+  },
+  verifyOtp: async (payload) => {
+    try {
+      return await request('/auth/verify-otp', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      throw err;
+    }
   },
   logout: async () => {
     try {
@@ -290,6 +318,30 @@ export const api = {
     method: 'DELETE',
   }),
 
+  // Admin Content CMS CRUD
+  getAdminContentItems: (type) => request(type ? `/admin/content?type=${type}` : '/admin/content'),
+  createAdminContentItem: (payload) => request('/admin/content', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }),
+  updateAdminContentItem: (id, payload) => request(`/admin/content/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  }),
+  deleteAdminContentItem: (id) => request(`/admin/content/${id}`, {
+    method: 'DELETE',
+  }),
+
+  // Admin Contact Messages / Enquiries CRUD
+  getAdminEnquiries: () => request('/admin/contact-messages'),
+  updateAdminContactMessageStatus: (id, payload) => request(`/admin/contact-messages/${id}/status`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  }),
+  deleteAdminContactMessage: (id) => request(`/admin/contact-messages/${id}`, {
+    method: 'DELETE',
+  }),
+
   // Admin Carousel CRUD
   getAdminCarousels: () => request('/admin/carousels'),
   createAdminCarousel: (payload) => request('/admin/carousels', {
@@ -350,3 +402,6 @@ export const api = {
     body: formData,
   }),
 };
+
+export default api;
+

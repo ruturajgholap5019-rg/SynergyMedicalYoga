@@ -11,7 +11,14 @@ import {
   AlertCircle,
   ShieldCheck,
   LogOut,
-  Lock
+  Lock,
+  Eye,
+  EyeOff,
+  Palette,
+  ExternalLink,
+  Edit3,
+  CheckCircle2,
+  Trash2
 } from 'lucide-react';
 import { api, clearClientLogoutMarker, wasClientLoggedOut } from './lib/api';
 
@@ -20,7 +27,9 @@ import ProductsTab from './components/ProductsTab';
 import UsersTab from './components/UsersTab';
 import OrdersTab from './components/OrdersTab';
 
-function ContentManager({ items, refresh, showToast }) {
+function ContentManager({ items = [], refresh, showToast }) {
+  const [editingId, setEditingId] = useState(null);
+  const [filterType, setFilterType] = useState('all');
   const [form, setForm] = useState({
     type: 'blog',
     title: '',
@@ -29,103 +38,388 @@ function ContentManager({ items, refresh, showToast }) {
     body: '',
     imageUrl: '',
     imageAlt: '',
-    isPublished: false,
+    buttonText: '',
+    buttonLink: '',
+    isPublished: true,
   });
+
+  const resetForm = () => {
+    setEditingId(null);
+    setForm({
+      type: 'blog',
+      title: '',
+      slug: '',
+      excerpt: '',
+      body: '',
+      imageUrl: '',
+      imageAlt: '',
+      buttonText: '',
+      buttonLink: '',
+      isPublished: true,
+    });
+  };
+
+  const handleEdit = (item) => {
+    setEditingId(item._id);
+    setForm({
+      type: item.type || 'blog',
+      title: item.title || '',
+      slug: item.slug || '',
+      excerpt: item.excerpt || '',
+      body: item.body || '',
+      imageUrl: item.imageUrl || item.src || item.image || '',
+      imageAlt: item.imageAlt || item.alt || '',
+      buttonText: item.buttonText || '',
+      buttonLink: item.buttonLink || '',
+      isPublished: item.isPublished ?? true,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await api.createAdminContentItem(form);
-    showToast?.('CMS content item created');
-    setForm({ type: 'blog', title: '', slug: '', excerpt: '', body: '', imageUrl: '', imageAlt: '', isPublished: false });
-    refresh();
+    try {
+      if (editingId) {
+        await api.updateAdminContentItem(editingId, form);
+        showToast?.(`CMS item "${form.title}" updated successfully!`);
+      } else {
+        await api.createAdminContentItem(form);
+        showToast?.(`CMS item "${form.title}" created successfully!`);
+      }
+      resetForm();
+      refresh?.();
+    } catch (err) {
+      alert(err.message || 'Failed to save CMS item');
+    }
   };
 
   const togglePublished = async (item) => {
-    await api.updateAdminContentItem(item._id, { isPublished: !item.isPublished });
-    showToast?.('Publish status updated');
-    refresh();
+    try {
+      await api.updateAdminContentItem(item._id, { isPublished: !item.isPublished });
+      showToast?.(`"${item.title}" ${!item.isPublished ? 'published' : 'unpublished'}`);
+      refresh?.();
+    } catch (err) {
+      alert(err.message || 'Failed to toggle publish status');
+    }
   };
 
   const deleteItem = async (item) => {
-    if (!window.confirm(`Delete "${item.title}"?`)) return;
-    await api.deleteAdminContentItem(item._id);
-    showToast?.('CMS content item deleted');
-    refresh();
+    if (!window.confirm(`Are you sure you want to delete "${item.title}"?`)) return;
+    try {
+      await api.deleteAdminContentItem(item._id);
+      showToast?.('CMS item deleted');
+      refresh?.();
+    } catch (err) {
+      alert(err.message || 'Failed to delete item');
+    }
   };
 
+  const filteredItems = filterType === 'all'
+    ? items
+    : items.filter((i) => (i.type || 'blog').toLowerCase() === filterType.toLowerCase());
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <form onSubmit={handleSubmit} className="lg:col-span-4 bg-white p-6 rounded-3xl border border-gray-200 shadow-sm space-y-4 text-xs">
-        <h3 className="font-sansita text-2xl font-bold text-gray-900">Create CMS Item</h3>
-        <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2">
-          {['blog', 'faq', 'testimonial', 'gallery', 'video', 'course', 'courseBatch', 'team', 'policy', 'page'].map((type) => (
-            <option key={type} value={type}>{type}</option>
-          ))}
-        </select>
-        <input required placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2" />
-        <input placeholder="Slug (optional)" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2" />
-        <textarea placeholder="Excerpt / short answer" rows={3} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2" />
-        <textarea placeholder="Body content" rows={5} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2" />
-        <input placeholder="Image URL" value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2" />
-        <input placeholder="Image alt text" value={form.imageAlt} onChange={(e) => setForm({ ...form, imageAlt: e.target.value })} className="w-full bg-slate-50 border rounded-xl px-3 py-2" />
-        <label className="flex items-center gap-2 font-bold">
-          <input type="checkbox" checked={form.isPublished} onChange={(e) => setForm({ ...form, isPublished: e.target.checked })} />
-          Published
-        </label>
-        <button className="w-full bg-[#005550] text-white py-3 rounded-xl font-bold">Create Content</button>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {/* CMS CREATE / EDIT FORM */}
+      <form onSubmit={handleSubmit} className="lg:col-span-5 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-md space-y-4 text-xs">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+          <h3 className="font-sansita text-2xl font-bold text-[#005550]">
+            {editingId ? 'Edit CMS Item' : 'Create New CMS Item'}
+          </h3>
+          {editingId && (
+            <button
+              type="button"
+              onClick={resetForm}
+              className="text-xs font-bold text-gray-500 hover:text-gray-800 bg-slate-100 px-3 py-1 rounded-xl cursor-pointer"
+            >
+              Cancel Edit
+            </button>
+          )}
+        </div>
+
+        <div>
+          <label className="block font-bold text-gray-700 mb-1">Content Type *</label>
+          <select
+            value={form.type}
+            onChange={(e) => setForm({ ...form, type: e.target.value })}
+            className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-gray-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
+          >
+            <option value="blog">Blog Post / Article</option>
+            <option value="carousel">Hero Banner Carousel</option>
+            <option value="faq">FAQ Question &amp; Answer</option>
+            <option value="testimonial">Patient / Course Testimonial</option>
+            <option value="gallery">Media Gallery Item</option>
+            <option value="video">Clinical Video</option>
+            <option value="course">Course / Syllabus Entry</option>
+            <option value="policy">Policy / Terms Page</option>
+            <option value="page">Custom Page</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block font-bold text-gray-700 mb-1">Title / Headline *</label>
+          <input
+            required
+            type="text"
+            placeholder="e.g. Benefits of Rope & Belt Therapy for Knee Pain"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+            className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
+          />
+        </div>
+
+        <div>
+          <label className="block font-bold text-gray-700 mb-1">Slug (URL Keyword - Optional)</label>
+          <input
+            type="text"
+            placeholder="knee-pain-rbt-benefits"
+            value={form.slug}
+            onChange={(e) => setForm({ ...form, slug: e.target.value })}
+            className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
+          />
+        </div>
+
+        <div>
+          <label className="block font-bold text-gray-700 mb-1">Excerpt / Subtitle / Short Summary</label>
+          <textarea
+            rows={2}
+            placeholder="Brief summary displayed on cards or hero banners..."
+            value={form.excerpt}
+            onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
+            className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
+          />
+        </div>
+
+        <div>
+          <label className="block font-bold text-gray-700 mb-1">Full Body Content / Description</label>
+          <textarea
+            rows={4}
+            placeholder="Full article body, FAQ detailed answer, or course overview..."
+            value={form.body}
+            onChange={(e) => setForm({ ...form, body: e.target.value })}
+            className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="block font-bold text-gray-700 mb-1">Image URL</label>
+            <input
+              type="text"
+              placeholder="https://.../banner.jpg"
+              value={form.imageUrl}
+              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+              className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
+            />
+          </div>
+          <div>
+            <label className="block font-bold text-gray-700 mb-1">Image Alt Text</label>
+            <input
+              type="text"
+              placeholder="Synergy Medical Therapy"
+              value={form.imageAlt}
+              onChange={(e) => setForm({ ...form, imageAlt: e.target.value })}
+              className="w-full bg-slate-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
+            />
+          </div>
+        </div>
+
+        {form.type === 'carousel' && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-teal-50/60 p-3 rounded-2xl border border-teal-100">
+            <div>
+              <label className="block font-bold text-teal-900 mb-1">Button Text</label>
+              <input
+                type="text"
+                placeholder="Explore Shop / Book Now"
+                value={form.buttonText}
+                onChange={(e) => setForm({ ...form, buttonText: e.target.value })}
+                className="w-full bg-white border border-teal-200 rounded-xl px-3 py-2 text-xs"
+              />
+            </div>
+            <div>
+              <label className="block font-bold text-teal-900 mb-1">Button Link</label>
+              <input
+                type="text"
+                placeholder="/shop or /contact"
+                value={form.buttonLink}
+                onChange={(e) => setForm({ ...form, buttonLink: e.target.value })}
+                className="w-full bg-white border border-teal-200 rounded-xl px-3 py-2 text-xs"
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center gap-2 pt-2">
+          <input
+            type="checkbox"
+            id="cmsPublished"
+            checked={form.isPublished}
+            onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
+            className="w-4 h-4 text-[#005550] focus:ring-[#005550] rounded cursor-pointer"
+          />
+          <label htmlFor="cmsPublished" className="font-bold text-gray-800 cursor-pointer">
+            Publish immediately to website
+          </label>
+        </div>
+
+        <button className="w-full bg-[#005550] hover:bg-[#003d39] text-white py-3 rounded-xl font-bold shadow-md shadow-[#005550]/20 transition-all cursor-pointer">
+          {editingId ? 'Update CMS Item' : 'Create CMS Content'}
+        </button>
       </form>
 
-      <div className="lg:col-span-8 bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
-        <h3 className="font-sansita text-2xl font-bold text-gray-900 mb-4">CMS Library</h3>
-        <div className="space-y-3">
-          {items.map((item) => (
-            <div key={item._id} className="border border-gray-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <span className="text-[10px] uppercase font-extrabold text-[#005550]">{item.type}</span>
-                <h4 className="font-bold text-gray-900">{item.title}</h4>
-                <p className="text-xs text-gray-500">{item.slug}</p>
+      {/* CMS LIBRARY DISPLAY */}
+      <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-md space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+          <div>
+            <h3 className="font-sansita text-2xl font-bold text-[#005550]">Website Content Library</h3>
+            <p className="text-xs text-gray-500">Manage published articles, banners, FAQs, and pages.</p>
+          </div>
+
+          {/* Type Filter Tabs */}
+          <div className="flex flex-wrap gap-1.5">
+            {['all', 'blog', 'carousel', 'faq', 'testimonial', 'policy'].map((t) => (
+              <button
+                key={t}
+                onClick={() => setFilterType(t)}
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold capitalize transition-all cursor-pointer ${
+                  filterType === t
+                    ? 'bg-[#005550] text-white shadow-xs'
+                    : 'bg-slate-100 text-gray-600 hover:bg-slate-200'
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-4 max-h-[600px] overflow-y-auto pr-1">
+          {filteredItems.map((item) => (
+            <div key={item._id} className="border border-gray-200/90 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-teal-200 transition-all bg-slate-50/50">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded-md bg-teal-100 text-[#005550]">
+                    {item.type || 'blog'}
+                  </span>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${item.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                    {item.isPublished ? 'Published' : 'Draft'}
+                  </span>
+                </div>
+                <h4 className="font-bold text-gray-900 text-sm leading-snug">{item.title}</h4>
+                {item.excerpt && <p className="text-xs text-gray-600 line-clamp-1">{item.excerpt}</p>}
+                {item.slug && <p className="text-[11px] text-teal-700 font-mono">/{item.slug}</p>}
               </div>
-              <div className="flex gap-2">
-                <button onClick={() => togglePublished(item)} className="px-3 py-2 rounded-xl bg-slate-100 text-xs font-bold">
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => handleEdit(item)}
+                  className="px-3 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-[#005550] text-xs font-bold transition-all cursor-pointer"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => togglePublished(item)}
+                  className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-gray-700 text-xs font-bold transition-all cursor-pointer"
+                >
                   {item.isPublished ? 'Unpublish' : 'Publish'}
                 </button>
-                <button onClick={() => deleteItem(item)} className="px-3 py-2 rounded-xl bg-rose-50 text-rose-700 text-xs font-bold">Delete</button>
+                <button
+                  onClick={() => deleteItem(item)}
+                  className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-all cursor-pointer"
+                >
+                  Delete
+                </button>
               </div>
             </div>
           ))}
-          {items.length === 0 && <p className="text-sm text-gray-500">No CMS content created yet.</p>}
+
+          {filteredItems.length === 0 && (
+            <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-gray-200 space-y-1">
+              <p className="text-sm font-bold text-gray-600">No CMS items found</p>
+              <p className="text-xs text-gray-400">Use the form on the left to publish new content to your website.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function EnquiriesManager({ enquiries, refresh, showToast }) {
+function EnquiriesManager({ enquiries = [], refresh, showToast }) {
   const updateStatus = async (enquiry, status) => {
-    await api.updateAdminContactMessageStatus(enquiry._id, { status });
-    showToast?.('Enquiry status updated');
-    refresh();
+    try {
+      await api.updateAdminContactMessageStatus(enquiry._id, { status });
+      showToast?.('Enquiry status updated');
+      refresh?.();
+    } catch (err) {
+      alert(err.message || 'Failed to update enquiry status');
+    }
+  };
+
+  const deleteEnquiry = async (id) => {
+    if (!window.confirm('Delete this contact message?')) return;
+    try {
+      await api.deleteAdminContactMessage(id);
+      showToast?.('Contact enquiry deleted');
+      refresh?.();
+    } catch (err) {
+      alert(err.message || 'Failed to delete enquiry');
+    }
   };
 
   return (
-    <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm space-y-4">
-      <h3 className="font-sansita text-2xl font-bold text-gray-900">Contact Enquiries</h3>
-      {enquiries.map((enquiry) => (
-        <div key={enquiry._id} className="border border-gray-200 rounded-2xl p-4 space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-            <div>
-              <h4 className="font-bold text-gray-900">{enquiry.name}</h4>
-              <p className="text-xs text-gray-500">{enquiry.email} | {enquiry.phone}</p>
-              <p className="text-sm font-semibold text-[#005550] mt-1">{enquiry.subject}</p>
+    <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-md space-y-6">
+      <div className="border-b border-gray-100 pb-4">
+        <h3 className="font-sansita text-2xl font-bold text-[#005550]">Website Enquiries &amp; Patient Messages</h3>
+        <p className="text-xs text-gray-500">Contact form submissions from ruturajgholap5019@gmail.com testing mode &amp; website users.</p>
+      </div>
+
+      <div className="space-y-4">
+        {enquiries.map((enquiry) => (
+          <div key={enquiry._id} className="border border-gray-200/90 rounded-2xl p-5 space-y-3 bg-slate-50/50 hover:border-teal-200 transition-all">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-gray-100 pb-3">
+              <div>
+                <h4 className="font-bold text-gray-900 text-base">{enquiry.name}</h4>
+                <p className="text-xs text-gray-500 font-medium">{enquiry.email} • {enquiry.phone}</p>
+                <p className="text-xs font-bold text-[#005550] mt-1 bg-teal-50 px-2.5 py-1 rounded-lg inline-block border border-teal-100">
+                  Subject: {enquiry.subject || 'General Enquiry'}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <select
+                  value={enquiry.status || 'new'}
+                  onChange={(e) => updateStatus(enquiry, e.target.value)}
+                  className="bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-800 shadow-xs outline-none cursor-pointer focus:border-[#005550]"
+                >
+                  <option value="new">New Inquiry</option>
+                  <option value="read">Mark Read</option>
+                  <option value="replied">Replied</option>
+                  <option value="archived">Archived</option>
+                </select>
+
+                <button
+                  onClick={() => deleteEnquiry(enquiry._id)}
+                  className="p-1.5 text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition-all cursor-pointer"
+                  title="Delete message"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-            <select value={enquiry.status} onChange={(e) => updateStatus(enquiry, e.target.value)} className="bg-slate-50 border rounded-xl px-3 py-2 text-xs font-bold">
-              {['new', 'read', 'replied', 'archived'].map((status) => <option key={status} value={status}>{status}</option>)}
-            </select>
+
+            <div className="bg-white p-3.5 rounded-xl border border-gray-100 text-xs text-gray-700 whitespace-pre-line leading-relaxed">
+              {enquiry.message}
+            </div>
           </div>
-          <p className="text-sm text-gray-700 whitespace-pre-line">{enquiry.message}</p>
-        </div>
-      ))}
-      {enquiries.length === 0 && <p className="text-sm text-gray-500">No enquiries yet.</p>}
+        ))}
+
+        {enquiries.length === 0 && (
+          <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-gray-200 space-y-1">
+            <p className="text-sm font-bold text-gray-600">No contact enquiries received yet</p>
+            <p className="text-xs text-gray-400">Submissions from the website Contact Us page will appear here.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -138,6 +432,19 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   const [loading, setLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [toastMessage, setToastMessage] = useState(null);
+
+  // Admin Control Panel Background Theme State
+  const [adminBgTheme, setAdminBgTheme] = useState(() => {
+    try {
+      return localStorage.getItem('synergy_admin_bg_theme') || 'mint-teal';
+    } catch (e) {
+      return 'mint-teal';
+    }
+  });
+
+  // Password visibility states
+  const [showAdminPassword, setShowAdminPassword] = useState(false);
+  const [showUserPassword, setShowUserPassword] = useState(false);
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');
@@ -440,6 +747,17 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
 
   const handleUserSubmit = async (e) => {
     e.preventDefault();
+    if (userFormData.phone) {
+      const cleanPhone = userFormData.phone.replace(/\D/g, '');
+      if (cleanPhone.length < 10 || cleanPhone.length > 13) {
+        alert('Please enter a valid 10-digit phone number.');
+        return;
+      }
+      if (cleanPhone.length === 10 && !/^[6-9]\d{9}$/.test(cleanPhone)) {
+        alert('10-digit mobile number must start with 6, 7, 8, or 9.');
+        return;
+      }
+    }
     try {
       if (editingUser) {
         const payload = {
@@ -555,13 +873,23 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
 
             <div>
               <label className="block text-slate-300 font-bold mb-1">Admin Password</label>
-              <input
-                type="password"
-                required
-                value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-teal-500"
-              />
+              <div className="relative">
+                <input
+                  type={showAdminPassword ? 'text' : 'password'}
+                  required
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-4 pr-10 py-3 text-white focus:outline-none focus:border-teal-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowAdminPassword(!showAdminPassword)}
+                  className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-200 focus:outline-none cursor-pointer"
+                  title={showAdminPassword ? "Hide password" : "Show password"}
+                >
+                  {showAdminPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             <button
@@ -579,45 +907,100 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-inter text-[#444444] pb-24">
+    <div className="min-h-screen bg-[#F4F8F8] font-inter text-slate-800 pb-24">
+      {/* TOP NAVIGATION BAR */}
+      <header className="bg-[#003D39] text-white border-b border-teal-500/20 sticky top-0 z-40 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#005550] flex items-center justify-center border border-teal-400/30 text-white font-black text-lg shadow-md">
+              🌿
+            </div>
+            <div>
+              <span className="font-sansita font-bold text-lg text-white tracking-wide block leading-none">
+                Synergy Medical Yoga
+              </span>
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-teal-300">
+                Admin Console
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold border border-white/20 backdrop-blur-xs transition-all cursor-pointer shadow-xs"
+              title="Open main website in a new tab"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-teal-200" />
+              <span>View Live Website</span>
+            </a>
+            
+            <div className="hidden lg:flex items-center gap-2 bg-black/20 px-3 py-1.5 rounded-xl border border-white/10 text-xs font-medium text-teal-100">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>{currentUser.name}</span>
+            </div>
+
+            <button
+              onClick={triggerRefresh}
+              className="bg-white/10 hover:bg-white/20 text-white p-2 sm:px-3 sm:py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border border-white/20 backdrop-blur-xs transition-all cursor-pointer"
+              title="Refresh console data"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-teal-200 ${loading ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Refresh</span>
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border border-rose-400/30 backdrop-blur-xs transition-all cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5 text-rose-300" />
+              <span className="hidden sm:inline">Log Out</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
       {/* Toast message */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl font-bold text-xs animate-bounce">
+        <div className="fixed bottom-6 right-6 z-50 bg-[#003D39] text-white px-5 py-3 rounded-2xl shadow-xl font-bold text-xs animate-bounce border border-teal-500/30">
           {toastMessage}
         </div>
       )}
 
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#003d39] via-[#005550] to-[#007068] text-white py-10 px-4 sm:px-8 shadow-lg">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="bg-[#003D39] text-white py-10 px-4 sm:px-8 shadow-xl relative overflow-hidden border-b border-teal-500/30">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#002d2a] via-[#004d47] to-[#003834] opacity-95"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
           <div>
-            <div className="flex items-center gap-2 text-teal-200 text-xs font-bold uppercase tracking-wider mb-2">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Synergy Medical Yoga Management Console</span>
+            <div className="flex items-center gap-3 mb-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 backdrop-blur-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                System Operational
+              </span>
+              <span className="text-teal-200 font-semibold text-xs">Synergy Medical Management</span>
             </div>
-            <h1 className="font-sansita text-3xl sm:text-4xl font-bold tracking-tight">
+            <h1 className="font-sansita text-3xl sm:text-4xl font-bold tracking-tight text-white flex items-center gap-3 drop-shadow-sm">
               Admin Control Panel
             </h1>
-            <p className="text-teal-100 text-sm mt-1">
-              Logged in as <span className="font-semibold text-white">{currentUser.name}</span> ({currentUser.email})
+            <p className="text-teal-100 text-xs sm:text-sm mt-1.5 font-medium">
+              Authorized Session: <span className="font-bold text-white bg-white/15 px-2.5 py-0.5 rounded-lg border border-white/20">{currentUser.name}</span> <span className="text-teal-200">({currentUser.email})</span>
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={triggerRefresh}
-              className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 backdrop-blur-xs border border-white/20 transition-all cursor-pointer"
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white text-[#005550] hover:bg-teal-50 px-4.5 py-2.5 rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-md transition-all cursor-pointer hover:scale-[1.02]"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              <span>Refresh Data</span>
-            </button>
-            <button
-              onClick={handleLogout}
-              className="bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 border border-rose-400/30 transition-all cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Log Out</span>
-            </button>
+              <ExternalLink className="w-4 h-4 text-[#005550]" />
+              <span>Go to Website</span>
+            </a>
           </div>
         </div>
       </div>
@@ -934,25 +1317,37 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
                 <label className="block font-bold text-gray-700 mb-1">Phone Number</label>
                 <input
                   type="tel"
-                  placeholder="+91 98765 43210"
+                  maxLength={15}
+                  placeholder="98765 43210 (10 digits)"
                   value={userFormData.phone}
-                  onChange={(e) => setUserFormData({ ...userFormData, phone: e.target.value })}
+                  onChange={(e) => setUserFormData({ ...userFormData, phone: e.target.value.replace(/[^\d+\s-]/g, '').slice(0, 15) })}
                   className="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
                 />
+                <span className="text-[10px] text-gray-400 mt-1 block">Valid 10-digit mobile number</span>
               </div>
 
               {!editingUser && (
                 <div>
                   <label className="block font-bold text-gray-700 mb-1">Account Password</label>
-                  <input
-                    type="password"
-                    required
-                    minLength={8}
-                    placeholder="At least 8 characters"
-                    value={userFormData.password}
-                    onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
-                    className="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showUserPassword ? 'text' : 'password'}
+                      required
+                      minLength={8}
+                      placeholder="At least 8 characters"
+                      value={userFormData.password}
+                      onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
+                      className="w-full bg-slate-50 border border-gray-200 rounded-xl pl-4 pr-10 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#005550]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowUserPassword(!showUserPassword)}
+                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer"
+                      title={showUserPassword ? "Hide password" : "Show password"}
+                    >
+                      {showUserPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
               )}
 

@@ -8,66 +8,30 @@ const catchAsync = require('../utils/catchAsync');
 const { sendOrderConfirmation } = require('../services/emailService');
 const notificationService = require('../services/notificationService');
 
-// Helper function to extract valid items safely without Mongoose CastErrors
+// Checkout data is never trusted: products, prices, names and available sizes
+// are read from the catalogue, not supplied by the browser.
 const extractValidItems = async (req) => {
-  let items = [];
-
-  // Check items array provided in request body
-  if (Array.isArray(req.body.items) && req.body.items.length > 0) {
-    for (const it of req.body.items) {
-      if (!it) continue;
-      const rawId = it.productId?._id || it.productId || it.id;
-      let matchedProduct = null;
-
-      // 1. Try finding by valid Mongo ObjectId
-      if (rawId && mongoose.Types.ObjectId.isValid(rawId)) {
-        matchedProduct = await Product.findById(rawId);
-      }
-      
-      // 2. Try finding product by name match
-      if (!matchedProduct && it.name) {
-        const cleanName = it.name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-        matchedProduct = await Product.findOne({ name: new RegExp(cleanName, 'i') });
-      }
-
-      // 3. Fallback to any active product in database
-      if (!matchedProduct) {
-        matchedProduct = await Product.findOne();
-      }
-
-      if (matchedProduct) {
-        items.push({
-          productId: matchedProduct._id,
-          name: it.name || matchedProduct.name,
-          price: Number(it.price || matchedProduct.price || 0),
-          selectedSize: it.selectedSize || 'Standard',
-          quantity: Number(it.quantity || 1),
-        });
-      }
-    }
-  }
+  let sourceItems = Array.isArray(req.body.items) ? req.body.items : [];
 
   // Fallback to user's database cart if request items was empty
-  if (items.length === 0 && req.user) {
+  if (sourceItems.length === 0 && req.user) {
     const cart = await Cart.findOne({ user: req.user._id }).populate('items.productId');
     if (cart && Array.isArray(cart.items)) {
-      for (const item of cart.items) {
-        if (!item) continue;
-        const p = (item.productId && typeof item.productId === 'object') ? item.productId : null;
-        if (p && p._id) {
-          items.push({
-            productId: p._id,
-            name: p.name || 'Therapy Product',
-            price: Number(p.price || 0),
-            selectedSize: item.selectedSize || 'Standard',
-            quantity: Number(item.quantity || 1),
-          });
-        }
-      }
+      sourceItems = cart.items.map((item) => ({ productId: item.productId?._id || item.productId, selectedSize: item.selectedSize, quantity: item.quantity }));
     }
   }
-
-  return items;
+  if (!sourceItems.length || sourceItems.length > 50) return [];
+  const ids = sourceItems.map((item) => item?.productId?._id || item?.productId || item?.id);
+  if (ids.some((id) => !mongoose.Types.ObjectId.isValid(id))) return [];
+  const products = await Product.find({ _id: { $in: ids }, inStock: true });
+  const productsById = new Map(products.map((product) => [String(product._id), product]));
+  return sourceItems.map((item) => {
+    const product = productsById.get(String(item.productId?._id || item.productId || item.id));
+    const quantity = Number(item.quantity);
+    const selectedSize = String(item.selectedSize || 'Standard');
+    if (!product || !Number.isInteger(quantity) || quantity < 1 || quantity > 20 || !product.sizes.includes(selectedSize)) return null;
+    return { productId: product._id, name: product.name, price: product.price, selectedSize, quantity };
+  }).filter(Boolean);
 };
 
 exports.createOrder = catchAsync(async (req, res, next) => {
@@ -124,6 +88,9 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 const cashfreeService = require('../services/cashfreeService');
 
 exports.createCheckoutSession = catchAsync(async (req, res, next) => {
+  if (process.env.PAYMENTS_ENABLED !== 'true') {
+    return next(new AppError('Online payments are temporarily unavailable.', 503));
+  }
   const { shippingAddress = {}, paymentMethod = 'cashfree', upiId, customerInfo } = req.body;
   const items = await extractValidItems(req);
 
@@ -322,15 +289,15 @@ exports.stripeWebhook = catchAsync(async (req, res) => {
 exports.cashfreeWebhook = catchAsync(async (req, res) => {
   const signature = req.headers['x-webhook-signature'];
   const timestamp = req.headers['x-webhook-timestamp'];
-  const rawBody = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+  const rawBody = Buffer.isBuffer(req.body) ? req.body.toString('utf8') : JSON.stringify(req.body);
 
   // Validate HMAC SHA256 Signature
   const isValid = await cashfreeService.verifyCashfreeSignature(rawBody, signature, timestamp);
   if (!isValid) {
-    console.warn('⚠️ Invalid Cashfree Webhook Signature received!');
+    return res.status(401).json({ status: 'fail', message: 'Invalid webhook signature.' });
   }
 
-  const payload = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  const payload = JSON.parse(rawBody);
   const eventType = payload?.type;
   const orderData = payload?.data?.order;
   const paymentData = payload?.data?.payment;
@@ -342,8 +309,8 @@ exports.cashfreeWebhook = catchAsync(async (req, res) => {
       const mongoOrderId = parts[1];
 
       if (mongoOrderId && mongoose.Types.ObjectId.isValid(mongoOrderId)) {
-        const order = await Order.findByIdAndUpdate(
-          mongoOrderId,
+        const order = await Order.findOneAndUpdate(
+          { _id: mongoOrderId, paymentStatus: { $ne: 'paid' } },
           {
             paymentStatus: 'paid',
             orderStatus: 'processing',

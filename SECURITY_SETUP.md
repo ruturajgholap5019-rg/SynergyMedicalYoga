@@ -54,4 +54,4 @@ Local uploads are acceptable only for development. For staging/production, confi
 
 ## Email
 
-SMTP is disabled unless all SMTP variables are configured. Never commit SMTP passwords or app passwords.
+SMTP is disabled unless all SMTP variables are configured. Never commit SMTP passwords or app passwords. For Gmail, enable 2-Step Verification, create an App Password, and set `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, and `CONTACT_RECEIVER_EMAIL` in the host environment.
