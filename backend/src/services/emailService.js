@@ -253,7 +253,7 @@ exports.sendContactEmail = async (data) => {
 
 exports.sendOtpEmail = async ({ email, name, otp }) => {
   const senderEmail = process.env.RESEND_FROM_EMAIL || process.env.SMTP_FROM || process.env.SMTP_USER || 'onboarding@resend.dev';
-  const recipients = [email, 'ruturajgholap5019@gmail.com'].filter((e, i, a) => e && a.indexOf(e) === i);
+  const recipients = [email];
 
   const mailOptions = {
     from: `"Synergy Medical Yoga" <${senderEmail}>`,
