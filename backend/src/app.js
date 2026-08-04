@@ -22,6 +22,8 @@ const { stripeWebhook, cashfreeWebhook } = require('./controllers/orderControlle
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
 app.post('/api/orders/cashfree-webhook', express.raw({ type: 'application/json' }), cashfreeWebhook);
 
