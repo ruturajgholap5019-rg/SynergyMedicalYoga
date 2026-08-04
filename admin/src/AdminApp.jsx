@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import {
   LayoutDashboard,
   Package,
@@ -80,10 +81,10 @@ function ContentManager({ items = [], refresh, showToast }) {
     try {
       if (editingId) {
         await api.updateAdminContentItem(editingId, form);
-        showToast?.(`CMS item "${form.title}" updated successfully!`);
+        showToast?.('Content updated');
       } else {
         await api.createAdminContentItem(form);
-        showToast?.(`CMS item "${form.title}" created successfully!`);
+        showToast?.('Content created');
       }
       resetForm();
       refresh?.();
@@ -95,7 +96,7 @@ function ContentManager({ items = [], refresh, showToast }) {
   const togglePublished = async (item) => {
     try {
       await api.updateAdminContentItem(item._id, { isPublished: !item.isPublished });
-      showToast?.(`"${item.title}" ${!item.isPublished ? 'published' : 'unpublished'}`);
+      showToast?.(item.isPublished ? 'Content unpublished' : 'Content published');
       refresh?.();
     } catch (err) {
       alert(err.message || 'Failed to toggle publish status');
@@ -106,7 +107,7 @@ function ContentManager({ items = [], refresh, showToast }) {
     if (!window.confirm(`Are you sure you want to delete "${item.title}"?`)) return;
     try {
       await api.deleteAdminContentItem(item._id);
-      showToast?.('CMS item deleted');
+      showToast?.('Content deleted');
       refresh?.();
     } catch (err) {
       alert(err.message || 'Failed to delete item');
@@ -348,7 +349,7 @@ function EnquiriesManager({ enquiries = [], refresh, showToast }) {
   const updateStatus = async (enquiry, status) => {
     try {
       await api.updateAdminContactMessageStatus(enquiry._id, { status });
-      showToast?.('Enquiry status updated');
+      showToast?.('Enquiry updated');
       refresh?.();
     } catch (err) {
       alert(err.message || 'Failed to update enquiry status');
@@ -359,7 +360,7 @@ function EnquiriesManager({ enquiries = [], refresh, showToast }) {
     if (!window.confirm('Delete this contact message?')) return;
     try {
       await api.deleteAdminContactMessage(id);
-      showToast?.('Contact enquiry deleted');
+      showToast?.('Enquiry deleted');
       refresh?.();
     } catch (err) {
       alert(err.message || 'Failed to delete enquiry');
@@ -490,12 +491,10 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
     title: '',
   });
 
-  // Toast handler
+  // Single clean toast handler (short 2-4 words)
   const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage((cur) => (cur === msg ? null : cur));
-    }, 3000);
+    if (!msg) return;
+    toast.success(msg, { toastId: msg, autoClose: 2000 });
   };
 
   // Check auth session
@@ -621,7 +620,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       setCurrentUser(res.user);
       clearClientLogoutMarker();
       onAuthSuccess?.(res.user);
-      showToast(`Welcome back, ${res.user.name}!`);
+      showToast('Logged in');
     } catch (err) {
       alert(err.message || 'Admin login failed');
     } finally {
@@ -636,7 +635,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       console.error(err);
     } finally {
       setCurrentUser(null);
-      showToast('Logged out of Admin Console');
+      showToast('Logged out');
       onLogout?.();
     }
   };
@@ -697,10 +696,10 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
 
       if (editingProduct) {
         await api.updateAdminProduct(editingProduct._id, payload);
-        showToast(`Product "${payload.name}" updated successfully!`);
+        showToast('Product updated');
       } else {
         await api.createAdminProduct(payload);
-        showToast(`Product "${payload.name}" created successfully!`);
+        showToast('Product created');
       }
 
       setIsProductModalOpen(false);
@@ -713,7 +712,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   const handleDeleteProduct = async (id) => {
     try {
       await api.deleteAdminProduct(id);
-      showToast('Product deleted successfully');
+      showToast('Product deleted');
       triggerRefresh();
     } catch (err) {
       alert(err.message || 'Failed to delete product');
@@ -748,13 +747,12 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   const handleUserSubmit = async (e) => {
     e.preventDefault();
     if (userFormData.phone) {
-      const cleanPhone = userFormData.phone.replace(/\D/g, '');
-      if (cleanPhone.length < 10 || cleanPhone.length > 13) {
-        alert('Please enter a valid 10-digit phone number.');
-        return;
+      let cleanPhone = userFormData.phone.replace(/\D/g, '');
+      if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) {
+        cleanPhone = cleanPhone.slice(2);
       }
-      if (cleanPhone.length === 10 && !/^[6-9]\d{9}$/.test(cleanPhone)) {
-        alert('10-digit mobile number must start with 6, 7, 8, or 9.');
+      if (cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+        alert('Please enter a valid 10-digit mobile number (e.g. 9876543210).');
         return;
       }
     }
@@ -767,14 +765,14 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
           role: userFormData.role,
         };
         await api.updateAdminUser(editingUser._id, payload);
-        showToast(`User "${payload.name}" updated successfully!`);
+        showToast('User updated');
       } else {
         if (!userFormData.password || userFormData.password.length < 8) {
           alert('Password must be at least 8 characters long for new users.');
           return;
         }
         await api.createAdminUser(userFormData);
-        showToast(`User "${userFormData.name}" created successfully!`);
+        showToast('User created');
       }
 
       setIsUserModalOpen(false);
@@ -787,7 +785,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   const handleDeleteUser = async (id) => {
     try {
       await api.deleteAdminUser(id);
-      showToast('User deleted successfully');
+      showToast('User deleted');
       triggerRefresh();
     } catch (err) {
       alert(err.message || 'Failed to delete user');
@@ -798,7 +796,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     try {
       await api.updateAdminOrderStatus(orderId, { orderStatus: newStatus });
-      showToast(`Order status updated to ${newStatus}`);
+      showToast('Order updated');
       triggerRefresh();
     } catch (err) {
       alert(err.message || 'Failed to update order status');
@@ -808,7 +806,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   const handleUpdatePaymentStatus = async (orderId, newPaymentStatus) => {
     try {
       await api.updateAdminOrderStatus(orderId, { paymentStatus: newPaymentStatus });
-      showToast(`Payment status updated to ${newPaymentStatus}`);
+      showToast('Payment status updated');
       triggerRefresh();
     } catch (err) {
       alert(err.message || 'Failed to update payment status');
@@ -818,7 +816,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   const handleDeleteOrder = async (id) => {
     try {
       await api.deleteAdminOrder(id);
-      showToast('Order deleted successfully');
+      showToast('Order deleted');
       triggerRefresh();
     } catch (err) {
       alert(err.message || 'Failed to delete order');
@@ -961,13 +959,6 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
           </div>
         </div>
       </header>
-
-      {/* Toast message */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#003D39] text-white px-5 py-3 rounded-2xl shadow-xl font-bold text-xs animate-bounce border border-teal-500/30">
-          {toastMessage}
-        </div>
-      )}
 
       {/* Header Banner */}
       <div className="bg-[#003D39] text-white py-10 px-4 sm:px-8 shadow-xl relative overflow-hidden border-b border-teal-500/30">

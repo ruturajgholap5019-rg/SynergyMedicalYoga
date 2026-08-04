@@ -3,12 +3,18 @@ const { z } = require('zod');
 const mongoId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid MongoDB id');
 const safeText = (max = 1000) => z.string().trim().min(1).max(max);
 const optionalUrl = z.string().trim().url().optional().or(z.literal(''));
+const phoneSchema = z.string().trim().refine((val) => {
+  if (!val) return false;
+  const clean = val.replace(/\D/g, '');
+  const tenDigit = (clean.length === 12 && clean.startsWith('91')) ? clean.slice(2) : clean;
+  return tenDigit.length === 10 && /^[6-9]\d{9}$/.test(tenDigit);
+}, 'Please enter a valid 10-digit mobile number (e.g. 9876543210)');
 
 const auth = {
   register: z.object({
     name: safeText(80),
     email: z.string().trim().toLowerCase().email(),
-    phone: z.string().trim().min(7).max(20),
+    phone: phoneSchema,
     password: z.string().min(8).max(128),
   }),
   login: z.object({
@@ -25,14 +31,14 @@ const adminUser = {
   create: z.object({
     name: safeText(80),
     email: z.string().trim().toLowerCase().email(),
-    phone: z.string().trim().max(20).optional().or(z.literal('')),
+    phone: phoneSchema.optional().or(z.literal('')),
     password: z.string().min(8).max(128),
     role: z.enum(['customer', 'admin']).default('customer'),
   }),
   update: z.object({
     name: safeText(80).optional(),
     email: z.string().trim().toLowerCase().email().optional(),
-    phone: z.string().trim().max(20).optional().or(z.literal('')),
+    phone: phoneSchema.optional().or(z.literal('')),
     role: z.enum(['customer', 'admin']).optional(),
   }),
 };
@@ -76,7 +82,7 @@ const carousel = z.object({
 
 const appointment = z.object({
   patientName: safeText(100),
-  patientPhone: z.string().trim().min(7).max(20),
+  patientPhone: phoneSchema,
   patientEmail: z.string().trim().toLowerCase().email(),
   serviceId: mongoId.optional().or(z.literal('')),
   serviceTitle: safeText(180),
@@ -89,7 +95,7 @@ const appointment = z.object({
 
 const contact = z.object({
   name: safeText(100),
-  phone: z.string().trim().min(7).max(20),
+  phone: phoneSchema,
   email: z.string().trim().toLowerCase().email(),
   subject: z.string().trim().max(180).optional().or(z.literal('')),
   message: safeText(3000),

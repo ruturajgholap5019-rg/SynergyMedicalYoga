@@ -128,6 +128,15 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
       return;
     }
 
+    let cleanPhone = (phone || currentUser?.phone || '').replace(/\D/g, '');
+    if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) {
+      cleanPhone = cleanPhone.slice(2);
+    }
+    if (!cleanPhone || cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      toast.error('Please enter a valid 10-digit mobile number (e.g. 9876543210).', { toastId: 'phone-err' });
+      return;
+    }
+
     setIsSubmitting(true);
     const fullName = `${firstName} ${lastName}`.trim() || 'Valued Customer';
     const fullAddress = `${streetAddress1} ${streetAddress2 ? ', ' + streetAddress2 : ''}`.trim() || 'No Address Listed';

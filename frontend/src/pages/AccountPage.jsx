@@ -115,22 +115,13 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
       return;
     }
 
-    // Phone Number Validation
-    const cleanPhone = signUpPhone.replace(/\D/g, '');
-    if (!cleanPhone) {
-      toast.error('Phone number is required.');
-      return;
+    // Phone Number Validation: Strict 10-digit mobile number starting with 6-9
+    let cleanPhone = signUpPhone.replace(/\D/g, '');
+    if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) {
+      cleanPhone = cleanPhone.slice(2);
     }
-    if (cleanPhone.length < 10) {
-      toast.error('Phone number must be at least 10 digits.');
-      return;
-    }
-    if (cleanPhone.length > 13) {
-      toast.error('Phone number is too long. Please enter a valid 10-digit mobile number.');
-      return;
-    }
-    if (cleanPhone.length === 10 && !/^[6-9]\d{9}$/.test(cleanPhone)) {
-      toast.error('Mobile number should start with 6, 7, 8, or 9.');
+    if (!cleanPhone || cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      toast.error('Please enter a valid 10-digit mobile number (e.g. 9876543210).', { toastId: 'phone-err' });
       return;
     }
 
