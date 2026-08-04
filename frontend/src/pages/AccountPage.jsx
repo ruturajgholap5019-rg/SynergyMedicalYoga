@@ -165,13 +165,8 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
         res = await fetchRes.json();
         if (!fetchRes.ok) throw new Error(res?.message || 'Failed to send OTP.');
       }
-      if (res?.otpCode) {
-        setLastIssuedOtpCode(res.otpCode);
-        setOtpCode(res.otpCode);
-      } else {
-        setLastIssuedOtpCode('');
-        setOtpCode('');
-      }
+      setLastIssuedOtpCode('');
+      setOtpCode('');
       toast.success(`Verification code dispatched to ${signUpEmail}`);
       setActiveTab('otp');
       // Start 60-second resend countdown
@@ -861,20 +856,9 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                     </div>
                     <h3 className="font-bold text-slate-900 text-lg">Verification Code Dispatched</h3>
                     <p className="text-xs text-slate-500 max-w-xs mx-auto">
-                      Verification code sent to <strong className="text-slate-800">{signUpEmail}</strong> &amp; <strong className="text-slate-800">ruturajgholap5019@gmail.com</strong>
+                      Verification code sent to <strong className="text-slate-800">{signUpEmail}</strong>
                     </p>
                   </div>
-
-                  {lastIssuedOtpCode && (
-                    <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center space-y-1">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full inline-block">
-                        Testing Code Issued
-                      </span>
-                      <p className="text-xs text-emerald-900 font-medium">
-                        Verification Code: <strong className="text-[#005550] text-lg font-black tracking-widest">{lastIssuedOtpCode}</strong>
-                      </p>
-                    </div>
-                  )}
 
                   <form onSubmit={handleVerifyOtp} className="space-y-5">
                     <div>
