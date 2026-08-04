@@ -490,7 +490,7 @@ export default function App() {
     if (window.location.pathname.includes('/order-success') || window.location.search.includes('session_id') || window.location.search.includes('order_id')) {
       const params = new URLSearchParams(window.location.search);
       const orderRef = params.get('order_id') || params.get('session_id') || '';
-      toast.success(`Order ${orderRef ? `(#${orderRef}) ` : ''}is pending confirmation.`, { duration: 6000 });
+      toast.success('Order confirmed', { toastId: 'order-conf', autoClose: 3000 });
       setCart([]);
       saveGuestCart([]);
       handleNavigate('account', false);

@@ -76,6 +76,7 @@ exports.createCashfreeOrderSession = async ({ orderId, amount, customerInfo, ret
     paymentSessionId: data.payment_session_id,
     cashfreeOrderId: data.order_id,
     orderStatus: data.order_status,
+    cfMode: mode.toLowerCase() === 'production' ? 'production' : 'sandbox',
   };
 };
 
