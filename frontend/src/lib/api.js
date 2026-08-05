@@ -256,7 +256,7 @@ export const api = {
     body: JSON.stringify(payload),
   }),
   removeFromCart: (payload) => request('/cart/remove', {
-    method: 'DELETE',
+    method: 'POST',
     body: JSON.stringify(payload),
   }),
   mergeCart: (guestItems) => request('/cart/merge', {

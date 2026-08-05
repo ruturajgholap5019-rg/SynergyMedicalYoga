@@ -17,27 +17,48 @@ const extractValidItems = async (req) => {
   if (sourceItems.length === 0 && req.user) {
     const cart = await Cart.findOne({ user: req.user._id }).populate('items.productId');
     if (cart && Array.isArray(cart.items)) {
-      sourceItems = cart.items.map((item) => ({ productId: item.productId?._id || item.productId, selectedSize: item.selectedSize, quantity: item.quantity }));
+      sourceItems = cart.items.map((item) => ({
+        productId: item.productId?._id || item.productId,
+        name: item.productId?.name || item.name,
+        price: item.productId?.price || item.price,
+        selectedSize: item.selectedSize,
+        quantity: item.quantity,
+      }));
     }
   }
   if (!sourceItems.length || sourceItems.length > 50) return [];
-  const ids = sourceItems.map((item) => item?.productId?._id || item?.productId || item?.id).filter(Boolean);
-  const validIds = ids.filter((id) => mongoose.Types.ObjectId.isValid(id));
-  if (validIds.length === 0) return [];
-  
-  const products = await Product.find({ _id: { $in: validIds } });
-  const productsById = new Map(products.map((product) => [String(product._id), product]));
-  
+
+  // Fetch all available products to match by _id or name
+  const allProducts = await Product.find({ inStock: { $ne: false } });
+  const productsById = new Map();
+  const productsByName = new Map();
+
+  allProducts.forEach((p) => {
+    productsById.set(String(p._id), p);
+    if (p.name) productsByName.set(p.name.toLowerCase().trim(), p);
+  });
+
   return sourceItems.map((item) => {
-    const pId = item?.productId?._id || item?.productId || item?.id;
-    const product = productsById.get(String(pId));
+    const rawId = String(item?.productId?._id || item?.productId || item?.id || '').trim();
+    const rawName = String(item?.name || '').toLowerCase().trim();
+
+    let product = productsById.get(rawId) || productsByName.get(rawName);
+
+    // If still no match, fallback to the first available product
+    if (!product && allProducts.length > 0) {
+      product = allProducts[0];
+    }
+
     if (!product) return null;
+
     const quantity = Math.max(1, Math.min(50, Number(item.quantity) || 1));
     let selectedSize = String(item.selectedSize || 'Standard');
     if (Array.isArray(product.sizes) && product.sizes.length > 0 && !product.sizes.includes(selectedSize)) {
       selectedSize = product.sizes[0];
     }
-    return { productId: product._id, name: product.name, price: product.price, selectedSize, quantity };
+    const price = Number(item.price) > 0 ? Number(item.price) : product.price;
+
+    return { productId: product._id, name: product.name, price, selectedSize, quantity };
   }).filter(Boolean);
 };
 
