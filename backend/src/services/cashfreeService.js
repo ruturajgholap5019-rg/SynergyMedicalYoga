@@ -3,22 +3,35 @@ const Setting = require('../models/Setting');
 
 // Helper to get Cashfree credentials from DB settings or process.env
 const getCashfreeCredentials = async () => {
-  let appId = process.env.CASHFREE_APP_ID || '';
-  let secretKey = process.env.CASHFREE_SECRET_KEY || '';
-  let mode = process.env.CASHFREE_ENV || 'SANDBOX';
+  let appId = (process.env.CASHFREE_APP_ID || '').trim();
+  let secretKey = (process.env.CASHFREE_SECRET_KEY || '').trim();
+  let mode = (process.env.CASHFREE_ENV || 'SANDBOX').trim();
 
   try {
     const setting = await Setting.findOne();
     if (setting) {
-      if (setting.cashfreeAppId) appId = setting.cashfreeAppId;
-      if (setting.cashfreeSecretKey) secretKey = setting.cashfreeSecretKey;
-      if (setting.cashfreeMode) mode = setting.cashfreeMode;
+      if (setting.cashfreeAppId) appId = setting.cashfreeAppId.trim();
+      if (setting.cashfreeSecretKey) secretKey = setting.cashfreeSecretKey.trim();
+      if (setting.cashfreeMode) mode = setting.cashfreeMode.trim();
     }
   } catch (err) {
     console.error('Failed to fetch Cashfree settings from DB:', err);
   }
 
-  return { appId, secretKey, mode };
+  // Smart auto-detection: Prevent "authentication Failed" caused by environment mode mismatch
+  const isTestKey = appId.toUpperCase().startsWith('TEST');
+  const isExplicitProd = mode.toUpperCase() === 'PRODUCTION';
+
+  let effectiveMode = isExplicitProd ? 'PRODUCTION' : 'SANDBOX';
+  if (isTestKey && isExplicitProd) {
+    console.warn('⚠️ [CASHFREE AUTO-FIX] Test App ID starting with "TEST" detected while mode was set to PRODUCTION. Auto-routing to Cashfree Sandbox.');
+    effectiveMode = 'SANDBOX';
+  } else if (!isTestKey && !isExplicitProd && appId.length > 8) {
+    console.warn('⚠️ [CASHFREE AUTO-FIX] Live App ID detected while mode was set to SANDBOX. Auto-routing to Cashfree Production.');
+    effectiveMode = 'PRODUCTION';
+  }
+
+  return { appId, secretKey, mode: effectiveMode };
 };
 
 /**
