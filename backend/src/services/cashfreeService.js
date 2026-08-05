@@ -38,15 +38,18 @@ exports.createCashfreeOrderSession = async ({ orderId, amount, customerInfo, ret
     ? 'https://api.cashfree.com/pg/orders'
     : 'https://sandbox.cashfree.com/pg/orders';
 
+  const rawPhone = (customerInfo?.phone || '').replace(/[^0-9]/g, '');
+  const cleanPhone = rawPhone.length >= 10 ? rawPhone.slice(-10) : '9876543210';
+
   const payload = {
     order_id: `CF_${orderId}_${Date.now()}`,
     order_amount: Math.round(amount * 100) / 100,
     order_currency: 'INR',
     customer_details: {
-      customer_id: customerInfo.id || `CUST_${Date.now()}`,
-      customer_name: customerInfo.name || 'Customer',
-      customer_email: customerInfo.email,
-      customer_phone: customerInfo.phone ? customerInfo.phone.replace(/[^0-9]/g, '').slice(-10) : '9999999999',
+      customer_id: customerInfo?.id || `CUST_${Date.now()}`,
+      customer_name: customerInfo?.name || 'Valued Customer',
+      customer_email: customerInfo?.email || 'customer@synergymedicalyoga.com',
+      customer_phone: cleanPhone,
     },
     order_meta: {
       return_url: returnUrl,
