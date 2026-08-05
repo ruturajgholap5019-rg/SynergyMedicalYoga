@@ -69,7 +69,8 @@ exports.createCashfreeOrderSession = async ({ orderId, amount, customerInfo, ret
 
   if (!response.ok) {
     console.error('Cashfree API error response:', data);
-    throw new Error(data.message || 'Failed to create Cashfree payment session.');
+    const errorMsg = data.message || data.error || (typeof data.detail === 'string' ? data.detail : (data.detail ? JSON.stringify(data.detail) : 'Failed to create Cashfree payment session.'));
+    throw new Error(errorMsg);
   }
 
   return {
