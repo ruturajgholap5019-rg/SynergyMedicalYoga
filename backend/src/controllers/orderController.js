@@ -126,7 +126,7 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
   const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const order = new Order({
-    user: req.user._id,
+    user: req.user?._id || undefined,
     items,
     totalAmount,
     shippingAddress: {
@@ -147,7 +147,7 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
   // 1. Handle Cashfree Payments (Primary Gateway)
   if (paymentMethod === 'cashfree') {
     try {
-      const clientUrl = process.env.CLIENT_URL || req.headers.origin || 'https://synergymedicalyoga.com';
+      const clientUrl = process.env.CLIENT_URL || req.headers.origin || 'https://synergy-medical-yoga.vercel.app';
       const backendDomain = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
       const returnUrl = `${clientUrl}/order-success?order_id={order_id}&session_id={order_token}`;
       const notifyUrl = `${backendDomain}/api/orders/cashfree-webhook`;
@@ -156,10 +156,10 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
         orderId: order._id.toString(),
         amount: totalAmount,
         customerInfo: {
-          id: req.user._id.toString(),
-          name: customerInfo?.name || req.user.name,
-          email: customerInfo?.email || req.user.email,
-          phone: customerInfo?.phone || req.user.phone,
+          id: req.user?._id?.toString() || `GUEST_${Date.now()}`,
+          name: customerInfo?.name || req.user?.name || 'Valued Customer',
+          email: customerInfo?.email || req.user?.email || 'customer@synergymedicalyoga.com',
+          phone: customerInfo?.phone || req.user?.phone || '9876543210',
         },
         returnUrl,
         notifyUrl,
@@ -167,7 +167,9 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
 
       order.cashfreeOrderId = cfSession.cashfreeOrderId;
       await order.save();
-      await Cart.findOneAndDelete({ user: req.user._id });
+      if (req.user?._id) {
+        await Cart.findOneAndDelete({ user: req.user._id });
+      }
 
       return res.status(200).json({
         status: 'success',

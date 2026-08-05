@@ -1,17 +1,17 @@
 const express = require('express');
 const { createOrder, getUserOrders, getOrder, createCheckoutSession } = require('../controllers/orderController');
-const { protect } = require('../middleware/auth');
+const { protect, optionalProtect } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Protected order routes
-router.use(protect);
+// Public / Guest & User Checkout Sessions
+router.post('/checkout', optionalProtect, createCheckoutSession);
+router.post('/create-checkout-session', optionalProtect, createCheckoutSession);
 
-router.post('/', createOrder);
-router.post('/checkout', createCheckoutSession);
-router.post('/create-checkout-session', createCheckoutSession);
-router.get('/my-orders', getUserOrders);
-router.get('/', getUserOrders);
-router.get('/:id', getOrder);
+// Protected user order routes
+router.post('/', protect, createOrder);
+router.get('/my-orders', protect, getUserOrders);
+router.get('/', protect, getUserOrders);
+router.get('/:id', protect, getOrder);
 
 module.exports = router;

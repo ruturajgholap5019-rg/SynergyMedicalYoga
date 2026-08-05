@@ -76,3 +76,38 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   return next(new AppError('Unauthorized: Please log in with valid security credentials to access this protected route.', 401));
 });
+
+exports.optionalProtect = catchAsync(async (req, res, next) => {
+  let token = req.cookies.accessToken;
+
+  if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  const refreshToken = req.cookies.refreshToken || req.headers['x-refresh-token'];
+
+  if (token) {
+    try {
+      const decoded = verifyAccessToken(token);
+      const user = await User.findById(decoded.id).select('-password +tokenVersion');
+      if (user && !user.isDeleted) {
+        req.user = sanitizeUser(user);
+        return next();
+      }
+    } catch (err) {}
+  }
+
+  if (refreshToken) {
+    try {
+      const decodedRefresh = verifyRefreshToken(refreshToken);
+      const user = await User.findById(decodedRefresh.id).select('-password +tokenVersion');
+      if (user && !user.isDeleted) {
+        req.user = sanitizeUser(user);
+        return next();
+      }
+    } catch (err) {}
+  }
+
+  req.user = null;
+  return next();
+});
