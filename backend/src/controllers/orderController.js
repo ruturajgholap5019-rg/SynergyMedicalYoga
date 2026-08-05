@@ -21,15 +21,22 @@ const extractValidItems = async (req) => {
     }
   }
   if (!sourceItems.length || sourceItems.length > 50) return [];
-  const ids = sourceItems.map((item) => item?.productId?._id || item?.productId || item?.id);
-  if (ids.some((id) => !mongoose.Types.ObjectId.isValid(id))) return [];
-  const products = await Product.find({ _id: { $in: ids }, inStock: true });
+  const ids = sourceItems.map((item) => item?.productId?._id || item?.productId || item?.id).filter(Boolean);
+  const validIds = ids.filter((id) => mongoose.Types.ObjectId.isValid(id));
+  if (validIds.length === 0) return [];
+  
+  const products = await Product.find({ _id: { $in: validIds } });
   const productsById = new Map(products.map((product) => [String(product._id), product]));
+  
   return sourceItems.map((item) => {
-    const product = productsById.get(String(item.productId?._id || item.productId || item.id));
-    const quantity = Number(item.quantity);
-    const selectedSize = String(item.selectedSize || 'Standard');
-    if (!product || !Number.isInteger(quantity) || quantity < 1 || quantity > 20 || !product.sizes.includes(selectedSize)) return null;
+    const pId = item?.productId?._id || item?.productId || item?.id;
+    const product = productsById.get(String(pId));
+    if (!product) return null;
+    const quantity = Math.max(1, Math.min(50, Number(item.quantity) || 1));
+    let selectedSize = String(item.selectedSize || 'Standard');
+    if (Array.isArray(product.sizes) && product.sizes.length > 0 && !product.sizes.includes(selectedSize)) {
+      selectedSize = product.sizes[0];
+    }
     return { productId: product._id, name: product.name, price: product.price, selectedSize, quantity };
   }).filter(Boolean);
 };
