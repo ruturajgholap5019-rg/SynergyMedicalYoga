@@ -1,4 +1,4 @@
-let rawApiUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+let rawApiUrl = (import.meta.env.VITE_API_URL || 'https://synergymedicalyoga.onrender.com/api').replace(/\/+$/, '');
 if (rawApiUrl.startsWith('http') && !rawApiUrl.endsWith('/api')) {
   rawApiUrl = `${rawApiUrl}/api`;
 }
