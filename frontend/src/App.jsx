@@ -126,15 +126,36 @@ export default function App() {
     return parsePathname(window.location.pathname).page;
   });
 
-  const [cart, setCart] = useState([]);
-  const [guestCart, setGuestCart] = useState(() => {
+  const [cart, setCart] = useState(() => {
     try {
-      const saved = window.localStorage.getItem('synergyGuestCart');
-      return saved ? JSON.parse(saved) : [];
+      const savedCart = window.localStorage.getItem('synergyCart');
+      return savedCart ? JSON.parse(savedCart) : [];
     } catch {
       return [];
     }
   });
+
+  const [guestCart, setGuestCart] = useState(() => {
+    try {
+      const savedGuest = window.localStorage.getItem('synergyGuestCart');
+      return savedGuest ? JSON.parse(savedGuest) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Automatically persist cart states to localStorage whenever updated
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('synergyCart', JSON.stringify(cart));
+    } catch (e) {}
+  }, [cart]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('synergyGuestCart', JSON.stringify(guestCart));
+    } catch (e) {}
+  }, [guestCart]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [pendingCheckout, setPendingCheckout] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState(null);

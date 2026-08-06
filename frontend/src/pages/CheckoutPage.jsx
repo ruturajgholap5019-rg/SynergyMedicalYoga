@@ -29,16 +29,11 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
   const [appliedCoupon, setAppliedCoupon] = useState('');
 
   // Payment Configuration & Process State
-  const [paymentMethod, setPaymentMethod] = useState('upi');
-  const [upiRefId, setUpiRefId] = useState('');
-  const [copiedUpi, setCopiedUpi] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('cashfree');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderSuccessId, setOrderSuccessId] = useState(null);
   const [paymentConfig, setPaymentConfig] = useState({
-    upiId: 'synergymedical@upi',
     merchantName: 'Synergy Medical Yoga',
-    customQrUrl: '',
-    enableUpi: true,
     enableCod: true,
     enableStripe: true,
     enableCashfree: true,
@@ -594,46 +589,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
               {/* Gateway Selector Toggles - Cashfree Online Payment (Cards, UPI, Netbanking) & COD */}
               <div className="space-y-3">
                 
-                {/* 1. UPI Payment Option */}
-                <div
-                  onClick={() => setPaymentMethod('upi')}
-                  className={`p-4.5 rounded-2xl border transition-all cursor-pointer select-none ${
-                    paymentMethod === 'upi'
-                      ? 'border-[#005550] bg-[#f8fbfa] shadow-sm ring-1 ring-[#005550]'
-                      : 'border-slate-200 bg-white hover:border-slate-300'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="radio"
-                        id="upi"
-                        name="pay_method"
-                        checked={paymentMethod === 'upi'}
-                        onChange={() => setPaymentMethod('upi')}
-                        className="w-4 h-4 text-[#005550] focus:ring-[#005550] cursor-pointer"
-                      />
-                      <div>
-                        <label htmlFor="upi" className="font-bold text-sm text-slate-800 block cursor-pointer">
-                          Pay via UPI
-                        </label>
-                        <span className="text-xs text-slate-500 font-medium">Use GPay, PhonePe, Paytm, or any UPI app</span>
-                      </div>
-                    </div>
-
-                    <div className="hidden sm:flex items-center gap-1 font-extrabold text-[10px] uppercase tracking-wider px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-lg border border-emerald-200">
-                      <span>UPI</span>
-                    </div>
-                  </div>
-
-                  {paymentMethod === 'upi' && (
-                    <div className="mt-3 bg-white p-3.5 rounded-xl border border-teal-100 text-xs text-slate-600 font-medium shadow-2xs space-y-1">
-                      <p>✨ Pay <strong>₹{totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> to <strong>{merchantUpi}</strong> using your preferred UPI app. Your order will be confirmed after successful payment.</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* 2. Cashfree Online Payment (Primary Gateway) */}
+                {/* 1. Cashfree Online Payment (Primary Gateway) */}
                 <div
                   onClick={() => setPaymentMethod('cashfree')}
                   className={`p-4.5 rounded-2xl border transition-all cursor-pointer select-none ${
@@ -755,7 +711,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
                 ) : (
                   <>
                     <Lock className="w-4 h-4 text-emerald-300" />
-                    <span>{paymentMethod === 'cashfree' ? 'Pay Now via Cashfree' : paymentMethod === 'upi' ? 'Place UPI Order' : 'Place Order'}</span>
+                    <span>{paymentMethod === 'cashfree' ? 'Pay Now via Cashfree' : 'Place Order'}</span>
                   </>
                 )}
               </button>

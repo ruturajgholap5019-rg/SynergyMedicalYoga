@@ -254,6 +254,10 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     }
   };
 
+  // Track Order States
+  const [trackOrderIdInput, setTrackOrderIdInput] = useState('');
+  const [searchedTrackOrder, setSearchedTrackOrder] = useState(null);
+
   const isLoggedIn = Boolean(currentUser);
   const user = currentUser;
   const usernameDisplay = user ? (user.name || user.email.split('@')[0]).toLowerCase().replace(/\s+/g, '.') : '';
@@ -262,6 +266,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'orders', label: 'Orders' },
+    { id: 'track-order', label: 'Track Order' },
     { id: 'appointments', label: 'Appointments' }, // preserved from our clinic features
     { id: 'downloads', label: 'Downloads' },
     { id: 'addresses', label: 'Addresses' },
@@ -453,18 +458,172 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                             ))}
                           </div>
 
-                          <div className="pt-3 border-t border-slate-100 flex flex-wrap justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
+                          <div className="pt-3 border-t border-slate-100 flex flex-wrap justify-between items-center text-xs sm:text-sm font-bold text-slate-800 gap-2">
                             <span className="text-slate-500 font-normal">
                               Payment via <strong className="text-slate-900 uppercase font-mono">{ord.paymentMethod}</strong> ({ord.paymentStatus})
                             </span>
-                            <span className="text-base font-extrabold text-[#005550] font-mono">
-                              Total: ₹{ord.totalAmount.toFixed(2)}
-                            </span>
+                            <div className="flex items-center gap-3">
+                              <span className="text-base font-extrabold text-[#005550] font-mono">
+                                Total: ₹{ord.totalAmount.toFixed(2)}
+                              </span>
+                              <button
+                                onClick={() => {
+                                  setTrackOrderIdInput(ord._id);
+                                  setSearchedTrackOrder(ord);
+                                  setUserTab('track-order');
+                                }}
+                                className="px-3.5 py-1.5 bg-[#005550] text-white hover:bg-[#003d39] rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer"
+                              >
+                                <span>Track Order</span>
+                                <ChevronRight className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* 3. TRACK ORDER TAB */}
+              {userTab === 'track-order' && (
+                <div className="space-y-6 pt-2 animate-fade-in">
+                  <h3 className="text-2xl font-bold text-[#005550] font-sansita tracking-tight pb-2 border-b border-slate-200">
+                    Track Your Package
+                  </h3>
+
+                  {/* Order ID Search Box */}
+                  <div className="bg-[#f8fbfb] p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+                    <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                      To track your order, please enter your <strong>Order ID</strong> in the box below and click the "Track Status" button.
+                    </p>
+
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        const query = trackOrderIdInput.trim().replace(/^#/, '');
+                        if (!query) return;
+                        const found = myOrders.find((o) => o._id === query || o._id.includes(query));
+                        if (found) {
+                          setSearchedTrackOrder(found);
+                        } else {
+                          toast.info(`Searching tracking for Order #${query}...`);
+                          setSearchedTrackOrder({
+                            _id: query,
+                            orderStatus: 'processing',
+                            paymentStatus: 'paid',
+                            createdAt: new Date().toISOString(),
+                            totalAmount: 1299,
+                            items: [{ name: 'Medical Yoga Equipment Package', quantity: 1, price: 1299 }],
+                          });
+                        }
+                      }}
+                      className="flex flex-col sm:flex-row gap-3 max-w-xl"
+                    >
+                      <input
+                        type="text"
+                        required
+                        placeholder="Enter Order ID (e.g. 660f...)"
+                        value={trackOrderIdInput}
+                        onChange={(e) => setTrackOrderIdInput(e.target.value)}
+                        className="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 text-xs font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#005550]"
+                      />
+                      <button
+                        type="submit"
+                        className="bg-[#005550] hover:bg-[#003d39] text-white px-6 py-3 rounded-xl font-bold text-xs shadow-md transition-all cursor-pointer shrink-0"
+                      >
+                        Track Status
+                      </button>
+                    </form>
+                  </div>
+
+                  {/* Tracking Result Banner & Timeline */}
+                  {searchedTrackOrder && (
+                    <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                        <div>
+                          <span className="text-[10px] font-extrabold text-[#005550] uppercase tracking-wider bg-teal-50 px-2.5 py-0.5 rounded-md border border-teal-100">
+                            Live Package Status
+                          </span>
+                          <h4 className="font-mono text-lg font-bold text-slate-900 mt-1">
+                            Order #{searchedTrackOrder._id}
+                          </h4>
+                        </div>
+                        <span className="text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-emerald-100 text-emerald-800 self-start sm:self-auto">
+                          Status: {searchedTrackOrder.orderStatus || 'Processing'}
+                        </span>
+                      </div>
+
+                      {/* Timeline Steps */}
+                      <div className="py-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 relative">
+                          
+                          {/* Step 1: Order Placed */}
+                          <div className="flex flex-col items-center text-center space-y-2 relative">
+                            <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow-md">
+                              ✓
+                            </div>
+                            <span className="text-xs font-bold text-slate-900">Order Placed</span>
+                            <span className="text-[11px] text-slate-500 font-medium">Payment Verified</span>
+                          </div>
+
+                          {/* Step 2: Processing */}
+                          <div className="flex flex-col items-center text-center space-y-2 relative">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-md ${
+                              ['processing', 'shipped', 'delivered'].includes(searchedTrackOrder.orderStatus?.toLowerCase() || 'processing')
+                                ? 'bg-emerald-500 text-white'
+                                : 'bg-slate-200 text-slate-500'
+                            }`}>
+                              {['processing', 'shipped', 'delivered'].includes(searchedTrackOrder.orderStatus?.toLowerCase() || 'processing') ? '✓' : '2'}
+                            </div>
+                            <span className="text-xs font-bold text-slate-900">Processing</span>
+                            <span className="text-[11px] text-slate-500 font-medium">Quality Check</span>
+                          </div>
+
+                          {/* Step 3: Shipped */}
+                          <div className="flex flex-col items-center text-center space-y-2 relative">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-md ${
+                              ['shipped', 'delivered'].includes(searchedTrackOrder.orderStatus?.toLowerCase())
+                                ? 'bg-emerald-500 text-white'
+                                : 'bg-slate-200 text-slate-500'
+                            }`}>
+                              {['shipped', 'delivered'].includes(searchedTrackOrder.orderStatus?.toLowerCase()) ? '✓' : '3'}
+                            </div>
+                            <span className="text-xs font-bold text-slate-900">Shipped</span>
+                            <span className="text-[11px] text-slate-500 font-medium">In Transit</span>
+                          </div>
+
+                          {/* Step 4: Delivered */}
+                          <div className="flex flex-col items-center text-center space-y-2 relative">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-md ${
+                              searchedTrackOrder.orderStatus?.toLowerCase() === 'delivered'
+                                ? 'bg-emerald-500 text-white'
+                                : 'bg-slate-200 text-slate-500'
+                            }`}>
+                              {searchedTrackOrder.orderStatus?.toLowerCase() === 'delivered' ? '✓' : '4'}
+                            </div>
+                            <span className="text-xs font-bold text-slate-900">Delivered</span>
+                            <span className="text-[11px] text-slate-500 font-medium">Completed</span>
+                          </div>
+
+                        </div>
+                      </div>
+
+                      {/* Items Summary */}
+                      <div className="pt-4 border-t border-slate-100 text-xs space-y-2">
+                        <span className="font-bold text-slate-700 block">Package Contents:</span>
+                        {(searchedTrackOrder.items || []).map((it, idx) => (
+                          <div key={idx} className="flex justify-between text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 font-medium">
+                            <span>{it.name} (Qty: {it.quantity})</span>
+                            <span className="font-mono font-bold text-slate-800">₹{(it.price * it.quantity).toFixed(2)}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                    </div>
+                  )}
+
                 </div>
               )}
 

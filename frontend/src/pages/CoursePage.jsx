@@ -530,16 +530,15 @@ export default function CoursePage({ setActivePage }) {
               )}
             </div>
 
-            {/* ── Weekend 4 – W4 badge ALWAYS amber ── */}
-            <div className="border border-emerald-500/40 rounded-3xl overflow-hidden shadow-md bg-emerald-50/30 transition-all duration-300">
+            {/* Weekend 4 – Offline */}
+            <div className="border border-gray-200 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
               <button
                 onClick={() => setOpenWeekend(openWeekend === 4 ? null : 4)}
                 className={`w-full flex items-center justify-between p-6 text-left font-poppins font-bold text-lg transition-all ${openWeekend === 4 ? 'bg-[#005550] text-white shadow-md' : 'bg-slate-50 text-gray-800 hover:bg-teal-50/50'
                   }`}
               >
                 <div className="flex items-center gap-3">
-                  {/* Badge always amber */}
-                  <div className="w-8 h-8 rounded-full bg-amber-400 text-gray-900 flex items-center justify-center text-xs font-extrabold">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold ${openWeekend === 4 ? 'bg-amber-400 text-gray-900' : 'bg-[#005550] text-white'}`}>
                     W4
                   </div>
                   <div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Trash2 } from 'lucide-react';
+import { Search, Trash2, Eye, X, Package, MapPin, CreditCard, User, Calendar, CheckCircle2, Clock } from 'lucide-react';
 
 export default function OrdersTab({
   orders,
@@ -9,6 +9,7 @@ export default function OrdersTab({
 }) {
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState('All');
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const filteredOrders = orders.filter((o) => {
     const userName = o.user?.name || 'Customer';
@@ -71,12 +72,12 @@ export default function OrdersTab({
                 filteredOrders.map((order) => (
                   <tr key={order._id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="py-4 px-6">
-                      <p className="font-bold text-gray-900 font-mono text-[11px]">{order._id}</p>
-                      <p className="text-gray-600 font-medium">{order.user?.name || 'Customer'}</p>
-                      <p className="text-gray-400 text-[10px]">{order.user?.email}</p>
+                      <p className="font-bold text-gray-900 font-mono text-[11px]">#{order._id}</p>
+                      <p className="text-gray-600 font-medium">{order.user?.name || 'Valued Customer'}</p>
+                      <p className="text-gray-400 text-[10px]">{order.user?.email || 'Guest Customer'}</p>
                     </td>
                     <td className="py-4 px-6 font-extrabold text-gray-900 text-sm">
-                      ₹{order.totalAmount}
+                      ₹{Number(order.totalAmount || 0).toLocaleString('en-IN')}
                     </td>
                     <td className="py-4 px-6">
                       <select
@@ -107,20 +108,30 @@ export default function OrdersTab({
                       </select>
                     </td>
                     <td className="py-4 px-6 text-right">
-                      <button
-                        onClick={() =>
-                          setDeleteConfirmModal({
-                            isOpen: true,
-                            type: 'order',
-                            id: order._id,
-                            title: `Order #${order._id.substring(0, 8)}`,
-                          })
-                        }
-                        className="p-2 bg-slate-100 hover:bg-rose-50 text-gray-700 hover:text-rose-600 rounded-xl transition-colors cursor-pointer"
-                        title="Delete order"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="px-3 py-1.5 bg-[#005550]/10 hover:bg-[#005550] text-[#005550] hover:text-white rounded-xl font-bold transition-all text-xs flex items-center gap-1.5 cursor-pointer"
+                          title="View complete order details"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>View Details</span>
+                        </button>
+                        <button
+                          onClick={() =>
+                            setDeleteConfirmModal({
+                              isOpen: true,
+                              type: 'order',
+                              id: order._id,
+                              title: `Order #${order._id.substring(0, 8)}`,
+                            })
+                          }
+                          className="p-2 bg-slate-100 hover:bg-rose-50 text-gray-700 hover:text-rose-600 rounded-xl transition-colors cursor-pointer"
+                          title="Delete order"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -129,6 +140,132 @@ export default function OrdersTab({
           </table>
         </div>
       </div>
+
+      {/* --- MODAL: VIEW ORDER DETAILS --- */}
+      {selectedOrder && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-gray-200 shadow-2xl max-w-2xl w-full p-6 sm:p-8 relative my-8 text-slate-800 animate-in fade-in zoom-in-95 duration-200">
+            
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#005550] bg-teal-50 px-2.5 py-1 rounded-md border border-teal-100">
+                  Order Details
+                </span>
+                <h3 className="font-mono text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                  #{selectedOrder._id}
+                </h3>
+              </div>
+              <button
+                onClick={() => setSelectedOrder(null)}
+                className="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="space-y-6 text-xs">
+              
+              {/* Order Overview Meta Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-1">
+                  <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wider block">Date Placed</span>
+                  <p className="font-bold text-slate-800 flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-[#005550]" />
+                    <span>{new Date(selectedOrder.createdAt || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                  </p>
+                </div>
+                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-1">
+                  <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wider block">Payment Status</span>
+                  <span className={`inline-block text-[11px] font-extrabold px-2.5 py-0.5 rounded-full capitalize ${
+                    selectedOrder.paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    {selectedOrder.paymentStatus || 'Pending'} ({String(selectedOrder.paymentMethod || 'cashfree').toUpperCase()})
+                  </span>
+                </div>
+                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-1">
+                  <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wider block">Fulfillment</span>
+                  <span className="inline-block text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-teal-100 text-[#005550] capitalize">
+                    {selectedOrder.orderStatus || 'Processing'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Customer & Shipping Address Details */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-2">
+                  <h4 className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                    <User className="w-4 h-4 text-[#005550]" /> Customer Details
+                  </h4>
+                  <p className="font-bold text-sm text-slate-800">{selectedOrder.user?.name || 'Valued Customer'}</p>
+                  <p className="text-slate-600">{selectedOrder.user?.email || 'N/A'}</p>
+                  {selectedOrder.user?.phone && <p className="text-slate-600 font-mono">{selectedOrder.user.phone}</p>}
+                </div>
+
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-2">
+                  <h4 className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-[#005550]" /> Shipping Address
+                  </h4>
+                  {selectedOrder.shippingAddress ? (
+                    <p className="text-slate-700 leading-relaxed font-medium">
+                      {selectedOrder.shippingAddress.street}<br />
+                      {selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.state} - {selectedOrder.shippingAddress.pincode}<br />
+                      {selectedOrder.shippingAddress.country || 'India'}
+                    </p>
+                  ) : (
+                    <p className="text-gray-400">No address recorded</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Order Items Table */}
+              <div className="space-y-3">
+                <h4 className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                  <Package className="w-4 h-4 text-[#005550]" /> Purchased Items ({selectedOrder.items?.length || 0})
+                </h4>
+
+                <div className="border border-slate-200 rounded-2xl overflow-hidden divide-y divide-slate-100">
+                  {(selectedOrder.items || []).map((item, idx) => (
+                    <div key={idx} className="p-3.5 flex items-center justify-between gap-4 bg-white">
+                      <div className="space-y-0.5">
+                        <p className="font-bold text-slate-900 text-xs">{item.name}</p>
+                        <p className="text-[11px] text-slate-500 font-medium">
+                          Size: <span className="font-bold text-slate-700">{item.selectedSize || 'Standard'}</span> • Qty: <span className="font-bold text-slate-700">{item.quantity}</span>
+                        </p>
+                      </div>
+                      <span className="font-mono font-bold text-slate-900 text-xs shrink-0">
+                        ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Order Total Footer */}
+              <div className="bg-teal-50/70 p-4 rounded-2xl border border-teal-100 flex items-center justify-between font-bold text-sm text-[#005550]">
+                <span>Total Amount Paid</span>
+                <span className="font-mono text-lg font-black text-[#005550]">
+                  ₹{Number(selectedOrder.totalAmount || 0).toLocaleString('en-IN')}
+                </span>
+              </div>
+
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex justify-end pt-6 mt-6 border-t border-gray-100">
+              <button
+                onClick={() => setSelectedOrder(null)}
+                className="px-6 py-2.5 rounded-xl font-bold bg-[#005550] text-white hover:bg-[#003d39] transition-all text-xs cursor-pointer shadow-md"
+              >
+                Close Details
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
