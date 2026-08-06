@@ -149,7 +149,7 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
     try {
       const clientUrl = process.env.CLIENT_URL || req.headers.origin || 'https://synergy-medical-yoga.vercel.app';
       const backendDomain = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
-      const returnUrl = `${clientUrl}/order-success?order_id={order_id}&session_id={order_token}`;
+      const returnUrl = `${clientUrl}/order-success?order_id={order_id}&session_id={session_id}`;
       const notifyUrl = `${backendDomain}/api/orders/cashfree-webhook`;
 
       const cfSession = await cashfreeService.createCashfreeOrderSession({
