@@ -114,6 +114,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 });
 
 const cashfreeService = require('../services/cashfreeService');
+const { buildCashfreeReturnUrl } = require('../utils/paymentGateway');
 
 exports.createCheckoutSession = catchAsync(async (req, res, next) => {
   const { shippingAddress = {}, paymentMethod = 'cashfree', upiId, customerInfo } = req.body;
@@ -149,7 +150,7 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
     try {
       const clientUrl = process.env.CLIENT_URL || req.headers.origin || 'https://synergy-medical-yoga.vercel.app';
       const backendDomain = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
-      const returnUrl = `${clientUrl}/order-success?order_id={order_id}&session_id={session_id}`;
+      const returnUrl = buildCashfreeReturnUrl(clientUrl);
       const notifyUrl = `${backendDomain}/api/orders/cashfree-webhook`;
 
       const cfSession = await cashfreeService.createCashfreeOrderSession({
@@ -187,7 +188,9 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
 
   // 2. Handle Manual UPI or Cash on Delivery
   if (paymentMethod === 'upi' || paymentMethod === 'cod') {
-    await Cart.findOneAndDelete({ user: req.user._id });
+    if (req.user?._id) {
+      await Cart.findOneAndDelete({ user: req.user._id });
+    }
     return res.status(201).json({
       status: 'success',
       order: order,

@@ -29,7 +29,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
   const [appliedCoupon, setAppliedCoupon] = useState('');
 
   // Payment Configuration & Process State
-  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [paymentMethod, setPaymentMethod] = useState('upi');
   const [upiRefId, setUpiRefId] = useState('');
   const [copiedUpi, setCopiedUpi] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -167,22 +167,30 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
 
       const response = await api.createCheckoutSession(payload);
 
-      // 1. Process Cashfree PG Checkout (Primary Gateway - Original Website Parity)
+      // 1. Process Cashfree PG Checkout (Primary Gateway - External Browser Flow)
       if (paymentMethod === 'cashfree') {
         if (!response?.paymentSessionId) {
           toast.error('Unable to initialize Cashfree payment. Please check Cashfree App ID & Secret Key in settings.');
           return;
         }
-        toast.info('⏳ Launching secure Cashfree payment portal...', { autoClose: 2000, toastId: 'cf-launch' });
+
+        const paymentWindow = window.open('', '_blank');
+        if (!paymentWindow) {
+          toast.error('Please allow popups for this site so the Cashfree payment portal can open in a new tab.');
+          return;
+        }
+
+        toast.info('⏳ Opening Cashfree payment portal in a new browser tab...', { autoClose: 2000, toastId: 'cf-launch' });
         const CashfreeSDK = await loadCashfreeSdk();
         if (CashfreeSDK) {
           const cashfree = CashfreeSDK({ mode: response.cfMode || 'sandbox' });
           cashfree.checkout({
             paymentSessionId: response.paymentSessionId,
-            redirectTarget: '_self',
+            redirectTarget: '_blank',
           });
           return;
         } else {
+          paymentWindow.close();
           toast.error('Failed to load Cashfree Payment SDK. Please try again.');
           return;
         }
@@ -257,7 +265,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
     <div className="bg-[#f8fafe] min-h-screen pb-20 selection:bg-[#005550] selection:text-white font-sans">
       
       {/* 1. Deep Teal Hero Header exactly matching original website */}
-      <div className="bg-gradient-to-r from-[#005550] via-[#03403c] to-[#005550] text-white py-14 sm:py-20 px-4 relative overflow-hidden flex items-center justify-center shadow-md">
+      <div className="bg-linear-to-r from-[#005550] via-[#03403c] to-[#005550] text-white py-14 sm:py-20 px-4 relative overflow-hidden flex items-center justify-center shadow-md">
         {/* Background Decorative Elements simulating yoga ropes/leaf patterns */}
         <div className="absolute -left-16 -top-16 w-72 h-72 rounded-full bg-white/5 blur-2xl pointer-events-none"></div>
         <div className="absolute -right-16 -bottom-16 w-80 h-80 rounded-full bg-emerald-400/10 blur-2xl pointer-events-none"></div>
@@ -269,7 +277,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
       </div>
 
       {/* 2. Main 2-Column Content Section */}
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-8 mt-10 sm:mt-12">
+      <div className="max-w-310 mx-auto px-4 sm:px-8 mt-10 sm:mt-12">
         <form onSubmit={handleSubmitOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
           {/* LEFT COLUMN: Billing Details (Col 7) */}
@@ -586,7 +594,46 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
               {/* Gateway Selector Toggles - Cashfree Online Payment (Cards, UPI, Netbanking) & COD */}
               <div className="space-y-3">
                 
-                {/* 1. Cashfree Online Payment (Primary Gateway) */}
+                {/* 1. UPI Payment Option */}
+                <div
+                  onClick={() => setPaymentMethod('upi')}
+                  className={`p-4.5 rounded-2xl border transition-all cursor-pointer select-none ${
+                    paymentMethod === 'upi'
+                      ? 'border-[#005550] bg-[#f8fbfa] shadow-sm ring-1 ring-[#005550]'
+                      : 'border-slate-200 bg-white hover:border-slate-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        id="upi"
+                        name="pay_method"
+                        checked={paymentMethod === 'upi'}
+                        onChange={() => setPaymentMethod('upi')}
+                        className="w-4 h-4 text-[#005550] focus:ring-[#005550] cursor-pointer"
+                      />
+                      <div>
+                        <label htmlFor="upi" className="font-bold text-sm text-slate-800 block cursor-pointer">
+                          Pay via UPI
+                        </label>
+                        <span className="text-xs text-slate-500 font-medium">Use GPay, PhonePe, Paytm, or any UPI app</span>
+                      </div>
+                    </div>
+
+                    <div className="hidden sm:flex items-center gap-1 font-extrabold text-[10px] uppercase tracking-wider px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-lg border border-emerald-200">
+                      <span>UPI</span>
+                    </div>
+                  </div>
+
+                  {paymentMethod === 'upi' && (
+                    <div className="mt-3 bg-white p-3.5 rounded-xl border border-teal-100 text-xs text-slate-600 font-medium shadow-2xs space-y-1">
+                      <p>✨ Pay <strong>₹{totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> to <strong>{merchantUpi}</strong> using your preferred UPI app. Your order will be confirmed after successful payment.</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. Cashfree Online Payment (Primary Gateway) */}
                 <div
                   onClick={() => setPaymentMethod('cashfree')}
                   className={`p-4.5 rounded-2xl border transition-all cursor-pointer select-none ${
@@ -625,7 +672,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
                   )}
                 </div>
 
-                {/* 2. Cash on Delivery (COD) Option */}
+                {/* 3. Cash on Delivery (COD) Option */}
                 <div
                   onClick={() => setPaymentMethod('cod')}
                   className={`p-4.5 rounded-2xl border transition-all cursor-pointer select-none ${
@@ -708,7 +755,7 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
                 ) : (
                   <>
                     <Lock className="w-4 h-4 text-emerald-300" />
-                    <span>{paymentMethod === 'cashfree' ? 'Pay Now via Cashfree' : 'Place Order'}</span>
+                    <span>{paymentMethod === 'cashfree' ? 'Pay Now via Cashfree' : paymentMethod === 'upi' ? 'Place UPI Order' : 'Place Order'}</span>
                   </>
                 )}
               </button>
