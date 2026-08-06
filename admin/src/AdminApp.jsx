@@ -907,92 +907,76 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   return (
     <div className="min-h-screen bg-[#F4F8F8] font-inter text-slate-800 pb-24">
       {/* TOP NAVIGATION BAR */}
-      <header className="bg-[#003D39] text-white border-b border-teal-500/20 sticky top-0 z-40 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#005550] flex items-center justify-center border border-teal-400/30 text-white font-black text-lg shadow-md">
-              🌿
-            </div>
-            <div>
-              <span className="font-sansita font-bold text-lg text-white tracking-wide block leading-none">
-                Synergy Medical Yoga
+      {/* Unified Upgraded Admin Header Banner */}
+      <div className="bg-gradient-to-r from-[#002d2a] via-[#004d47] to-[#003834] text-white py-8 px-4 sm:px-8 shadow-2xl relative overflow-hidden border-b border-teal-400/20">
+        {/* Background Decorative Ambient Flares */}
+        <div className="absolute top-1/2 -left-20 -translate-y-1/2 w-80 h-80 rounded-full bg-teal-400/10 blur-3xl pointer-events-none"></div>
+        <div className="absolute -right-20 -bottom-20 w-96 h-96 rounded-full bg-emerald-400/15 blur-3xl pointer-events-none"></div>
+        
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
+          
+          {/* Left Title & System Status Section */}
+          <div className="space-y-2.5">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 text-white font-black text-base shadow-xs backdrop-blur-md">
+                🌿
+              </div>
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 backdrop-blur-md shadow-xs">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                </span>
+                <span>System Operational</span>
               </span>
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-teal-300">
-                Admin Console
+              <span className="text-teal-200/90 font-bold text-xs bg-white/10 px-3 py-1 rounded-full border border-white/15 backdrop-blur-md">
+                Synergy Medical Management
               </span>
             </div>
+            
+            <h1 className="font-sans text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white flex items-center gap-3 drop-shadow-xs">
+              Admin Control Panel
+            </h1>
+
+            <p className="text-teal-100/90 text-xs sm:text-sm font-medium flex items-center gap-2 flex-wrap pt-0.5">
+              <span>Authorized Session:</span>
+              <span className="font-extrabold text-white bg-white/15 px-2.5 py-0.5 rounded-lg border border-white/20 shadow-xs">
+                {currentUser.name}
+              </span>
+              <span className="text-teal-300 font-mono text-xs">({currentUser.email})</span>
+            </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Right Action Bar */}
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
             <a
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold border border-white/20 backdrop-blur-xs transition-all cursor-pointer shadow-xs"
-              title="Open main website in a new tab"
+              className="bg-white text-[#005550] hover:bg-emerald-50 hover:text-[#003834] px-4.5 py-2.5 rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-[0.98] border border-white/90"
+              title="Open main live website in a new tab"
             >
-              <ExternalLink className="w-3.5 h-3.5 text-teal-200" />
-              <span>View Live Website</span>
+              <ExternalLink className="w-3.5 h-3.5 text-[#005550]" />
+              <span>Go to Website</span>
             </a>
-            
-            <div className="hidden lg:flex items-center gap-2 bg-black/20 px-3 py-1.5 rounded-xl border border-white/10 text-xs font-medium text-teal-100">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{currentUser.name}</span>
-            </div>
 
             <button
               onClick={triggerRefresh}
-              className="bg-white/10 hover:bg-white/20 text-white p-2 sm:px-3 sm:py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border border-white/20 backdrop-blur-xs transition-all cursor-pointer"
+              className="bg-white/10 hover:bg-white/20 text-white px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 border border-white/20 backdrop-blur-md transition-all cursor-pointer hover:scale-[1.02]"
               title="Refresh console data"
             >
               <RefreshCw className={`w-3.5 h-3.5 text-teal-200 ${loading ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span>Refresh</span>
             </button>
 
             <button
               onClick={handleLogout}
-              className="bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border border-rose-400/30 backdrop-blur-xs transition-all cursor-pointer"
+              className="bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 border border-rose-400/30 backdrop-blur-md transition-all cursor-pointer hover:scale-[1.02]"
             >
               <LogOut className="w-3.5 h-3.5 text-rose-300" />
-              <span className="hidden sm:inline">Log Out</span>
+              <span>Log Out</span>
             </button>
           </div>
-        </div>
-      </header>
 
-      {/* Header Banner */}
-      <div className="bg-[#003D39] text-white py-10 px-4 sm:px-8 shadow-xl relative overflow-hidden border-b border-teal-500/30">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#002d2a] via-[#004d47] to-[#003834] opacity-95"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl pointer-events-none"></div>
-        
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 backdrop-blur-xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                System Operational
-              </span>
-              <span className="text-teal-200 font-semibold text-xs">Synergy Medical Management</span>
-            </div>
-            <h1 className="font-sansita text-3xl sm:text-4xl font-bold tracking-tight text-white flex items-center gap-3 drop-shadow-sm">
-              Admin Control Panel
-            </h1>
-            <p className="text-teal-100 text-xs sm:text-sm mt-1.5 font-medium">
-              Authorized Session: <span className="font-bold text-white bg-white/15 px-2.5 py-0.5 rounded-lg border border-white/20">{currentUser.name}</span> <span className="text-teal-200">({currentUser.email})</span>
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-[#005550] hover:bg-teal-50 px-4.5 py-2.5 rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-md transition-all cursor-pointer hover:scale-[1.02]"
-            >
-              <ExternalLink className="w-4 h-4 text-[#005550]" />
-              <span>Go to Website</span>
-            </a>
-          </div>
         </div>
       </div>
 
