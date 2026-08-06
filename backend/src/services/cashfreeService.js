@@ -70,6 +70,14 @@ exports.createCashfreeOrderSession = async ({ orderId, amount, customerInfo, ret
     },
   };
 
+  console.info('[Cashfree] Creating order session', {
+    mode,
+    baseUrl,
+    appId: appId ? `${appId.slice(0, 6)}...` : 'MISSING',
+    order_id: payload.order_id,
+    order_amount: payload.order_amount,
+  });
+
   const response = await fetch(baseUrl, {
     method: 'POST',
     headers: {
@@ -84,7 +92,12 @@ exports.createCashfreeOrderSession = async ({ orderId, amount, customerInfo, ret
   const data = await response.json();
 
   if (!response.ok) {
-    console.error('Cashfree API error response:', data);
+    console.error('[Cashfree] API error response:', {
+      status: response.status,
+      statusText: response.statusText,
+      response: data,
+      request: payload,
+    });
     const errorMsg = data.message || data.error || (typeof data.detail === 'string' ? data.detail : (data.detail ? JSON.stringify(data.detail) : 'Failed to create Cashfree payment session.'));
     throw new Error(errorMsg);
   }
