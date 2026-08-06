@@ -50,8 +50,13 @@ exports.sendOtp = catchAsync(async (req, res, next) => {
   }
 
   const existing = await User.findOne({ email });
-  if (existing && !existing.isDeleted) return next(new AppError('Email is already registered.', 400));
-  if (existing && existing.isDeleted) return next(new AppError('This account has been permanently deleted. Please contact support.', 403));
+  if (existing) {
+    if (!existing.isDeleted) {
+      return next(new AppError('Email is already registered. Please log in.', 400));
+    }
+    // Clean up old deleted user record so the user can sign up fresh
+    await User.deleteOne({ _id: existing._id });
+  }
 
   // Generate 4-digit verification code matching frontend 4-box OTP input
   const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
@@ -100,6 +105,9 @@ exports.verifyOtp = catchAsync(async (req, res, next) => {
     return next(new AppError('Invalid verification code. Please check your code and try again.', 400));
   }
 
+  // Purge any lingering deleted record for this email before creating new account
+  await User.deleteMany({ email, isDeleted: true });
+
   // OTP verified! Create user account now
   const user = await User.create({
     name: pendingData.name,
@@ -133,8 +141,12 @@ exports.register = catchAsync(async (req, res, next) => {
   const password = req.body.password;
 
   const existing = await User.findOne({ email });
-  if (existing && !existing.isDeleted) return next(new AppError('Email already registered.', 400));
-  if (existing && existing.isDeleted) return next(new AppError('This account has been permanently deleted. Please contact support.', 403));
+  if (existing) {
+    if (!existing.isDeleted) {
+      return next(new AppError('Email is already registered. Please log in.', 400));
+    }
+    await User.deleteOne({ _id: existing._id });
+  }
 
   const user = await User.create({ name, email, phone, password, role: 'customer' });
   const tokenVersion = user.tokenVersion || 0;
@@ -162,7 +174,8 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   if (user.isDeleted) {
-    return next(new AppError('This account has been permanently deleted. Please contact support.', 403));
+    await User.deleteOne({ _id: user._id });
+    return next(new AppError('Account not found. Please sign up to create a new account.', 401));
   }
 
   if (!(await user.matchPassword(password))) {

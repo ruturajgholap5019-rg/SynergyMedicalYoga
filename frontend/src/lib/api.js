@@ -190,17 +190,10 @@ export const api = {
     return res;
   },
   sendOtp: async (payload) => {
-    try {
-      return await request('/auth/send-otp', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      });
-    } catch (err) {
-      if (err.message && (err.message.includes('registered') || err.message.includes('deleted') || err.message.includes('required'))) {
-        throw err;
-      }
-      return { status: 'success', message: 'Verification code sent to email' };
-    }
+    return await request('/auth/send-otp', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
   },
   verifyOtp: async (payload) => {
     try {
