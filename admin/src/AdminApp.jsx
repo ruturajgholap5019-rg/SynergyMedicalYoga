@@ -907,72 +907,65 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   return (
     <div className="min-h-screen bg-[#F4F8F8] font-inter text-slate-800 pb-24">
       {/* TOP NAVIGATION BAR */}
-      {/* Unified Upgraded Admin Header Banner */}
-      <div className="bg-gradient-to-r from-[#002d2a] via-[#004d47] to-[#003834] text-white py-8 px-4 sm:px-8 shadow-2xl relative overflow-hidden border-b border-teal-400/20">
-        {/* Background Decorative Ambient Flares */}
-        <div className="absolute top-1/2 -left-20 -translate-y-1/2 w-80 h-80 rounded-full bg-teal-400/10 blur-3xl pointer-events-none"></div>
-        <div className="absolute -right-20 -bottom-20 w-96 h-96 rounded-full bg-emerald-400/15 blur-3xl pointer-events-none"></div>
+      {/* Upgraded Admin Header Banner with Original Deep Teal Theme & Refined Button Layout */}
+      <div className="bg-[#003D39] text-white py-8 px-4 sm:px-8 shadow-xl relative overflow-hidden border-b border-teal-500/30">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#002d2a] via-[#004d47] to-[#003834] opacity-95 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl pointer-events-none"></div>
         
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
           
-          {/* Left Title & System Status Section */}
-          <div className="space-y-2.5">
+          {/* Title & Status Badges */}
+          <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 text-white font-black text-base shadow-xs backdrop-blur-md">
-                🌿
-              </div>
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 backdrop-blur-md shadow-xs">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
-                </span>
-                <span>System Operational</span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 backdrop-blur-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                System Operational
               </span>
-              <span className="text-teal-200/90 font-bold text-xs bg-white/10 px-3 py-1 rounded-full border border-white/15 backdrop-blur-md">
+              <span className="text-teal-200 font-bold text-xs bg-white/10 px-3 py-1 rounded-full border border-white/15 backdrop-blur-xs">
                 Synergy Medical Management
               </span>
             </div>
             
-            <h1 className="font-sans text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white flex items-center gap-3 drop-shadow-xs">
+            <h1 className="font-sans text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3 drop-shadow-xs">
               Admin Control Panel
             </h1>
 
-            <p className="text-teal-100/90 text-xs sm:text-sm font-medium flex items-center gap-2 flex-wrap pt-0.5">
+            <p className="text-teal-100 text-xs sm:text-sm font-medium flex items-center gap-2 flex-wrap">
               <span>Authorized Session:</span>
-              <span className="font-extrabold text-white bg-white/15 px-2.5 py-0.5 rounded-lg border border-white/20 shadow-xs">
+              <span className="font-bold text-white bg-white/15 px-2.5 py-0.5 rounded-lg border border-white/20 shadow-xs">
                 {currentUser.name}
               </span>
-              <span className="text-teal-300 font-mono text-xs">({currentUser.email})</span>
+              <span className="text-teal-200 font-mono text-xs">({currentUser.email})</span>
             </p>
           </div>
 
-          {/* Right Action Bar */}
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+          {/* Refined Right Action Bar Buttons */}
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 shrink-0">
             <a
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white text-[#005550] hover:bg-emerald-50 hover:text-[#003834] px-4.5 py-2.5 rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-lg shadow-black/10 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-[0.98] border border-white/90"
-              title="Open main live website in a new tab"
+              className="h-10 bg-white text-[#005550] hover:bg-teal-50 hover:text-[#003834] px-4 rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-md transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              title="Open main website in a new tab"
             >
-              <ExternalLink className="w-3.5 h-3.5 text-[#005550]" />
+              <ExternalLink className="w-4 h-4 text-[#005550]" />
               <span>Go to Website</span>
             </a>
 
             <button
               onClick={triggerRefresh}
-              className="bg-white/10 hover:bg-white/20 text-white px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 border border-white/20 backdrop-blur-md transition-all cursor-pointer hover:scale-[1.02]"
+              className="h-10 bg-white/15 hover:bg-white/25 text-white px-3.5 rounded-xl text-xs font-bold flex items-center gap-2 border border-white/20 backdrop-blur-xs transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
               title="Refresh console data"
             >
-              <RefreshCw className={`w-3.5 h-3.5 text-teal-200 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-4 h-4 text-teal-200 ${loading ? 'animate-spin' : ''}`} />
               <span>Refresh</span>
             </button>
 
             <button
               onClick={handleLogout}
-              className="bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 border border-rose-400/30 backdrop-blur-md transition-all cursor-pointer hover:scale-[1.02]"
+              className="h-10 bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 px-4 rounded-xl text-xs font-bold flex items-center gap-2 border border-rose-400/30 backdrop-blur-xs transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
             >
-              <LogOut className="w-3.5 h-3.5 text-rose-300" />
+              <LogOut className="w-4 h-4 text-rose-300" />
               <span>Log Out</span>
             </button>
           </div>
