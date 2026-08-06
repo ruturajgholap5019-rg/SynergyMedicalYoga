@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, Loader2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, Loader2, Navigation } from 'lucide-react';
 import { useSiteSettings } from '../lib/useSiteSettings';
 import { api } from '../lib/api';
 import ScrollReveal from '../components/ScrollReveal';
@@ -234,15 +234,28 @@ export default function ContactPage() {
 
       {/* Google Maps Location Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#f4f7f8] p-4 rounded-3xl border border-gray-200/80 shadow-sm">
-          <div className="flex items-center justify-between p-3 mb-2">
-            <h4 className="font-poppins font-bold text-gray-900 text-sm flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-[#005550]" /> Visit Greens Center, Chinchwad, Pune
-            </h4>
-            <span className="text-xs text-[#005550] font-bold">Synergy HQ Clinic</span>
+        <div className="bg-[#f4f7f8] p-5 sm:p-6 rounded-3xl border border-gray-200/80 shadow-md space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 border-b border-gray-200">
+            <div>
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#005550] bg-teal-50 px-2.5 py-0.5 rounded-md border border-teal-100">
+                Synergy HQ Clinic Location
+              </span>
+              <h4 className="font-sansita font-bold text-gray-900 text-lg sm:text-xl flex items-center gap-2 mt-1">
+                <MapPin className="w-5 h-5 text-[#005550]" /> Greens Centre, Chinchwad, Pune
+              </h4>
+            </div>
+            <a
+              href="https://maps.app.goo.gl/wY28V5b61a3K9rNFA"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#005550] hover:bg-[#003d39] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer hover:scale-[1.02]"
+            >
+              <Navigation className="w-4 h-4 text-teal-200" />
+              <span>Get Directions</span>
+            </a>
           </div>
 
-          <div className="aspect-21/9 bg-gray-100 rounded-2xl overflow-hidden relative">
+          <div className="w-full h-[400px] sm:h-[450px] bg-slate-100 rounded-2xl overflow-hidden relative shadow-inner border border-gray-200">
             <iframe
               title="Synergy Medical Yoga Location"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3780.892699042978!2d73.7692424!3d18.6196134!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2b94af6338889%3A0xf98907edfb0d2a26!2sSynergy%20Medical%20Yoga!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"

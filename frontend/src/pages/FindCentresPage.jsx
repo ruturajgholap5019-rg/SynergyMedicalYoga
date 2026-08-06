@@ -170,30 +170,25 @@ export default function FindCentresPage() {
                     {selectedCenter.address}
                   </p>
 
-                  <div className="relative aspect-[4/3] bg-[#003D39] rounded-2xl overflow-hidden p-4 flex flex-col justify-between border border-white/10">
-                    <div className="flex items-center gap-2 bg-black/30 backdrop-blur-xs p-2.5 rounded-xl">
-                      <Building2 className="w-4 h-4 text-teal-300" />
-                      <span className="text-xs font-bold text-white">{selectedCenter.city} Hub ({selectedCenter.pincode})</span>
-                    </div>
-
-                    <div className="text-center py-6">
-                      <div className="w-12 h-12 bg-white text-[#005550] rounded-full flex items-center justify-center mx-auto shadow-lg animate-bounce">
-                        <MapPin className="w-6 h-6" />
-                      </div>
-                      <p className="text-xs font-bold text-white mt-2">{selectedCenter.name}</p>
-                      <p className="text-[10px] text-teal-200">Open Today • {selectedCenter.hours}</p>
-                    </div>
-
-                    <a
-                      href={selectedCenter.mapUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full bg-white hover:bg-gray-100 text-[#005550] text-xs font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md"
-                    >
-                      <Navigation className="w-4 h-4" />
-                      <span>Open in Google Maps Navigation</span>
-                    </a>
+                  <div className="relative aspect-[4/3] bg-slate-100 rounded-2xl overflow-hidden border border-white/20 shadow-md">
+                    <iframe
+                      title={`${selectedCenter.name} Location`}
+                      src={selectedCenter.embedUrl || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3780.892699042978!2d73.7692424!3d18.6196134!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2b94af6338889%3A0xf98907edfb0d2a26!2sSynergy%20Medical%20Yoga!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin'}
+                      className="w-full h-full border-0"
+                      allowFullScreen
+                      loading="lazy"
+                    />
                   </div>
+
+                  <a
+                    href={selectedCenter.mapUrl || 'https://maps.app.goo.gl/wY28V5b61a3K9rNFA'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-white hover:bg-gray-100 text-[#005550] text-xs font-extrabold py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer hover:scale-[1.01]"
+                  >
+                    <Navigation className="w-4 h-4 text-[#005550]" />
+                    <span>Open in Google Maps App</span>
+                  </a>
 
                   <div className="bg-white/10 p-3 rounded-xl text-xs space-y-1">
                     <p className="text-white/80">Need immediate booking at this center?</p>
