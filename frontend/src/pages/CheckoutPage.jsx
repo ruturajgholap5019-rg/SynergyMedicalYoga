@@ -209,7 +209,13 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
       toast.success('Order placed successfully!', { toastId: 'order-success' });
 
     } catch (err) {
-      toast.error(err.message || 'Failed to process checkout. Please verify your details and try again.');
+      const errorMsg = err.message || 'Failed to process checkout. Please verify your details and try again.';
+      if (errorMsg.includes('Cashfree') && (errorMsg.includes('missing') || errorMsg.includes('not configured'))) {
+        toast.error('⚠️ Cashfree gateway credentials not configured. Please choose "Pay via UPI" to place your order.', { autoClose: 6000, toastId: 'cf-unconfigured' });
+        setPaymentMethod('upi');
+      } else {
+        toast.error(errorMsg);
+      }
     } finally {
       setIsSubmitting(false);
     }

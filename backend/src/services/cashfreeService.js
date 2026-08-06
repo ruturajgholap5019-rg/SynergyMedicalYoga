@@ -41,7 +41,7 @@ exports.createCashfreeOrderSession = async ({ orderId, amount, customerInfo, ret
   const { appId, secretKey, mode } = await getCashfreeCredentials();
 
   if (!appId || !secretKey) {
-    throw new Error('Cashfree App ID or Secret Key is missing in settings.');
+    throw new Error('Cashfree Payment Gateway is not configured. Please set Cashfree App ID & Secret Key in Admin Settings or backend environment variables, or select "Pay via UPI".');
   }
 
   const baseUrl = mode.toUpperCase() === 'PRODUCTION'
