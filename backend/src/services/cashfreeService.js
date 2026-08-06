@@ -43,9 +43,6 @@ exports.createCashfreeOrderSession = async ({ orderId, amount, customerInfo, ret
   if (!appId || !secretKey) {
     throw new Error('Cashfree App ID or Secret Key is missing in settings.');
   }
-  if (!customerInfo?.email) {
-    throw new Error('Customer email is required to create a payment session.');
-  }
 
   const baseUrl = mode.toUpperCase() === 'PRODUCTION'
     ? 'https://api.cashfree.com/pg/orders'
@@ -53,6 +50,7 @@ exports.createCashfreeOrderSession = async ({ orderId, amount, customerInfo, ret
 
   const rawPhone = (customerInfo?.phone || '').replace(/[^0-9]/g, '');
   const cleanPhone = rawPhone.length >= 10 ? rawPhone.slice(-10) : '9876543210';
+  const customerEmail = (customerInfo?.email || 'customer@synergymedicalyoga.com').trim();
 
   const payload = {
     order_id: `CF_${orderId}_${Date.now()}`,
@@ -61,12 +59,12 @@ exports.createCashfreeOrderSession = async ({ orderId, amount, customerInfo, ret
     customer_details: {
       customer_id: customerInfo?.id || `CUST_${Date.now()}`,
       customer_name: customerInfo?.name || 'Valued Customer',
-      customer_email: customerInfo?.email || 'customer@synergymedicalyoga.com',
+      customer_email: customerEmail,
       customer_phone: cleanPhone,
     },
     order_meta: {
       return_url: returnUrl,
-      notify_url: notifyUrl,
+      ...(notifyUrl && String(notifyUrl).startsWith('https://') ? { notify_url: notifyUrl } : {}),
     },
   };
 

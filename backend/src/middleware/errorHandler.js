@@ -43,13 +43,12 @@ const sendErrorProd = (err, res) => {
 
 exports.errorHandler = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error';
+  err.status = err.status || (`${err.statusCode}`.startsWith('4') ? 'fail' : 'error');
 
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else {
-    let error = { ...err };
-    error.message = err.message;
+    let error = err;
 
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
