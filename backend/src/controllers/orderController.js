@@ -191,6 +191,18 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
     if (req.user?._id) {
       await Cart.findOneAndDelete({ user: req.user._id });
     }
+
+    notificationService.sendOrderNotification({
+      orderId: order._id,
+      customerName: customerInfo?.name || req.user?.name || 'Valued Customer',
+      phone: customerInfo?.phone || req.user?.phone || '',
+      email: customerInfo?.email || req.user?.email || '',
+      totalAmount,
+      paymentMethod,
+    }).catch((err) => {
+      console.error('Background order notification error:', err.message);
+    });
+
     return res.status(201).json({
       status: 'success',
       order: order,
