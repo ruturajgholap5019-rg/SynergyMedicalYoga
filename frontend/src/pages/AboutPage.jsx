@@ -15,7 +15,7 @@ const APPSTORE      = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09
 const PLAY_QR       = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/WhatsApp-Image-2025-06-03-at-8.34.11-PM.jpeg';
 const APPLE_QR      = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/WhatsApp-Image-2025-07-07-at-1.34.20-PM-1024x1024.jpeg';
 const INTEGRATED_BG = 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Website-Baners-04-992x1024.png';
-const APP_MOCKUP    = 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png';
+const APP_MOCKUP    = 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-२-1-scaled.png';
 
 const TEAM = [
   { 
@@ -212,21 +212,22 @@ export default function AboutPage() {
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-[#f4f7f8] border-t border-gray-200">
         <div className="max-w-7xl mx-auto">
           
+          {/* Full-width Title Header */}
+          <div className="space-y-4 mb-12 max-w-4xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#005550] bg-teal-50 px-3.5 py-1.5 rounded-full border border-teal-200/60 inline-block">
+              Clinical Synergy
+            </span>
+            <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight">
+              Medical Yoga Therapy{' '}
+              <span className="text-[#005550]">Integrated Approach To Joint Care</span>
+            </h2>
+            <div className="w-24 h-1.5 bg-[#005550] rounded-full mt-2" />
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
             
-            {/* Left Column: Title & Anatomical Poster */}
+            {/* Left Column: Anatomical Poster */}
             <div className="lg:col-span-5 space-y-8 lg:sticky lg:top-24">
-              <div className="space-y-4">
-                <span className="text-xs font-bold uppercase tracking-widest text-[#005550] bg-teal-50 px-3 py-1 rounded-full border border-teal-200/60">
-                  Clinical Synergy
-                </span>
-                <h2 className="font-sansita text-3xl sm:text-4xl lg:text-[40px] font-extrabold text-gray-900 leading-tight">
-                  Medical Yoga Therapy <br />
-                  <span className="text-[#005550]">Integrated Approach To Joint Care</span>
-                </h2>
-                <div className="w-20 h-1 bg-[#005550] rounded" />
-              </div>
-
               <div className="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden h-[480px] sm:h-[540px] lg:h-[600px] w-full">
                 <img
                   src={INTEGRATED_BG}
@@ -294,9 +295,9 @@ export default function AboutPage() {
       {/* ──────────────────────────────────────────────
           6. FULL-WIDTH PROMOTIONAL APP BANNER (ABOVE FOOTER)
           ────────────────────────────────────────────── */}
-      <section className="w-full bg-[#e2e6e6] overflow-hidden py-12 sm:py-16 lg:py-20 border-t border-gray-300/60 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-linear-to-b from-[#e8f6f6] to-[#d6efef] border-t border-teal-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Left Column: Title, Store Buttons & QR Codes */}
             <div className="lg:col-span-7 space-y-8 text-left">
@@ -342,7 +343,7 @@ export default function AboutPage() {
               <img
                 src={getImageUrl(settings.appMockupImage || APP_MOCKUP)}
                 alt="Therapist holding Synergy MYT App"
-                className="max-w-sm sm:max-w-md w-full object-contain drop-shadow-2xl transform hover:scale-102 transition-transform duration-500"
+                className="max-w-lg lg:max-w-xl w-full h-auto max-h-[580px] sm:max-h-[680px] lg:max-h-[750px] object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
               />
             </div>
 

@@ -25,7 +25,7 @@ const defaultSettings = {
   appStoreUrl: 'https://play.google.com/store/search?q=synergy%20medical&c=apps',
   playStoreQrImage: 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/WhatsApp-Image-2025-06-03-at-8.34.11-PM.jpeg',
   appStoreQrImage: 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/WhatsApp-Image-2025-07-07-at-1.34.20-PM-1024x1024.jpeg',
-  appMockupImage: 'https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png',
+  appMockupImage: 'https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-२-1-scaled.png',
 
   // Contact & Socials
   contactPhone: '+91 97303 21042',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, ArrowRight, Star, QrCode } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight, Star, QrCode, BookOpen, Package, Smartphone } from 'lucide-react';
 import { PRODUCTS } from '../data/mockData';
 import { api, getImageUrl } from '../lib/api';
 import ProductCard from '../components/ProductCard';
@@ -397,6 +397,104 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
         </div>
       </section>
 
+      {/* ──────────────────────────────────────────────
+          2B. SYNERGY EDUCATION - LEARN RBT
+          ────────────────────────────────────────────── */}
+      <section className="py-20 bg-white border-b border-gray-100 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal animation="fade-up">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+              {/* Left Image Column */}
+              <div className="lg:col-span-6 flex justify-center">
+                <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-teal-100/80 group max-w-lg w-full">
+                  <img
+                    src="https://synergymedicalyoga.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-07-31-at-7.30.41-AM-1-e1785843613878.jpeg"
+                    alt="Learn Rope & Belt Therapy with Synergy Medical Yoga"
+                    className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#003834]/20 via-transparent to-transparent opacity-60 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Right Content Column */}
+              <div className="lg:col-span-6 space-y-7">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-widest text-[#005550] bg-teal-50 px-3.5 py-1 rounded-full border border-teal-200/80">
+                      Synergy education
+                    </span>
+                    <div className="h-0.5 w-12 bg-[#005550]/40 rounded-full" />
+                  </div>
+                  
+                  <h2 className="font-sansita text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+                    Learn Rope &amp; Belt Therapy with Synergy Medical Yoga
+                  </h2>
+                </div>
+
+                <p className="text-base sm:text-lg text-gray-700 leading-relaxed font-normal">
+                  Build practical skills through Synergy’s structured Rope &amp; Belt Therapy education programme, designed for yoga teachers, therapists and wellness professionals.
+                </p>
+
+                {/* 3 Feature Boxes */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                  {/* Box 1 */}
+                  <div className="bg-[#f4fbfb] p-5 rounded-2xl border border-teal-100/80 text-center hover:bg-teal-50/70 transition-all duration-300 shadow-xs flex flex-col items-center justify-center space-y-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#005550] text-white flex items-center justify-center shadow-md">
+                      <BookOpen className="w-6 h-6 text-teal-200" />
+                    </div>
+                    <h3 className="font-poppins font-bold text-gray-900 text-xs sm:text-sm leading-snug">
+                      Structured curriculum
+                    </h3>
+                  </div>
+
+                  {/* Box 2 */}
+                  <div className="bg-[#f4fbfb] p-5 rounded-2xl border border-teal-100/80 text-center hover:bg-teal-50/70 transition-all duration-300 shadow-xs flex flex-col items-center justify-center space-y-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#005550] text-white flex items-center justify-center shadow-md">
+                      <Package className="w-6 h-6 text-teal-200" />
+                    </div>
+                    <h3 className="font-poppins font-bold text-gray-900 text-xs sm:text-sm leading-snug">
+                      Individual RBT kit for practice
+                    </h3>
+                  </div>
+
+                  {/* Box 3 */}
+                  <div className="bg-[#f4fbfb] p-5 rounded-2xl border border-teal-100/80 text-center hover:bg-teal-50/70 transition-all duration-300 shadow-xs flex flex-col items-center justify-center space-y-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#005550] text-white flex items-center justify-center shadow-md">
+                      <Smartphone className="w-6 h-6 text-teal-200" />
+                    </div>
+                    <h3 className="font-poppins font-bold text-gray-900 text-xs sm:text-sm leading-snug">
+                      Continued learning and app support
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Explore Education Button */}
+                <div className="pt-2">
+                  <a
+                    href="https://synergymedicalyoga.com/education/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                      if (setActivePage) {
+                        e.preventDefault();
+                        setActivePage('course');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                    }}
+                    className="bg-[#005550] hover:bg-[#003d39] text-white font-bold px-8 py-3.5 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 inline-flex items-center gap-2.5 btn-glow-primary group cursor-pointer"
+                  >
+                    <span>Explore Education</span>
+                    <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
 
       {/* ──────────────────────────────────────────────
           3. WHY LEARN RBT WITH SYNERGY MEDICAL YOGA
@@ -747,9 +845,9 @@ export default function HomePage({ setActivePage, onAddToCart, onQuickView, onVi
 
             <div className="lg:col-span-6 flex justify-center">
               <img
-                src={getImageUrl(settings.appMockupImage || "https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png")}
+                src={getImageUrl(settings.appMockupImage || "https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-२-1-scaled.png")}
                 alt="Therapist with Synergy MYT App"
-                className="max-w-md w-full object-contain drop-shadow-2xl animate-float-slow"
+                className="max-w-lg lg:max-w-xl w-full h-auto max-h-[580px] sm:max-h-[680px] lg:max-h-[750px] object-contain drop-shadow-2xl animate-float-slow transform hover:scale-105 transition-transform duration-500"
               />
             </div>
           </div>

@@ -261,11 +261,11 @@ export default function ShopPage({ onAddToCart, onQuickView, onViewDetails, onBu
                   If you need additional in-person help, download the app for finding nearest therapist
                 </p>
               </div>
-              <div className="h-44 sm:h-48 flex items-end justify-center relative transform hover:scale-105 transition-transform duration-500">
+              <div className="h-64 sm:h-80 flex items-end justify-center relative transform hover:scale-105 transition-transform duration-500">
                 <img
-                  src="https://synergymedicalyoga.com/wp-content/uploads/2025/09/Download-Our-App-1-scaled-1.png"
+                  src="https://synergymedicalyoga.com/wp-content/uploads/2025/10/Download-the-app-Synergy-MYT-२-1-scaled.png"
                   alt="Find Nearest Therapist App"
-                  className="max-h-full object-contain filter drop-shadow-xl"
+                  className="max-h-full h-60 sm:h-72 object-contain filter drop-shadow-xl"
                 />
               </div>
             </div>

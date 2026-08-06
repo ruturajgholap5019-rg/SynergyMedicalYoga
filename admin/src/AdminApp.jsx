@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import {
   LayoutDashboard,
   Package,
@@ -93,28 +94,30 @@ function ContentManager({ items = [], refresh, showToast }) {
       resetForm();
       refresh?.();
     } catch (err) {
-      alert(err.message || 'Failed to save CMS item');
+      showToast?.(err.message || 'Failed to save CMS item', 'error');
     }
   };
 
   const togglePublished = async (item) => {
+    const id = item._id || item.id;
     try {
-      await api.updateAdminContentItem(item._id, { isPublished: !item.isPublished });
+      await api.updateAdminContentItem(id, { isPublished: !item.isPublished });
       showToast?.(item.isPublished ? 'Content unpublished' : 'Content published');
       refresh?.();
     } catch (err) {
-      alert(err.message || 'Failed to toggle publish status');
+      showToast?.(err.message || 'Failed to toggle publish status', 'error');
     }
   };
 
   const deleteItem = async (item) => {
+    const id = item._id || item.id;
     if (!window.confirm(`Are you sure you want to delete "${item.title}"?`)) return;
     try {
-      await api.deleteAdminContentItem(item._id);
+      await api.deleteAdminContentItem(id);
       showToast?.('Content deleted');
       refresh?.();
     } catch (err) {
-      alert(err.message || 'Failed to delete item');
+      showToast?.(err.message || 'Failed to delete item', 'error');
     }
   };
 
@@ -357,30 +360,40 @@ function EnquiriesManager({ enquiries = [], refresh, showToast }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const updateStatus = async (enquiry, status) => {
+    const id = enquiry._id || enquiry.id;
+    if (!id) {
+      showToast?.('Invalid enquiry ID', 'error');
+      return;
+    }
     try {
-      await api.updateAdminContactMessageStatus(enquiry._id, { status });
+      await api.updateAdminContactMessageStatus(id, { status });
       showToast?.(`Enquiry status updated to ${status}`);
-      if (selectedEnquiryModal?._id === enquiry._id) {
+      const modalId = selectedEnquiryModal?._id || selectedEnquiryModal?.id;
+      if (modalId === id) {
         setSelectedEnquiryModal((prev) => (prev ? { ...prev, status } : null));
       }
       refresh?.();
     } catch (err) {
-      alert(err.message || 'Failed to update enquiry status');
+      showToast?.(err.message || 'Failed to update enquiry status', 'error');
+      refresh?.();
     }
   };
 
   const deleteEnquiry = async (id) => {
+    if (!id) return;
     if (!window.confirm('Are you sure you want to delete this contact message?')) return;
     try {
       await api.deleteAdminContactMessage(id);
       showToast?.('Enquiry deleted successfully');
-      if (selectedEnquiryModal?._id === id) {
+      const modalId = selectedEnquiryModal?._id || selectedEnquiryModal?.id;
+      if (modalId === id) {
         setSelectedEnquiryModal(null);
       }
       setSelectedIds((prev) => prev.filter((i) => i !== id));
       refresh?.();
     } catch (err) {
-      alert(err.message || 'Failed to delete enquiry');
+      showToast?.(err.message || 'Failed to delete enquiry', 'error');
+      refresh?.();
     }
   };
 
@@ -395,7 +408,7 @@ function EnquiriesManager({ enquiries = [], refresh, showToast }) {
     if (selectedIds.length === filteredEnquiries.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(filteredEnquiries.map((e) => e._id));
+      setSelectedIds(filteredEnquiries.map((e) => e._id || e.id).filter(Boolean));
     }
   };
 
@@ -408,7 +421,8 @@ function EnquiriesManager({ enquiries = [], refresh, showToast }) {
       setSelectedIds([]);
       refresh?.();
     } catch (err) {
-      alert('Error deleting selected items');
+      showToast?.(err.message || 'Error deleting selected items', 'error');
+      refresh?.();
     }
   };
 
@@ -420,7 +434,8 @@ function EnquiriesManager({ enquiries = [], refresh, showToast }) {
       setSelectedIds([]);
       refresh?.();
     } catch (err) {
-      alert('Error updating selected items');
+      showToast?.(err.message || 'Error updating selected items', 'error');
+      refresh?.();
     }
   };
 
@@ -555,10 +570,11 @@ function EnquiriesManager({ enquiries = [], refresh, showToast }) {
       {/* Grid Layout: 3 to 4 boxes per line */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
         {filteredEnquiries.map((enquiry) => {
-          const isSelected = selectedIds.includes(enquiry._id);
+          const enqId = enquiry._id || enquiry.id;
+          const isSelected = selectedIds.includes(enqId);
           return (
             <div
-              key={enquiry._id}
+              key={enqId}
               className={`border rounded-2xl p-4 space-y-3 bg-white flex flex-col justify-between hover:border-teal-300 transition-all shadow-2xs relative ${
                 isSelected ? 'border-[#005550] bg-teal-50/20 ring-2 ring-[#005550]/20' : 'border-gray-200/90'
               }`}
@@ -568,7 +584,7 @@ function EnquiriesManager({ enquiries = [], refresh, showToast }) {
                   <div className="flex items-center gap-2 min-w-0">
                     {isSelectMode && (
                       <button
-                        onClick={() => toggleSelectId(enquiry._id)}
+                        onClick={() => toggleSelectId(enqId)}
                         className="text-[#005550] cursor-pointer"
                       >
                         {isSelected ? (
@@ -638,7 +654,7 @@ function EnquiriesManager({ enquiries = [], refresh, showToast }) {
                   </button>
 
                   <button
-                    onClick={() => deleteEnquiry(enquiry._id)}
+                    onClick={() => deleteEnquiry(enqId)}
                     className="p-1.5 text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition-all cursor-pointer"
                     title="Delete enquiry"
                   >
@@ -839,9 +855,13 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   });
 
   // Single clean toast handler (short 2-4 words)
-  const showToast = (msg) => {
+  const showToast = (msg, type = 'success') => {
     if (!msg) return;
-    toast.success(msg, { toastId: msg, autoClose: 2000 });
+    if (type === 'error') {
+      toast.error(msg, { id: msg, duration: 4000 });
+    } else {
+      toast.success(msg, { id: msg, duration: 2000 });
+    }
   };
 
   // Check auth session
@@ -898,7 +918,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       if (res.data) setContentItems(res.data);
     } catch (err) {
       if (!String(err.message || '').includes('/api/admin/content')) {
-        showToast(err.message || 'Failed to fetch CMS content');
+        showToast(err.message || 'Failed to fetch CMS content', 'error');
       }
       setContentItems([]);
     } finally {
@@ -912,7 +932,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       const res = await api.getAdminContactMessages();
       if (res.data) setEnquiries(res.data);
     } catch (err) {
-      showToast(err.message || 'Failed to fetch enquiries');
+      showToast(err.message || 'Failed to fetch enquiries', 'error');
     } finally {
       setLoading(false);
     }
@@ -924,7 +944,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       const res = await api.getAdminProducts();
       if (res.data) setProducts(res.data);
     } catch (err) {
-      showToast(err.message || 'Failed to fetch products from database');
+      showToast(err.message || 'Failed to fetch products from database', 'error');
     } finally {
       setLoading(false);
     }
@@ -936,7 +956,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       const res = await api.getAdminUsers();
       if (res.data) setUsers(res.data);
     } catch (err) {
-      showToast(err.message || 'Failed to fetch users from database');
+      showToast(err.message || 'Failed to fetch users from database', 'error');
     } finally {
       setLoading(false);
     }
@@ -948,7 +968,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       const res = await api.getAdminOrders();
       if (res.data) setOrders(res.data);
     } catch (err) {
-      showToast(err.message || 'Failed to fetch orders from database');
+      showToast(err.message || 'Failed to fetch orders from database', 'error');
     } finally {
       setLoading(false);
     }
@@ -961,7 +981,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
     try {
       const res = await api.login({ email: loginEmail, password: loginPassword });
       if (res.user?.role !== 'admin') {
-        alert('Access denied. Administrator privileges required.');
+        showToast('Access denied. Administrator privileges required.', 'error');
         return;
       }
       setCurrentUser(res.user);
@@ -969,7 +989,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       onAuthSuccess?.(res.user);
       showToast('Logged in');
     } catch (err) {
-      alert(err.message || 'Admin login failed');
+      showToast(err.message || 'Admin login failed', 'error');
     } finally {
       setLoading(false);
     }
@@ -1052,7 +1072,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       setIsProductModalOpen(false);
       triggerRefresh();
     } catch (err) {
-      alert(err.message || 'Failed to save product');
+      showToast(err.message || 'Failed to save product', 'error');
     }
   };
 
@@ -1062,7 +1082,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       showToast('Product deleted');
       triggerRefresh();
     } catch (err) {
-      alert(err.message || 'Failed to delete product');
+      showToast(err.message || 'Failed to delete product', 'error');
     }
   };
 
@@ -1099,7 +1119,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
         cleanPhone = cleanPhone.slice(2);
       }
       if (cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
-        alert('Please enter a valid 10-digit mobile number (e.g. 9876543210).');
+        showToast('Please enter a valid 10-digit mobile number (e.g. 9876543210).', 'error');
         return;
       }
     }
@@ -1115,7 +1135,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
         showToast('User updated');
       } else {
         if (!userFormData.password || userFormData.password.length < 8) {
-          alert('Password must be at least 8 characters long for new users.');
+          showToast('Password must be at least 8 characters long for new users.', 'error');
           return;
         }
         await api.createAdminUser(userFormData);
@@ -1125,7 +1145,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       setIsUserModalOpen(false);
       triggerRefresh();
     } catch (err) {
-      alert(err.message || 'Failed to save user');
+      showToast(err.message || 'Failed to save user', 'error');
     }
   };
 
@@ -1135,7 +1155,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       showToast('User deleted');
       triggerRefresh();
     } catch (err) {
-      alert(err.message || 'Failed to delete user');
+      showToast(err.message || 'Failed to delete user', 'error');
     }
   };
 
@@ -1146,7 +1166,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       showToast('Order updated');
       triggerRefresh();
     } catch (err) {
-      alert(err.message || 'Failed to update order status');
+      showToast(err.message || 'Failed to update order status', 'error');
     }
   };
 
@@ -1156,7 +1176,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       showToast('Payment status updated');
       triggerRefresh();
     } catch (err) {
-      alert(err.message || 'Failed to update payment status');
+      showToast(err.message || 'Failed to update payment status', 'error');
     }
   };
 
@@ -1166,7 +1186,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
       showToast('Order deleted');
       triggerRefresh();
     } catch (err) {
-      alert(err.message || 'Failed to delete order');
+      showToast(err.message || 'Failed to delete order', 'error');
     }
   };
 
@@ -1195,6 +1215,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
   if (!currentUser) {
     return (
       <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center p-4">
+        <Toaster position="top-right" reverseOrder={false} />
         <div className="bg-slate-800 border border-slate-700 rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-6">
           <div className="text-center space-y-2">
             <div className="w-14 h-14 bg-[#005550] text-teal-200 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
@@ -1253,6 +1274,7 @@ export default function AdminApp({ initialUser = null, onAuthSuccess, onLogout }
 
   return (
     <div className="min-h-screen bg-[#F4F8F8] font-inter text-slate-800 pb-24">
+      <Toaster position="top-right" reverseOrder={false} />
       {/* TOP NAVIGATION BAR */}
       {/* Upgraded Admin Header Banner with Original Deep Teal Theme & Refined Button Layout */}
       <div className="bg-[#003D39] text-white py-8 px-4 sm:px-8 shadow-xl relative overflow-hidden border-b border-teal-500/30">
