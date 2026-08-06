@@ -167,30 +167,24 @@ export default function CheckoutPage({ cart, currentUser, onOrderComplete, setAc
 
       const response = await api.createCheckoutSession(payload);
 
-      // 1. Process Cashfree PG Checkout (Primary Gateway - External Browser Flow)
+      // 1. Process Cashfree PG Checkout (Primary Gateway)
       if (paymentMethod === 'cashfree') {
         if (!response?.paymentSessionId) {
           toast.error('Unable to initialize Cashfree payment. Please check Cashfree App ID & Secret Key in settings.');
           return;
         }
 
-        const paymentWindow = window.open('', '_blank');
-        if (!paymentWindow) {
-          toast.error('Please allow popups for this site so the Cashfree payment portal can open in a new tab.');
-          return;
-        }
-
-        toast.info('⏳ Opening Cashfree payment portal in a new browser tab...', { autoClose: 2000, toastId: 'cf-launch' });
+        toast.info('⏳ Redirecting to secure Cashfree payment portal...', { autoClose: 2000, toastId: 'cf-launch' });
         const CashfreeSDK = await loadCashfreeSdk();
         if (CashfreeSDK) {
-          const cashfree = CashfreeSDK({ mode: response.cfMode || 'sandbox' });
+          const mode = (response.cfMode || '').toLowerCase() === 'production' ? 'production' : 'sandbox';
+          const cashfree = CashfreeSDK({ mode });
           cashfree.checkout({
             paymentSessionId: response.paymentSessionId,
-            redirectTarget: '_blank',
+            redirectTarget: '_self',
           });
           return;
         } else {
-          paymentWindow.close();
           toast.error('Failed to load Cashfree Payment SDK. Please try again.');
           return;
         }
