@@ -172,4 +172,7 @@ export const api = {
     method: 'PUT',
     body: JSON.stringify(payload),
   }),
+  deleteAdminContactMessage: (id) => request(`/admin/contact-messages/${id}`, {
+    method: 'DELETE',
+  }),
 };

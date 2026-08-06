@@ -212,7 +212,10 @@ exports.refresh = catchAsync(async (req, res, next) => {
 
   const user = await User.findById(decoded.id).select('+tokenVersion');
   if (!user) return next(new AppError('User not found.', 401));
-  if (user.isDeleted) return next(new AppError('This account has been permanently deleted.', 401));
+  if (user.isDeleted) {
+    clearTokensCookies(res);
+    return next(new AppError('Session expired. Please log in again.', 401));
+  }
   if ((decoded.tokenVersion || 0) !== (user.tokenVersion || 0)) {
     return next(new AppError('Session expired. Please log in again.', 401));
   }

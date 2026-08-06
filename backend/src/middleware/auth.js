@@ -18,6 +18,16 @@ const accessCookieOptions = () => ({
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
 
+const clearTokensCookies = (res) => {
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  };
+  res.clearCookie('accessToken', cookieOptions);
+  res.clearCookie('refreshToken', cookieOptions);
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
   let token = req.cookies.accessToken;
 
@@ -34,9 +44,11 @@ exports.protect = catchAsync(async (req, res, next) => {
       const user = await User.findById(decoded.id).select('-password +tokenVersion');
       if (user) {
         if (user.isDeleted) {
-          return next(new AppError('This account has been permanently deleted.', 401));
+          clearTokensCookies(res);
+          return next(new AppError('Session expired. Please log in again.', 401));
         }
         if ((decoded.tokenVersion || 0) !== (user.tokenVersion || 0)) {
+          clearTokensCookies(res);
           return next(new AppError('Session expired. Please log in again.', 401));
         }
         req.user = sanitizeUser(user);
@@ -57,10 +69,12 @@ exports.protect = catchAsync(async (req, res, next) => {
         if (user) {
           if (user.isDeleted) {
             await RefreshToken.findOneAndUpdate({ token: refreshToken }, { revoked: true });
-            return next(new AppError('This account has been permanently deleted.', 401));
+            clearTokensCookies(res);
+            return next(new AppError('Session expired. Please log in again.', 401));
           }
           if ((decodedRefresh.tokenVersion || 0) !== (user.tokenVersion || 0)) {
             await RefreshToken.findOneAndUpdate({ token: refreshToken }, { revoked: true });
+            clearTokensCookies(res);
             return next(new AppError('Session expired. Please log in again.', 401));
           }
           const newAccessToken = generateAccessToken(user._id, user.role, user.tokenVersion || 0);
@@ -74,7 +88,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     }
   }
 
-  return next(new AppError('Unauthorized: Please log in with valid security credentials to access this protected route.', 401));
+  clearTokensCookies(res);
+  return next(new AppError('Unauthorized: Please log in to access this page.', 401));
 });
 
 exports.optionalProtect = catchAsync(async (req, res, next) => {

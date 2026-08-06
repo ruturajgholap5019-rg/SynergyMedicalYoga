@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 import {
   LayoutDashboard,
   Package,
@@ -19,7 +18,12 @@ import {
   ExternalLink,
   Edit3,
   CheckCircle2,
-  Trash2
+  Trash2,
+  CheckSquare,
+  Square,
+  Send,
+  Search,
+  MessageSquare
 } from 'lucide-react';
 import { api, clearClientLogoutMarker, wasClientLoggedOut } from './lib/api';
 
@@ -346,10 +350,19 @@ function ContentManager({ items = [], refresh, showToast }) {
 }
 
 function EnquiriesManager({ enquiries = [], refresh, showToast }) {
+  const [selectedEnquiryModal, setSelectedEnquiryModal] = useState(null);
+  const [isSelectMode, setIsSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+
   const updateStatus = async (enquiry, status) => {
     try {
       await api.updateAdminContactMessageStatus(enquiry._id, { status });
-      showToast?.('Enquiry updated');
+      showToast?.(`Enquiry status updated to ${status}`);
+      if (selectedEnquiryModal?._id === enquiry._id) {
+        setSelectedEnquiryModal((prev) => (prev ? { ...prev, status } : null));
+      }
       refresh?.();
     } catch (err) {
       alert(err.message || 'Failed to update enquiry status');
@@ -357,70 +370,404 @@ function EnquiriesManager({ enquiries = [], refresh, showToast }) {
   };
 
   const deleteEnquiry = async (id) => {
-    if (!window.confirm('Delete this contact message?')) return;
+    if (!window.confirm('Are you sure you want to delete this contact message?')) return;
     try {
       await api.deleteAdminContactMessage(id);
-      showToast?.('Enquiry deleted');
+      showToast?.('Enquiry deleted successfully');
+      if (selectedEnquiryModal?._id === id) {
+        setSelectedEnquiryModal(null);
+      }
+      setSelectedIds((prev) => prev.filter((i) => i !== id));
       refresh?.();
     } catch (err) {
       alert(err.message || 'Failed to delete enquiry');
     }
   };
 
+  // Bulk actions
+  const toggleSelectId = (id) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const selectAll = () => {
+    if (selectedIds.length === filteredEnquiries.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredEnquiries.map((e) => e._id));
+    }
+  };
+
+  const bulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    if (!window.confirm(`Delete ${selectedIds.length} selected enquiries permanently?`)) return;
+    try {
+      await Promise.all(selectedIds.map((id) => api.deleteAdminContactMessage(id)));
+      showToast?.(`${selectedIds.length} enquiries deleted`);
+      setSelectedIds([]);
+      refresh?.();
+    } catch (err) {
+      alert('Error deleting selected items');
+    }
+  };
+
+  const bulkUpdateStatus = async (status) => {
+    if (selectedIds.length === 0) return;
+    try {
+      await Promise.all(selectedIds.map((id) => api.updateAdminContactMessageStatus(id, { status })));
+      showToast?.(`Updated ${selectedIds.length} enquiries to ${status}`);
+      setSelectedIds([]);
+      refresh?.();
+    } catch (err) {
+      alert('Error updating selected items');
+    }
+  };
+
+  const handleOpenEmailClient = (enquiry) => {
+    const subject = encodeURIComponent(`Re: ${enquiry.subject || 'Website Enquiry'}`);
+    const body = encodeURIComponent(
+      `Hello ${enquiry.name},\n\nThank you for contacting Synergy Medical Yoga.\n\nRegarding your enquiry:\n"${enquiry.message}"\n\nBest regards,\nSynergy Medical Yoga Team`
+    );
+    window.location.href = `mailto:${enquiry.email}?subject=${subject}&body=${body}`;
+    updateStatus(enquiry, 'replied');
+  };
+
+  // Filtering
+  const filteredEnquiries = enquiries.filter((e) => {
+    const matchesStatus = filterStatus === 'all' || (e.status || 'new') === filterStatus;
+    const q = searchQuery.toLowerCase().trim();
+    const matchesSearch = !q || (
+      (e.name || '').toLowerCase().includes(q) ||
+      (e.email || '').toLowerCase().includes(q) ||
+      (e.subject || '').toLowerCase().includes(q) ||
+      (e.message || '').toLowerCase().includes(q)
+    );
+    return matchesStatus && matchesSearch;
+  });
+
   return (
-    <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-md space-y-6">
-      <div className="border-b border-gray-100 pb-4">
-        <h3 className="font-sansita text-2xl font-bold text-[#005550]">Website Enquiries &amp; Patient Messages</h3>
-        <p className="text-xs text-gray-500">Contact form submissions from ruturajgholap5019@gmail.com testing mode &amp; website users.</p>
+    <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-md space-y-6">
+      {/* Header & Controls */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h3 className="font-sansita text-2xl font-bold text-[#005550]">Website Enquiries & Patient Messages</h3>
+            <span className="bg-teal-50 text-[#005550] text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border border-teal-100">
+              {enquiries.length} total
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Review patient enquiries, respond directly via email, or perform bulk operations.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Search */}
+          <div className="relative">
+            <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-3" />
+            <input
+              type="text"
+              placeholder="Search enquiries..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#005550] w-44 sm:w-52 font-medium"
+            />
+          </div>
+
+          {/* Filter Status */}
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none cursor-pointer focus:border-[#005550]"
+          >
+            <option value="all">All Statuses</option>
+            <option value="new">New</option>
+            <option value="read">Read</option>
+            <option value="replied">Replied</option>
+            <option value="archived">Archived</option>
+          </select>
+
+          {/* Toggle Select Mode ("Select More") */}
+          <button
+            onClick={() => {
+              setIsSelectMode(!isSelectMode);
+              if (isSelectMode) setSelectedIds([]);
+            }}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ${
+              isSelectMode
+                ? 'bg-[#005550] text-white'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+          >
+            <CheckSquare className="w-3.5 h-3.5" />
+            {isSelectMode ? 'Cancel Select' : 'Select More'}
+          </button>
+        </div>
       </div>
 
-      <div className="space-y-4">
-        {enquiries.map((enquiry) => (
-          <div key={enquiry._id} className="border border-gray-200/90 rounded-2xl p-5 space-y-3 bg-slate-50/50 hover:border-teal-200 transition-all">
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-gray-100 pb-3">
+      {/* Bulk Operations Action Bar */}
+      {isSelectMode && (
+        <div className="bg-teal-50/80 border border-teal-200 p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-3 animate-in fade-in duration-150">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={selectAll}
+              className="text-xs font-bold text-[#005550] hover:underline flex items-center gap-1 cursor-pointer"
+            >
+              {selectedIds.length === filteredEnquiries.length && filteredEnquiries.length > 0 ? (
+                <CheckSquare className="w-4 h-4 text-[#005550]" />
+              ) : (
+                <Square className="w-4 h-4 text-[#005550]" />
+              )}
+              {selectedIds.length === filteredEnquiries.length ? 'Deselect All' : 'Select All'}
+            </button>
+            <span className="text-xs text-slate-500 font-medium">
+              ({selectedIds.length} of {filteredEnquiries.length} selected)
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => bulkUpdateStatus('read')}
+              disabled={selectedIds.length === 0}
+              className="px-3 py-1.5 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-bold border border-slate-200 disabled:opacity-50 cursor-pointer shadow-2xs"
+            >
+              Mark Read
+            </button>
+            <button
+              onClick={() => bulkUpdateStatus('replied')}
+              disabled={selectedIds.length === 0}
+              className="px-3 py-1.5 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-bold border border-slate-200 disabled:opacity-50 cursor-pointer shadow-2xs"
+            >
+              Mark Replied
+            </button>
+            <button
+              onClick={bulkDelete}
+              disabled={selectedIds.length === 0}
+              className="px-3 py-1.5 bg-rose-600 text-white hover:bg-rose-700 rounded-xl text-xs font-bold disabled:opacity-50 cursor-pointer shadow-2xs flex items-center gap-1"
+            >
+              <Trash2 className="w-3.5 h-3.5" /> Delete Selected ({selectedIds.length})
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Grid Layout: 3 to 4 boxes per line */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+        {filteredEnquiries.map((enquiry) => {
+          const isSelected = selectedIds.includes(enquiry._id);
+          return (
+            <div
+              key={enquiry._id}
+              className={`border rounded-2xl p-4 space-y-3 bg-white flex flex-col justify-between hover:border-teal-300 transition-all shadow-2xs relative ${
+                isSelected ? 'border-[#005550] bg-teal-50/20 ring-2 ring-[#005550]/20' : 'border-gray-200/90'
+              }`}
+            >
               <div>
-                <h4 className="font-bold text-gray-900 text-base">{enquiry.name}</h4>
-                <p className="text-xs text-gray-500 font-medium">{enquiry.email} • {enquiry.phone}</p>
-                <p className="text-xs font-bold text-[#005550] mt-1 bg-teal-50 px-2.5 py-1 rounded-lg inline-block border border-teal-100">
-                  Subject: {enquiry.subject || 'General Enquiry'}
-                </p>
+                <div className="flex items-start justify-between gap-2 border-b border-gray-100 pb-2.5 mb-2.5">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {isSelectMode && (
+                      <button
+                        onClick={() => toggleSelectId(enquiry._id)}
+                        className="text-[#005550] cursor-pointer"
+                      >
+                        {isSelected ? (
+                          <CheckSquare className="w-4 h-4 text-[#005550]" />
+                        ) : (
+                          <Square className="w-4 h-4 text-gray-300 hover:text-gray-500" />
+                        )}
+                      </button>
+                    )}
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-slate-900 text-sm truncate" title={enquiry.name}>
+                        {enquiry.name}
+                      </h4>
+                      <p className="text-[11px] text-slate-500 truncate" title={enquiry.email}>
+                        {enquiry.email}
+                      </p>
+                    </div>
+                  </div>
+
+                  <select
+                    value={enquiry.status || 'new'}
+                    onChange={(e) => updateStatus(enquiry, e.target.value)}
+                    className={`text-[10px] font-extrabold uppercase tracking-wider px-2 py-1 rounded-lg border outline-none cursor-pointer ${
+                      enquiry.status === 'replied'
+                        ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                        : enquiry.status === 'read'
+                        ? 'bg-blue-50 text-blue-800 border-blue-200'
+                        : enquiry.status === 'archived'
+                        ? 'bg-slate-100 text-slate-600 border-slate-200'
+                        : 'bg-amber-50 text-amber-800 border-amber-200'
+                    }`}
+                  >
+                    <option value="new">New</option>
+                    <option value="read">Read</option>
+                    <option value="replied">Replied</option>
+                    <option value="archived">Archived</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1.5 mb-3">
+                  <p className="text-xs font-bold text-[#005550] bg-teal-50 px-2 py-0.5 rounded-md inline-block border border-teal-100 truncate max-w-full">
+                    {enquiry.subject || 'General Enquiry'}
+                  </p>
+                  <p className="text-xs text-slate-600 font-normal line-clamp-3 leading-snug bg-slate-50/70 p-2.5 rounded-xl border border-slate-100 italic">
+                    "{enquiry.message}"
+                  </p>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <select
-                  value={enquiry.status || 'new'}
-                  onChange={(e) => updateStatus(enquiry, e.target.value)}
-                  className="bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-800 shadow-xs outline-none cursor-pointer focus:border-[#005550]"
+              {/* Box Footer Actions */}
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-1">
+                <button
+                  onClick={() => setSelectedEnquiryModal(enquiry)}
+                  className="px-2.5 py-1.5 bg-teal-50 hover:bg-teal-100 text-[#005550] rounded-xl text-xs font-bold flex items-center gap-1 transition-all cursor-pointer border border-teal-100"
+                  title="Read full message"
                 >
-                  <option value="new">New Inquiry</option>
-                  <option value="read">Mark Read</option>
+                  <Eye className="w-3.5 h-3.5" /> View
+                </button>
+
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handleOpenEmailClient(enquiry)}
+                    className="px-2.5 py-1.5 bg-[#005550] hover:bg-[#003d39] text-white rounded-xl text-xs font-bold flex items-center gap-1 transition-all cursor-pointer shadow-2xs"
+                    title="Respond via Email"
+                  >
+                    <Mail className="w-3.5 h-3.5" /> Email
+                  </button>
+
+                  <button
+                    onClick={() => deleteEnquiry(enquiry._id)}
+                    className="p-1.5 text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition-all cursor-pointer"
+                    title="Delete enquiry"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {filteredEnquiries.length === 0 && (
+        <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-gray-200 space-y-1">
+          <p className="text-sm font-bold text-gray-600">No contact enquiries found</p>
+          <p className="text-xs text-gray-400">Submissions from the website Contact page will appear here.</p>
+        </div>
+      )}
+
+      {/* --- MODAL: VIEW FULL ENQUIRY MESSAGE & EMAIL RESPONDER --- */}
+      {selectedEnquiryModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 sm:p-8 relative my-8 text-slate-800 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#005550] bg-teal-50 px-2.5 py-1 rounded-md border border-teal-100">
+                  Enquiry Message Details
+                </span>
+                <h3 className="font-sansita text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                  {selectedEnquiryModal.subject || 'General Enquiry'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setSelectedEnquiryModal(null)}
+                className="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4 text-xs">
+              {/* Sender Details */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 grid grid-cols-1 sm:grid-cols-2 gap-3 font-medium">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Sender Name</span>
+                  <strong className="text-slate-900 text-sm">{selectedEnquiryModal.name}</strong>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Email Address</span>
+                  <a
+                    href={`mailto:${selectedEnquiryModal.email}`}
+                    className="text-[#005550] font-bold underline font-mono text-xs hover:text-slate-900"
+                  >
+                    {selectedEnquiryModal.email}
+                  </a>
+                </div>
+                {selectedEnquiryModal.phone && (
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Phone Number</span>
+                    <a
+                      href={`tel:${selectedEnquiryModal.phone}`}
+                      className="text-slate-800 font-bold font-mono text-xs hover:text-[#005550]"
+                    >
+                      {selectedEnquiryModal.phone}
+                    </a>
+                  </div>
+                )}
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Submitted At</span>
+                  <span className="text-slate-600 font-mono">
+                    {new Date(selectedEnquiryModal.createdAt || Date.now()).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              {/* Status Selector in Modal */}
+              <div className="flex items-center justify-between bg-teal-50/50 p-3 rounded-xl border border-teal-100">
+                <span className="font-bold text-slate-700">Enquiry Status:</span>
+                <select
+                  value={selectedEnquiryModal.status || 'new'}
+                  onChange={(e) => updateStatus(selectedEnquiryModal, e.target.value)}
+                  className="bg-white border border-slate-200 rounded-lg px-3 py-1 text-xs font-bold text-slate-800 outline-none cursor-pointer focus:border-[#005550]"
+                >
+                  <option value="new">New</option>
+                  <option value="read">Read</option>
                   <option value="replied">Replied</option>
                   <option value="archived">Archived</option>
                 </select>
+              </div>
 
+              {/* Full Message Text */}
+              <div>
+                <label className="block font-bold text-slate-700 mb-1.5 uppercase text-[10px] tracking-wider">
+                  Full Customer Message
+                </label>
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-slate-800 whitespace-pre-line leading-relaxed text-xs max-h-60 overflow-y-auto font-normal">
+                  {selectedEnquiryModal.message}
+                </div>
+              </div>
+
+              {/* Modal Footer Actions */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-gray-100">
                 <button
-                  onClick={() => deleteEnquiry(enquiry._id)}
-                  className="p-1.5 text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition-all cursor-pointer"
-                  title="Delete message"
+                  onClick={() => deleteEnquiry(selectedEnquiryModal._id)}
+                  className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border border-rose-200"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-3.5 h-3.5" /> Delete Enquiry
                 </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setSelectedEnquiryModal(null)}
+                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                  >
+                    Close
+                  </button>
+
+                  <button
+                    onClick={() => handleOpenEmailClient(selectedEnquiryModal)}
+                    className="px-5 py-2 bg-[#005550] hover:bg-[#003d39] text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-md flex items-center gap-1.5"
+                  >
+                    <Mail className="w-4 h-4" /> Reply Direct via Email
+                  </button>
+                </div>
               </div>
             </div>
-
-            <div className="bg-white p-3.5 rounded-xl border border-gray-100 text-xs text-gray-700 whitespace-pre-line leading-relaxed">
-              {enquiry.message}
-            </div>
           </div>
-        ))}
-
-        {enquiries.length === 0 && (
-          <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-gray-200 space-y-1">
-            <p className="text-sm font-bold text-gray-600">No contact enquiries received yet</p>
-            <p className="text-xs text-gray-400">Submissions from the website Contact Us page will appear here.</p>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
