@@ -246,6 +246,10 @@ export const api = {
     method: 'POST',
   }),
   getProfile: () => request('/auth/profile'),
+  updateProfile: (payload) => request('/auth/update-profile', {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  }),
   getCart: () => request('/cart'),
   addToCart: (payload) => request('/cart/add', {
     method: 'POST',

@@ -34,16 +34,53 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
   const [lastIssuedOtpCode, setLastIssuedOtpCode] = useState('');
   const [otpResendCountdown, setOtpResendCountdown] = useState(0);
 
-  // Address tab states
-  const [shippingAddress, setShippingAddress] = useState({
+  // Address tab states (Billing & Shipping)
+  const [billingAddress, setBillingAddress] = useState(() => {
+    try {
+      const saved = localStorage.getItem('synergyBillingAddress');
+      return saved ? JSON.parse(saved) : {
+        firstName: 'Valued',
+        lastName: 'Customer',
+        address1: '1st Floor, Greens Centre, Chinchwad',
+        city: 'Pune',
+        state: 'Maharashtra',
+        pincode: '411033',
+        country: 'India',
+        phone: '9876543210',
+      };
+    } catch {
+      return { firstName: 'Valued', lastName: 'Customer', address1: 'Greens Centre, Chinchwad', city: 'Pune', state: 'Maharashtra', pincode: '411033', country: 'India', phone: '' };
+    }
+  });
+
+  const [shippingAddress, setShippingAddress] = useState(() => {
+    try {
+      const saved = localStorage.getItem('synergyShippingAddress');
+      return saved ? JSON.parse(saved) : {
+        firstName: 'Valued',
+        lastName: 'Customer',
+        address1: '1st Floor, Greens Centre, Chinchwad',
+        city: 'Pune',
+        state: 'Maharashtra',
+        pincode: '411033',
+        country: 'India',
+        phone: '9876543210',
+      };
+    } catch {
+      return { firstName: 'Valued', lastName: 'Customer', address1: 'Greens Centre, Chinchwad', city: 'Pune', state: 'Maharashtra', pincode: '411033', country: 'India', phone: '' };
+    }
+  });
+
+  const [editingAddressType, setEditingAddressType] = useState(null); // 'billing' | 'shipping' | null
+  const [editAddressForm, setEditAddressForm] = useState({
     firstName: '',
     lastName: '',
-    company: '',
     address1: '',
     city: '',
     state: 'Maharashtra',
     pincode: '',
     country: 'India',
+    phone: '',
   });
 
   // Account details states
@@ -225,27 +262,73 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
     }
   };
 
-  const handleSaveDetails = (e) => {
+  const handleSaveDetails = async (e) => {
     e.preventDefault();
-    if (accountDetails.newPassword && accountDetails.newPassword !== accountDetails.confirmPassword) {
-      toast.error('New passwords do not match!');
-      return;
+    if (accountDetails.newPassword) {
+      if (!accountDetails.currentPassword) {
+        toast.error('Please enter your current password to change your password.');
+        return;
+      }
+      if (accountDetails.newPassword !== accountDetails.confirmPassword) {
+        toast.error('New passwords do not match!');
+        return;
+      }
     }
-    toast.success('Account details updated successfully!');
+
+    setLoading(true);
+    try {
+      const payload = {
+        name: `${accountDetails.firstName} ${accountDetails.lastName}`.trim(),
+        currentPassword: accountDetails.currentPassword,
+        newPassword: accountDetails.newPassword,
+      };
+      const res = await api.updateProfile(payload);
+      toast.success('Account details updated successfully!');
+      if (res?.user) {
+        window.localStorage.setItem('synergyUser', JSON.stringify(res.user));
+        onAuthSuccess?.(res.user);
+      }
+      setAccountDetails((prev) => ({
+        ...prev,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      }));
+    } catch (err) {
+      toast.error(err.message || 'Current password entered is incorrect. Password was not changed.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSaveAddress = (e) => {
+  const handleOpenEditAddress = (type) => {
+    setEditingAddressType(type);
+    const target = type === 'billing' ? billingAddress : shippingAddress;
+    setEditAddressForm({ ...target });
+  };
+
+  const handleSaveAddressForm = (e) => {
     e.preventDefault();
-    toast.success('Shipping & billing address saved!');
+    if (editingAddressType === 'billing') {
+      setBillingAddress(editAddressForm);
+      try { localStorage.setItem('synergyBillingAddress', JSON.stringify(editAddressForm)); } catch (e) {}
+      toast.success('Billing address saved successfully!');
+    } else {
+      setShippingAddress(editAddressForm);
+      try { localStorage.setItem('synergyShippingAddress', JSON.stringify(editAddressForm)); } catch (e) {}
+      toast.success('Shipping address saved successfully!');
+    }
+    setEditingAddressType(null);
   };
 
   const handleDeleteAccount = async () => {
-    if (window.confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
+    if (window.confirm('Are you absolutely sure you want to permanently delete your account? This action cannot be undone.')) {
       setLoading(true);
       try {
         await api.deleteAccount();
         toast.success('Your account has been permanently deleted.');
         onLogout?.();
+        window.location.href = '/';
       } catch (err) {
         toast.error(err.message || 'Failed to delete account.');
       } finally {
@@ -720,26 +803,35 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Billing Address Card */}
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
                       <div className="flex justify-between items-center pb-3 border-b border-slate-100">
                         <h4 className="font-extrabold text-slate-900 text-sm">Billing Address</h4>
-                        <button onClick={() => toast("Editing Billing Address")} className="text-[#005550] hover:text-slate-900 text-xs font-bold underline flex items-center gap-1 cursor-pointer">
-                          <Edit3 className="w-3.5 h-3.5" /> Edit
+                        <button
+                          onClick={() => handleOpenEditAddress('billing')}
+                          className="text-[#005550] hover:text-slate-900 text-xs font-bold underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" /> Edit Billing Address
                         </button>
                       </div>
                       <div className="text-xs text-slate-600 space-y-1 font-medium leading-relaxed">
-                        <p className="font-bold text-slate-800 text-sm">{shippingAddress.firstName} {shippingAddress.lastName}</p>
-                        <p>{shippingAddress.address1}</p>
-                        <p>{shippingAddress.city}, {shippingAddress.state} - {shippingAddress.pincode}</p>
-                        <p>{shippingAddress.country}</p>
+                        <p className="font-bold text-slate-800 text-sm">{billingAddress.firstName} {billingAddress.lastName}</p>
+                        <p>{billingAddress.address1}</p>
+                        <p>{billingAddress.city}, {billingAddress.state} - {billingAddress.pincode}</p>
+                        <p>{billingAddress.country}</p>
+                        {billingAddress.phone && <p className="font-mono text-slate-500 mt-1">Phone: {billingAddress.phone}</p>}
                       </div>
                     </div>
 
+                    {/* Shipping Address Card */}
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
                       <div className="flex justify-between items-center pb-3 border-b border-slate-100">
                         <h4 className="font-extrabold text-slate-900 text-sm">Shipping Address</h4>
-                        <button onClick={() => toast("Editing Shipping Address")} className="text-[#005550] hover:text-slate-900 text-xs font-bold underline flex items-center gap-1 cursor-pointer">
-                          <Edit3 className="w-3.5 h-3.5" /> Edit
+                        <button
+                          onClick={() => handleOpenEditAddress('shipping')}
+                          className="text-[#005550] hover:text-slate-900 text-xs font-bold underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" /> Edit Shipping Address
                         </button>
                       </div>
                       <div className="text-xs text-slate-600 space-y-1 font-medium leading-relaxed">
@@ -747,6 +839,7 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
                         <p>{shippingAddress.address1}</p>
                         <p>{shippingAddress.city}, {shippingAddress.state} - {shippingAddress.pincode}</p>
                         <p>{shippingAddress.country}</p>
+                        {shippingAddress.phone && <p className="font-mono text-slate-500 mt-1">Phone: {shippingAddress.phone}</p>}
                       </div>
                     </div>
                   </div>
@@ -1147,6 +1240,130 @@ export default function AccountPage({ setActivePage, currentUser, onAuthSuccess,
           </div>
         )}
       </section>
+
+      {/* --- MODAL: EDIT BILLING & SHIPPING ADDRESS --- */}
+      {editingAddressType && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-gray-200 shadow-2xl max-w-lg w-full p-6 sm:p-8 relative my-8 text-slate-800 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#005550] bg-teal-50 px-2.5 py-1 rounded-md border border-teal-100">
+                  Address Management
+                </span>
+                <h3 className="font-sansita text-xl sm:text-2xl font-bold text-slate-900 mt-1 capitalize">
+                  Edit {editingAddressType} Address
+                </h3>
+              </div>
+              <button
+                onClick={() => setEditingAddressType(null)}
+                className="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveAddressForm} className="space-y-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">First Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editAddressForm.firstName}
+                    onChange={(e) => setEditAddressForm({ ...editAddressForm, firstName: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-semibold focus:bg-white focus:outline-none focus:border-[#005550]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Last Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editAddressForm.lastName}
+                    onChange={(e) => setEditAddressForm({ ...editAddressForm, lastName: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-semibold focus:bg-white focus:outline-none focus:border-[#005550]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Street Address *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="House number and street name"
+                  value={editAddressForm.address1}
+                  onChange={(e) => setEditAddressForm({ ...editAddressForm, address1: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-semibold focus:bg-white focus:outline-none focus:border-[#005550]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Town / City *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editAddressForm.city}
+                    onChange={(e) => setEditAddressForm({ ...editAddressForm, city: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-semibold focus:bg-white focus:outline-none focus:border-[#005550]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">State *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editAddressForm.state}
+                    onChange={(e) => setEditAddressForm({ ...editAddressForm, state: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-semibold focus:bg-white focus:outline-none focus:border-[#005550]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">PIN Code *</label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={10}
+                    value={editAddressForm.pincode}
+                    onChange={(e) => setEditAddressForm({ ...editAddressForm, pincode: e.target.value.replace(/\D/g, '') })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-semibold focus:bg-white focus:outline-none focus:border-[#005550]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Phone Number</label>
+                  <input
+                    type="tel"
+                    placeholder="98765 43210"
+                    value={editAddressForm.phone}
+                    onChange={(e) => setEditAddressForm({ ...editAddressForm, phone: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-semibold focus:bg-white focus:outline-none focus:border-[#005550]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => setEditingAddressType(null)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl text-xs font-bold bg-[#005550] hover:bg-[#003d39] text-white transition-all shadow-md cursor-pointer"
+                >
+                  Save {editingAddressType === 'billing' ? 'Billing' : 'Shipping'} Address
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

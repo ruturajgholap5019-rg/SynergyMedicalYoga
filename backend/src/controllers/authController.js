@@ -248,12 +248,54 @@ exports.getProfile = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.updateProfile = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+  const { name, phone, currentPassword, newPassword } = req.body;
+
+  const user = await User.findById(userId).select('+password');
+  if (!user) {
+    return next(new AppError('User account not found.', 404));
+  }
+
+  // Handle password change validation
+  if (newPassword) {
+    if (!currentPassword) {
+      return next(new AppError('Please enter your current password to set a new password.', 400));
+    }
+    const isMatch = await user.matchPassword(currentPassword);
+    if (!isMatch) {
+      return next(new AppError('Current password entered is incorrect. Password was not changed.', 400));
+    }
+    if (newPassword.length < 8) {
+      return next(new AppError('New password must be at least 8 characters long.', 400));
+    }
+    user.password = newPassword;
+  }
+
+  if (name) user.name = name.trim();
+  if (phone) user.phone = phone.trim();
+
+  await user.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Profile details updated successfully!',
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+    },
+  });
+});
+
 exports.deleteAccount = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
   const user = await User.findById(userId);
 
   if (!user) {
-    return next(new AppError('User not found.', 404));
+    return next(new AppError('User account not found.', 404));
   }
 
   if (user.isProtected) {
@@ -263,12 +305,9 @@ exports.deleteAccount = catchAsync(async (req, res, next) => {
     return next(new AppError('Admin accounts cannot be deleted from the account portal.', 403));
   }
 
-  user.isDeleted = true;
-  user.tokenVersion = (user.tokenVersion || 0) + 1;
-  user.refreshToken = undefined;
-  await user.save({ validateBeforeSave: false });
-
-  await RefreshToken.updateMany({ user: user._id }, { revoked: true });
+  // Permanently delete user document from database so account is wiped completely
+  await User.findByIdAndDelete(userId);
+  await RefreshToken.deleteMany({ user: userId });
   clearTokensCookies(res);
 
   res.status(200).json({

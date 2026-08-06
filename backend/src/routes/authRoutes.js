@@ -1,5 +1,5 @@
 const express = require('express');
-const { login, sendOtp, verifyOtp, refresh, logout, getProfile, deleteAccount } = require('../controllers/authController');
+const { login, sendOtp, verifyOtp, refresh, logout, getProfile, updateProfile, deleteAccount } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const { authLimiter } = require('../middleware/rateLimiter');
 const { validate } = require('../middleware/validate');
@@ -13,6 +13,7 @@ router.post('/login', authLimiter, validate(auth.login), login);
 router.post('/refresh', refresh);
 router.post('/logout', logout);
 router.get('/profile', protect, getProfile);
+router.put('/update-profile', protect, updateProfile);
 router.delete('/delete-account', protect, deleteAccount);
 router.post('/delete-account', protect, deleteAccount);
 
