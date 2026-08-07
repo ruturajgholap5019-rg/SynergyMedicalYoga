@@ -75,8 +75,8 @@ const SYNERGY_LOCATIONS = [
     id: 'pune',
     city: 'Pune',
     isFlagship: true,
-    cx: 235,
-    cy: 425,
+    cx: 220,
+    cy: 375,
     name: 'Synergy Medical Yoga Flagship Hub',
     address: '1st Floor, Greens Centre, Above Reliance Fresh, Opposite Cosmos Bank, Near Shreedhar Nagar, Chinchwad, Pune, Maharashtra 411033',
     phone: '+91 97303 21042',
@@ -86,8 +86,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'mumbai',
     city: 'Mumbai',
-    cx: 198,
-    cy: 410,
+    cx: 180,
+    cy: 360,
     name: 'Synergy Medical Yoga Center - Mumbai',
     address: 'Dadar West & Borivali Medical Yoga Care Hubs, Mumbai, Maharashtra 400028',
     phone: '+91 97303 21042',
@@ -97,8 +97,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'delhi',
     city: 'Delhi NCR',
-    cx: 265,
-    cy: 195,
+    cx: 260,
+    cy: 115,
     name: 'Synergy Medical Yoga Center - Delhi NCR',
     address: 'South Extension & Gurgaon Wellness Center, Delhi NCR 110049',
     phone: '+91 97303 21042',
@@ -108,8 +108,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'bengaluru',
     city: 'Bengaluru',
-    cx: 260,
-    cy: 535,
+    cx: 230,
+    cy: 490,
     name: 'Synergy Medical Yoga Center - Bengaluru',
     address: 'Indiranagar & HSR Layout Therapy Hub, Bengaluru, Karnataka 560038',
     phone: '+91 97303 21042',
@@ -119,8 +119,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'hyderabad',
     city: 'Hyderabad',
-    cx: 310,
-    cy: 460,
+    cx: 275,
+    cy: 420,
     name: 'Synergy Medical Yoga Center - Hyderabad',
     address: 'Banjara Hills Medical Yoga Care Hub, Hyderabad, Telangana 500034',
     phone: '+91 97303 21042',
@@ -130,8 +130,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'ahmedabad',
     city: 'Ahmedabad',
-    cx: 165,
-    cy: 295,
+    cx: 175,
+    cy: 260,
     name: 'Synergy Medical Yoga Center - Ahmedabad',
     address: 'Navrangpura Wellness & RBT Center, Ahmedabad, Gujarat 380009',
     phone: '+91 97303 21042',
@@ -142,7 +142,7 @@ const SYNERGY_LOCATIONS = [
     id: 'surat',
     city: 'Surat',
     cx: 175,
-    cy: 350,
+    cy: 310,
     name: 'Synergy Medical Yoga Center - Surat',
     address: 'Ring Road & Adajan Therapy Hub, Surat, Gujarat 395009',
     phone: '+91 97303 21042',
@@ -152,8 +152,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'chennai',
     city: 'Chennai',
-    cx: 335,
-    cy: 550,
+    cx: 270,
+    cy: 560,
     name: 'Synergy Medical Yoga Center - Chennai',
     address: 'Anna Nagar & Mylapore Therapy Center, Chennai, Tamil Nadu 600040',
     phone: '+91 97303 21042',
@@ -163,8 +163,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'kolkata',
     city: 'Kolkata',
-    cx: 480,
-    cy: 330,
+    cx: 375,
+    cy: 315,
     name: 'Synergy Medical Yoga Center - Kolkata',
     address: 'Salt Lake & Park Street Center, Kolkata, West Bengal 700064',
     phone: '+91 97303 21042',
@@ -174,8 +174,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'jaipur',
     city: 'Jaipur',
-    cx: 230,
-    cy: 235,
+    cx: 215,
+    cy: 180,
     name: 'Synergy Medical Yoga Center - Jaipur',
     address: 'Malviya Nagar & C-Scheme Therapy Hub, Jaipur, Rajasthan 302017',
     phone: '+91 97303 21042',
@@ -185,8 +185,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'chandigarh',
     city: 'Chandigarh',
-    cx: 255,
-    cy: 165,
+    cx: 245,
+    cy: 95,
     name: 'Synergy Medical Yoga Center - Chandigarh',
     address: 'Sector 17 & Mohali Care Center, Chandigarh 160017',
     phone: '+91 97303 21042',
@@ -613,222 +613,326 @@ export default function ServicesPage({ setActivePage, currentUser }) {
                 
                 {/* SVG India Map Container */}
                 <svg
-                  viewBox="0 0 600 650"
+                  viewBox="0 0 520 640"
                   className="w-full h-auto drop-shadow-xl select-none"
-                  fill="none"
                   xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
                 >
                   <defs>
-                    <filter id="india-map-shadow" x="-10%" y="-10%" width="120%" height="120%">
-                      <feDropShadow dx="3" dy="6" stdDeviation="6" floodColor="#003d39" floodOpacity="0.18" />
+                    <linearGradient id="indiaFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#E8F8F5"/>
+                      <stop offset="100%" stopColor="#D5F5E3"/>
+                    </linearGradient>
+
+                    <linearGradient id="mahaFill" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#009688"/>
+                      <stop offset="100%" stopColor="#005550"/>
+                    </linearGradient>
+
+                    <filter id="shadow">
+                      <feDropShadow
+                        dx="0"
+                        dy="6"
+                        stdDeviation="6"
+                        floodColor="#003d39"
+                        floodOpacity=".18"
+                      />
                     </filter>
-                    <linearGradient id="liveStateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#b2dfdb" />
-                      <stop offset="100%" stopColor="#80cbc4" />
-                    </linearGradient>
-                    <linearGradient id="puneStateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#26a69a" />
-                      <stop offset="100%" stopColor="#00695c" />
-                    </linearGradient>
-                    <linearGradient id="otherStateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#e0f2f1" />
-                      <stop offset="100%" stopColor="#c8e6c9" />
-                    </linearGradient>
                   </defs>
 
-                  {/* Outer & Inner India Map Geographic State Layout */}
-                  <g filter="url(#india-map-shadow)">
-                    
-                    {/* 1. Jammu & Kashmir & Ladakh */}
+                  <g filter="url(#shadow)">
+                    {/* INDIA OUTER BORDER */}
                     <path
-                      d="M 235,115 L 265,55 L 305,35 L 340,65 L 350,110 L 320,135 L 285,155 L 245,145 Z"
-                      fill="url(#otherStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 2. Punjab, Himachal & Uttarakhand */}
-                    <path
-                      d="M 245,145 L 285,155 L 320,135 L 350,165 L 335,195 L 285,185 L 240,175 Z"
-                      fill="url(#liveStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 3. Haryana & Delhi */}
-                    <path
-                      d="M 240,175 L 285,185 L 280,225 L 245,215 Z"
-                      fill="url(#liveStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 4. Rajasthan */}
-                    <path
-                      d="M 175,200 L 240,175 L 245,215 L 280,225 L 260,295 L 205,315 L 160,270 Z"
-                      fill="url(#liveStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 5. Gujarat (With Kutch & Kathiawar Gulfs) */}
-                    <path
-                      d="M 160,270 L 205,315 L 225,355 L 175,375 L 160,350 L 175,335 L 140,345 L 125,315 L 160,305 L 140,285 Z"
-                      fill="url(#liveStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 6. Uttar Pradesh */}
-                    <path
-                      d="M 285,185 L 335,195 L 405,230 L 415,270 L 345,290 L 280,225 Z"
-                      fill="url(#otherStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 7. Madhya Pradesh */}
-                    <path
-                      d="M 260,295 L 345,290 L 375,350 L 345,380 L 265,370 L 225,355 L 205,315 Z"
-                      fill="url(#liveStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 8. Maharashtra (Pune Flagship & Mumbai) */}
-                    <path
-                      d="M 175,375 L 225,355 L 265,370 L 345,380 L 330,440 L 275,475 L 210,435 L 195,405 Z"
-                      fill="url(#puneStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="2.2"
-                    />
-
-                    {/* 9. Bihar & Jharkhand */}
-                    <path
-                      d="M 405,230 L 465,245 L 485,310 L 420,335 L 415,270 Z"
-                      fill="url(#otherStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 10. West Bengal & Sikkim */}
-                    <path
-                      d="M 465,245 L 485,220 L 500,240 L 485,310 L 515,365 L 460,390 L 450,335 Z"
-                      fill="url(#liveStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 11. Odisha & Chhattisgarh */}
-                    <path
-                      d="M 345,380 L 420,335 L 460,390 L 415,445 L 355,440 Z"
-                      fill="url(#liveStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 12. Telangana & Andhra Pradesh */}
-                    <path
-                      d="M 275,475 L 330,440 L 355,440 L 415,445 L 380,550 L 315,540 L 310,490 Z"
-                      fill="url(#liveStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 13. Karnataka & Goa */}
-                    <path
-                      d="M 210,435 L 275,475 L 310,490 L 295,570 L 245,550 L 220,480 Z"
-                      fill="url(#liveStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 14. Tamil Nadu & Kerala (Southern Tip) */}
-                    <path
-                      d="M 245,550 L 295,570 L 315,540 L 380,550 L 340,635 L 295,640 L 275,600 Z"
-                      fill="url(#liveStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* 15. Northeast States */}
-                    <path
-                      d="M 500,240 L 565,215 L 590,245 L 560,305 L 505,285 Z"
-                      fill="url(#otherStateGrad)"
-                      stroke="#004d40"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* ACCURATE OUTER BOUNDARY LINE OF INDIA */}
-                    <path
-                      d="M 235,115 L 265,55 L 305,35 L 340,65 L 350,110 L 320,135 L 350,165 L 405,230 L 465,245 L 485,220 L 500,240 L 565,215 L 590,245 L 560,305 L 505,285 L 515,365 L 460,390 L 415,445 L 380,550 L 340,635 L 295,640 L 275,600 L 245,550 L 220,480 L 210,435 L 195,405 L 175,375 L 160,350 L 175,335 L 140,345 L 125,315 L 160,305 L 140,285 L 160,270 L 175,200 L 240,175 Z"
-                      fill="none"
-                      stroke="#003d39"
-                      strokeWidth="3.5"
+                      d="
+                      M248 34
+                      L270 40
+                      L292 54
+                      L315 68
+                      L332 95
+                      L338 122
+                      L350 148
+                      L372 175
+                      L392 198
+                      L420 220
+                      L435 250
+                      L430 282
+                      L445 315
+                      L435 350
+                      L420 385
+                      L400 420
+                      L382 455
+                      L360 490
+                      L338 525
+                      L320 570
+                      L298 612
+                      L270 628
+                      L242 618
+                      L225 592
+                      L210 555
+                      L192 520
+                      L170 485
+                      L150 455
+                      L138 420
+                      L125 392
+                      L105 355
+                      L92 320
+                      L98 280
+                      L112 250
+                      L128 220
+                      L145 195
+                      L165 168
+                      L190 142
+                      L208 118
+                      L220 90
+                      L235 60
+                      Z"
+                      fill="url(#indiaFill)"
+                      stroke="#004D40"
+                      strokeWidth="3"
                       strokeLinejoin="round"
-                      strokeLinecap="round"
                     />
+
+                    {/* JAMMU & KASHMIR */}
+                    <path
+                      d="
+                      M238 52
+                      L260 42
+                      L286 52
+                      L302 70
+                      L286 90
+                      L255 92
+                      L236 74
+                      Z"
+                      fill="#EEF7F5"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+
+                    {/* PUNJAB */}
+                    <path
+                      d="
+                      M236 92
+                      L268 94
+                      L276 118
+                      L245 120
+                      Z"
+                      fill="#EEF7F5"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+
+                    {/* RAJASTHAN */}
+                    <path
+                      d="
+                      M170 170
+                      L245 120
+                      L260 195
+                      L210 250
+                      L160 220
+                      Z"
+                      fill="#EAF8F6"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+
+                    {/* GUJARAT */}
+                    <path
+                      d="
+                      M155 220
+                      L205 248
+                      L222 300
+                      L180 330
+                      L140 300
+                      L132 250
+                      Z"
+                      fill="#EAF8F6"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+
+                    {/* MADHYA PRADESH */}
+                    <path
+                      d="
+                      M210 250
+                      L300 240
+                      L325 300
+                      L240 330
+                      L205 298
+                      Z"
+                      fill="#EAF8F6"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+
+                    {/* MAHARASHTRA */}
+                    <path
+                      d="
+                      M180 330
+                      L240 330
+                      L320 350
+                      L308 410
+                      L245 435
+                      L190 405
+                      L168 360
+                      Z"
+                      fill="url(#mahaFill)"
+                      stroke="#ffffff"
+                      strokeWidth="2.5"
+                    />
+
+                    {/* KARNATAKA */}
+                    <path
+                      d="
+                      M190 405
+                      L245 435
+                      L272 520
+                      L225 545
+                      L185 500
+                      Z"
+                      fill="#EAF8F6"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+
+                    {/* TAMIL NADU */}
+                    <path
+                      d="
+                      M225 545
+                      L272 520
+                      L300 615
+                      L255 620
+                      L225 575
+                      Z"
+                      fill="#EAF8F6"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+
+                    {/* EAST INDIA */}
+                    <path
+                      d="
+                      M320 240
+                      L390 260
+                      L410 330
+                      L385 410
+                      L308 410
+                      L320 350
+                      Z"
+                      fill="#EAF8F6"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+
+                    {/* NORTHEAST */}
+                    <path
+                      d="
+                      M405 245
+                      L470 230
+                      L492 260
+                      L465 305
+                      L410 290
+                      Z"
+                      fill="#EAF8F6"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+
+                    {/* INTERACTIVE LOCATION DOTS */}
+                    {SYNERGY_LOCATIONS.map((loc) => {
+                      const active = hoveredLoc?.id === loc.id;
+                      return (
+                        <g
+                          key={loc.id}
+                          onMouseEnter={() => setHoveredLoc(loc)}
+                          onClick={() => setHoveredLoc(loc)}
+                          className="cursor-pointer"
+                        >
+                          {/* Flagship Pulse */}
+                          {loc.isFlagship && (
+                            <>
+                              <circle
+                                cx={loc.cx}
+                                cy={loc.cy}
+                                r="18"
+                                fill="#00A896"
+                                opacity=".18"
+                                className="animate-ping"
+                              />
+
+                              <circle
+                                cx={loc.cx}
+                                cy={loc.cy}
+                                r="13"
+                                fill="#00A896"
+                                opacity=".28"
+                              />
+                            </>
+                          )}
+
+                          {/* Selected Ring */}
+                          {active && (
+                            <circle
+                              cx={loc.cx}
+                              cy={loc.cy}
+                              r="15"
+                              fill="none"
+                              stroke="#005550"
+                              strokeWidth="3"
+                            />
+                          )}
+
+                          {/* Main Marker */}
+                          <circle
+                            cx={loc.cx}
+                            cy={loc.cy}
+                            r={loc.isFlagship ? 9 : 7}
+                            fill={active ? "#003D39" : "#00A896"}
+                            stroke="#fff"
+                            strokeWidth="2.5"
+                            className="transition-all duration-300"
+                          />
+
+                          {/* Inner Dot */}
+                          <circle
+                            cx={loc.cx}
+                            cy={loc.cy}
+                            r="3"
+                            fill="#50E3C2"
+                          />
+                        </g>
+                      );
+                    })}
                   </g>
-
-                  {/* INTERACTIVE LOCATION DOTS */}
-                  {SYNERGY_LOCATIONS.map((loc) => {
-                    const isSelected = hoveredLoc?.id === loc.id;
-                    return (
-                      <g
-                        key={loc.id}
-                        className="cursor-pointer transition-all duration-300"
-                        onMouseEnter={() => setHoveredLoc(loc)}
-                        onClick={() => setHoveredLoc(loc)}
-                      >
-                        {/* Outer Pulse Rings */}
-                        {loc.isFlagship && (
-                          <circle cx={loc.cx} cy={loc.cy} r="15" fill="#005550" fillOpacity="0.3" className="animate-ping" />
-                        )}
-                        {isSelected && (
-                          <circle cx={loc.cx} cy={loc.cy} r="13" fill="#005550" fillOpacity="0.4" />
-                        )}
-
-                        {/* Main Dot */}
-                        <circle
-                          cx={loc.cx}
-                          cy={loc.cy}
-                          r={loc.isFlagship ? "9" : "7.5"}
-                          fill={isSelected ? "#003d39" : loc.isFlagship ? "#005550" : "#00A896"}
-                          stroke="#FFFFFF"
-                          strokeWidth={isSelected ? "2.5" : "1.8"}
-                          className="hover:scale-125 transition-transform duration-300"
-                        />
-                        <circle
-                          cx={loc.cx}
-                          cy={loc.cy}
-                          r={loc.isFlagship ? "3.5" : "2.5"}
-                          fill="#50E3C2"
-                        />
-                      </g>
-                    );
-                  })}
                 </svg>
 
-                {/* Interactive Tooltip Card on Hover */}
+                {/* TOOLTIP */}
                 {hoveredLoc && (
-                  <div className="mt-4 p-4 bg-gradient-to-r from-[#005550] to-[#004743] text-white rounded-2xl shadow-lg border border-teal-600/40 animate-in fade-in zoom-in duration-200">
-                    <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-[#50E3C2] shrink-0" />
-                        <h4 className="font-poppins font-bold text-sm text-white">{hoveredLoc.name}</h4>
+                  <div className="mt-5 rounded-2xl overflow-hidden shadow-xl border border-teal-100">
+                    <div className="bg-[#005550] text-white px-5 py-4">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-5 h-5 text-teal-300" />
+                          <h3 className="font-bold text-sm">
+                            {hoveredLoc.name}
+                          </h3>
+                        </div>
+
+                        <span className="bg-teal-300 text-[#003D39] px-3 py-1 rounded-full text-[10px] font-bold">
+                          {hoveredLoc.city}
+                        </span>
                       </div>
-                      <span className="text-[10px] font-extrabold uppercase bg-[#50E3C2] text-[#003d39] px-2.5 py-0.5 rounded-full shrink-0">
-                        {hoveredLoc.city}
-                      </span>
-                    </div>
 
-                    <p className="text-xs text-teal-100/90 leading-relaxed font-normal mb-2 pl-6">
-                      {hoveredLoc.address}
-                    </p>
+                      <p className="mt-3 text-sm text-teal-100 leading-6">
+                        {hoveredLoc.address}
+                      </p>
 
-                    <div className="flex items-center justify-between text-[11px] text-teal-200 pt-2 border-t border-teal-700/60 pl-6">
-                      <span>📞 {hoveredLoc.phone}</span>
-                      <span className="font-semibold text-[#50E3C2]">{hoveredLoc.status}</span>
+                      <div className="mt-4 pt-3 border-t border-teal-700 flex justify-between text-xs">
+                        <span>📞 {hoveredLoc.phone}</span>
+
+                        <span className="font-semibold text-teal-300">
+                          {hoveredLoc.status}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 )}
