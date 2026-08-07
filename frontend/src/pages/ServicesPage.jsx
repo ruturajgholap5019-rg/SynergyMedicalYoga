@@ -75,8 +75,8 @@ const SYNERGY_LOCATIONS = [
     id: 'pune',
     city: 'Pune',
     isFlagship: true,
-    cx: 218,
-    cy: 302,
+    cx: 235,
+    cy: 425,
     name: 'Synergy Medical Yoga Flagship Hub',
     address: '1st Floor, Greens Centre, Above Reliance Fresh, Opposite Cosmos Bank, Near Shreedhar Nagar, Chinchwad, Pune, Maharashtra 411033',
     phone: '+91 97303 21042',
@@ -86,8 +86,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'mumbai',
     city: 'Mumbai',
-    cx: 192,
-    cy: 288,
+    cx: 198,
+    cy: 410,
     name: 'Synergy Medical Yoga Center - Mumbai',
     address: 'Dadar West & Borivali Medical Yoga Care Hubs, Mumbai, Maharashtra 400028',
     phone: '+91 97303 21042',
@@ -97,8 +97,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'delhi',
     city: 'Delhi NCR',
-    cx: 230,
-    cy: 155,
+    cx: 265,
+    cy: 195,
     name: 'Synergy Medical Yoga Center - Delhi NCR',
     address: 'South Extension & Gurgaon Wellness Center, Delhi NCR 110049',
     phone: '+91 97303 21042',
@@ -108,8 +108,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'bengaluru',
     city: 'Bengaluru',
-    cx: 230,
-    cy: 378,
+    cx: 260,
+    cy: 535,
     name: 'Synergy Medical Yoga Center - Bengaluru',
     address: 'Indiranagar & HSR Layout Therapy Hub, Bengaluru, Karnataka 560038',
     phone: '+91 97303 21042',
@@ -119,8 +119,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'hyderabad',
     city: 'Hyderabad',
-    cx: 260,
-    cy: 320,
+    cx: 310,
+    cy: 460,
     name: 'Synergy Medical Yoga Center - Hyderabad',
     address: 'Banjara Hills Medical Yoga Care Hub, Hyderabad, Telangana 500034',
     phone: '+91 97303 21042',
@@ -130,8 +130,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'ahmedabad',
     city: 'Ahmedabad',
-    cx: 172,
-    cy: 225,
+    cx: 165,
+    cy: 295,
     name: 'Synergy Medical Yoga Center - Ahmedabad',
     address: 'Navrangpura Wellness & RBT Center, Ahmedabad, Gujarat 380009',
     phone: '+91 97303 21042',
@@ -141,8 +141,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'surat',
     city: 'Surat',
-    cx: 182,
-    cy: 258,
+    cx: 175,
+    cy: 350,
     name: 'Synergy Medical Yoga Center - Surat',
     address: 'Ring Road & Adajan Therapy Hub, Surat, Gujarat 395009',
     phone: '+91 97303 21042',
@@ -152,8 +152,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'chennai',
     city: 'Chennai',
-    cx: 268,
-    cy: 392,
+    cx: 335,
+    cy: 550,
     name: 'Synergy Medical Yoga Center - Chennai',
     address: 'Anna Nagar & Mylapore Therapy Center, Chennai, Tamil Nadu 600040',
     phone: '+91 97303 21042',
@@ -163,8 +163,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'kolkata',
     city: 'Kolkata',
-    cx: 370,
-    cy: 252,
+    cx: 480,
+    cy: 330,
     name: 'Synergy Medical Yoga Center - Kolkata',
     address: 'Salt Lake & Park Street Center, Kolkata, West Bengal 700064',
     phone: '+91 97303 21042',
@@ -174,8 +174,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'jaipur',
     city: 'Jaipur',
-    cx: 198,
-    cy: 180,
+    cx: 230,
+    cy: 235,
     name: 'Synergy Medical Yoga Center - Jaipur',
     address: 'Malviya Nagar & C-Scheme Therapy Hub, Jaipur, Rajasthan 302017',
     phone: '+91 97303 21042',
@@ -185,8 +185,8 @@ const SYNERGY_LOCATIONS = [
   {
     id: 'chandigarh',
     city: 'Chandigarh',
-    cx: 228,
-    cy: 122,
+    cx: 255,
+    cy: 165,
     name: 'Synergy Medical Yoga Center - Chandigarh',
     address: 'Sector 17 & Mohali Care Center, Chandigarh 160017',
     phone: '+91 97303 21042',
@@ -613,70 +613,161 @@ export default function ServicesPage({ setActivePage, currentUser }) {
                 
                 {/* SVG India Map Container */}
                 <svg
-                  viewBox="0 0 545 425"
-                  className="w-full h-auto drop-shadow-md select-none"
+                  viewBox="0 0 600 650"
+                  className="w-full h-auto drop-shadow-xl select-none"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <defs>
-                    <filter id="map-shadow" x="-5%" y="-5%" width="110%" height="110%">
-                      <feDropShadow dx="2" dy="4" stdDeviation="4" floodColor="#005550" floodOpacity="0.12" />
+                    <filter id="india-map-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                      <feDropShadow dx="3" dy="6" stdDeviation="6" floodColor="#003d39" floodOpacity="0.18" />
                     </filter>
-                    <linearGradient id="liveStateGrad" x1="0" y1="0" x2="1" y2="1">
+                    <linearGradient id="liveStateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stopColor="#b2dfdb" />
                       <stop offset="100%" stopColor="#80cbc4" />
                     </linearGradient>
-                    <linearGradient id="puneStateGrad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="#4db6ac" />
-                      <stop offset="100%" stopColor="#00897b" />
+                    <linearGradient id="puneStateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#26a69a" />
+                      <stop offset="100%" stopColor="#00695c" />
+                    </linearGradient>
+                    <linearGradient id="otherStateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#e0f2f1" />
+                      <stop offset="100%" stopColor="#c8e6c9" />
                     </linearGradient>
                   </defs>
 
-                  {/* Outer & Inner India Map Geographic Layout */}
-                  <g filter="url(#map-shadow)">
-                    {/* OUTER BOUNDARY CONTOUR PATH */}
+                  {/* Outer & Inner India Map Geographic State Layout */}
+                  <g filter="url(#india-map-shadow)">
+                    
+                    {/* 1. Jammu & Kashmir & Ladakh */}
                     <path
-                      d="M 200,60 L 225,20 L 255,10 L 285,25 L 295,50 L 275,80 L 250,105 L 325,140 L 415,165 L 455,185 L 425,225 L 365,210 L 375,300 L 325,315 L 295,335 L 265,395 L 270,420 L 240,425 L 225,385 L 190,305 L 155,265 L 145,235 L 165,225 L 145,190 L 160,155 Z"
-                      fill="none"
-                      stroke="#005550"
-                      strokeWidth="3.5"
-                      strokeLinejoin="round"
+                      d="M 235,115 L 265,55 L 305,35 L 340,65 L 350,110 L 320,135 L 285,155 L 245,145 Z"
+                      fill="url(#otherStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
                     />
 
-                    {/* INNER LAYOUT STATE BOUNDARIES */}
-                    {/* Kashmir & Far North */}
-                    <path d="M 200,60 L 225,20 L 255,10 L 285,25 L 295,50 L 275,80 L 250,105 L 225,110 Z" fill="#e8f4f3" stroke="#b2dfdb" strokeWidth="1.2" />
-                    <path d="M 225,110 L 250,105 L 275,120 L 260,145 L 225,140 L 205,120 Z" fill="#e8f4f3" stroke="#b2dfdb" strokeWidth="1.2" />
+                    {/* 2. Punjab, Himachal & Uttarakhand */}
+                    <path
+                      d="M 245,145 L 285,155 L 320,135 L 350,165 L 335,195 L 285,185 L 240,175 Z"
+                      fill="url(#liveStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
 
-                    {/* Punjab & Haryana & Delhi */}
-                    <path d="M 210,120 L 250,115 L 245,160 L 210,165 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* 3. Haryana & Delhi */}
+                    <path
+                      d="M 240,175 L 285,185 L 280,225 L 245,215 Z"
+                      fill="url(#liveStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
 
-                    {/* Rajasthan */}
-                    <path d="M 160,155 L 225,140 L 220,195 L 175,215 L 145,190 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* 4. Rajasthan */}
+                    <path
+                      d="M 175,200 L 240,175 L 245,215 L 280,225 L 260,295 L 205,315 L 160,270 Z"
+                      fill="url(#liveStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
 
-                    {/* Gujarat */}
-                    <path d="M 145,190 L 175,215 L 195,250 L 155,265 L 145,235 L 165,225 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* 5. Gujarat (With Kutch & Kathiawar Gulfs) */}
+                    <path
+                      d="M 160,270 L 205,315 L 225,355 L 175,375 L 160,350 L 175,335 L 140,345 L 125,315 L 160,305 L 140,285 Z"
+                      fill="url(#liveStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
 
-                    {/* Maharashtra (Pune Flagship Hub) */}
-                    <path d="M 175,255 L 240,245 L 275,275 L 235,325 L 190,305 L 185,270 Z" fill="url(#puneStateGrad)" stroke="#ffffff" strokeWidth="2" />
+                    {/* 6. Uttar Pradesh */}
+                    <path
+                      d="M 285,185 L 335,195 L 405,230 L 415,270 L 345,290 L 280,225 Z"
+                      fill="url(#otherStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
 
-                    {/* Madhya Pradesh */}
-                    <path d="M 220,195 L 295,205 L 305,255 L 240,245 L 205,215 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* 7. Madhya Pradesh */}
+                    <path
+                      d="M 260,295 L 345,290 L 375,350 L 345,380 L 265,370 L 225,355 L 205,315 Z"
+                      fill="url(#liveStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
 
-                    {/* Uttar Pradesh & Bihar */}
-                    <path d="M 250,105 L 325,140 L 355,180 L 295,205 L 250,145 Z" fill="#e8f4f3" stroke="#b2dfdb" strokeWidth="1.2" />
+                    {/* 8. Maharashtra (Pune Flagship & Mumbai) */}
+                    <path
+                      d="M 175,375 L 225,355 L 265,370 L 345,380 L 330,440 L 275,475 L 210,435 L 195,405 Z"
+                      fill="url(#puneStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="2.2"
+                    />
 
-                    {/* Odisha & West Bengal */}
-                    <path d="M 305,255 L 360,250 L 375,300 L 325,315 L 275,275 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* 9. Bihar & Jharkhand */}
+                    <path
+                      d="M 405,230 L 465,245 L 485,310 L 420,335 L 415,270 Z"
+                      fill="url(#otherStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
 
-                    {/* Karnataka & Telangana & Andhra */}
-                    <path d="M 190,305 L 235,325 L 275,275 L 295,335 L 265,395 L 225,385 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* 10. West Bengal & Sikkim */}
+                    <path
+                      d="M 465,245 L 485,220 L 500,240 L 485,310 L 515,365 L 460,390 L 450,335 Z"
+                      fill="url(#liveStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
 
-                    {/* Tamil Nadu & Kerala */}
-                    <path d="M 225,385 L 265,395 L 270,420 L 240,425 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* 11. Odisha & Chhattisgarh */}
+                    <path
+                      d="M 345,380 L 420,335 L 460,390 L 415,445 L 355,440 Z"
+                      fill="url(#liveStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
 
-                    {/* Northeast */}
-                    <path d="M 355,180 L 415,165 L 455,185 L 425,225 L 365,210 Z" fill="#e8f4f3" stroke="#b2dfdb" strokeWidth="1.2" />
+                    {/* 12. Telangana & Andhra Pradesh */}
+                    <path
+                      d="M 275,475 L 330,440 L 355,440 L 415,445 L 380,550 L 315,540 L 310,490 Z"
+                      fill="url(#liveStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
+
+                    {/* 13. Karnataka & Goa */}
+                    <path
+                      d="M 210,435 L 275,475 L 310,490 L 295,570 L 245,550 L 220,480 Z"
+                      fill="url(#liveStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
+
+                    {/* 14. Tamil Nadu & Kerala (Southern Tip) */}
+                    <path
+                      d="M 245,550 L 295,570 L 315,540 L 380,550 L 340,635 L 295,640 L 275,600 Z"
+                      fill="url(#liveStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
+
+                    {/* 15. Northeast States */}
+                    <path
+                      d="M 500,240 L 565,215 L 590,245 L 560,305 L 505,285 Z"
+                      fill="url(#otherStateGrad)"
+                      stroke="#004d40"
+                      strokeWidth="1.5"
+                    />
+
+                    {/* ACCURATE OUTER BOUNDARY LINE OF INDIA */}
+                    <path
+                      d="M 235,115 L 265,55 L 305,35 L 340,65 L 350,110 L 320,135 L 350,165 L 405,230 L 465,245 L 485,220 L 500,240 L 565,215 L 590,245 L 560,305 L 505,285 L 515,365 L 460,390 L 415,445 L 380,550 L 340,635 L 295,640 L 275,600 L 245,550 L 220,480 L 210,435 L 195,405 L 175,375 L 160,350 L 175,335 L 140,345 L 125,315 L 160,305 L 140,285 L 160,270 L 175,200 L 240,175 Z"
+                      fill="none"
+                      stroke="#003d39"
+                      strokeWidth="3.5"
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                    />
                   </g>
 
                   {/* INTERACTIVE LOCATION DOTS */}
