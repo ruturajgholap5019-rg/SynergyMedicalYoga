@@ -204,27 +204,8 @@ export default function ServicesPage({ setActivePage, currentUser }) {
   const [selectedService, setSelectedService] = useState(null);
   const [hoveredLoc, setHoveredLoc] = useState(SYNERGY_LOCATIONS[0]); // Default Pune
 
-  // Carousel State
-  const [serviceSlides, setServiceSlides] = useState(() => {
-    try {
-      const cached = localStorage.getItem('synergy_cached_services_carousels');
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((s, idx) => {
-            const rawSrc = s.imageUrl || s.src || s.url || s.image;
-            const fallback = s.fallback || DEFAULT_SERVICE_SLIDES[idx % DEFAULT_SERVICE_SLIDES.length].src;
-            return {
-              ...s,
-              src: getImageUrl(rawSrc) || fallback,
-              fallback,
-            };
-          });
-        }
-      }
-    } catch (e) {}
-    return DEFAULT_SERVICE_SLIDES;
-  });
+  // Carousel State - Default to 3 slides
+  const [serviceSlides, setServiceSlides] = useState(DEFAULT_SERVICE_SLIDES);
   const [serviceSlide, setServiceSlide] = useState(0);
   const [isSlidePaused, setIsSlidePaused] = useState(false);
 

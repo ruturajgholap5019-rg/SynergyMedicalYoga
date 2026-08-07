@@ -224,63 +224,63 @@ export default function AboutPage() {
             <div className="w-24 h-1.5 bg-[#005550] rounded-full mt-2" />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            {/* Left Column: Anatomical Poster (Increased Width & Prominence) */}
-            <div className="lg:col-span-6 space-y-8 lg:sticky lg:top-24">
-              <div className="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden h-[520px] sm:h-[620px] lg:h-[720px] w-full">
+            {/* Left Column (7 cols): Anatomical Poster (Prominent Full Width & Height) */}
+            <div className="lg:col-span-7 space-y-8">
+              <div className="bg-white rounded-3xl shadow-2xl border border-teal-100 p-3 sm:p-5 w-full flex items-center justify-center">
                 <img
                   src={INTEGRATED_BG}
                   alt="Integrated Approach To Joint Care"
-                  className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
+                  className="w-full h-auto max-h-[850px] object-contain rounded-2xl drop-shadow-md hover:scale-[1.02] transition-transform duration-500"
                 />
               </div>
             </div>
 
-            {/* Right Column: 3 Detailed Pillars */}
-            <div className="lg:col-span-6 space-y-6">
+            {/* Right Column (5 cols): 3 Detailed Pillars */}
+            <div className="lg:col-span-5 space-y-6">
               
               {/* Pillar 1 */}
-              <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md border border-gray-200 transition-all duration-300 space-y-3">
+              <div className="bg-white p-7 rounded-3xl shadow-sm hover:shadow-md border border-gray-200 transition-all duration-300 space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-[#005550] text-white font-extrabold flex items-center justify-center text-sm shrink-0">
                     1
                   </div>
-                  <h3 className="font-poppins font-bold text-[#2C2D33] text-lg sm:text-xl">
+                  <h3 className="font-poppins font-bold text-[#2C2D33] text-lg">
                     Bio-mechanical corrections to help slowing down the degeneration
                   </h3>
                 </div>
-                <p className="text-sm sm:text-base text-gray-700 leading-relaxed pl-11">
+                <p className="text-sm text-gray-700 leading-relaxed pl-11">
                   Yoga based rope &amp; belt technique is used for bio-mechanical corrections in joints considering the anatomy of joints as well as pathology of pain condition. It helps in slowing down the degeneration of cartilage in the joint which helps in joint health longevity. This is done by trained and certified medical yoga therapists who work closely with yoga physicians in the background.
                 </p>
               </div>
 
               {/* Pillar 2 */}
-              <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md border border-gray-200 transition-all duration-300 space-y-3">
+              <div className="bg-white p-7 rounded-3xl shadow-sm hover:shadow-md border border-gray-200 transition-all duration-300 space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-[#005550] text-white font-extrabold flex items-center justify-center text-sm shrink-0">
                     2
                   </div>
-                  <h3 className="font-poppins font-bold text-[#2C2D33] text-lg sm:text-xl">
+                  <h3 className="font-poppins font-bold text-[#2C2D33] text-lg">
                     Physiological support to enable faster healing for chronic pains
                   </h3>
                 </div>
-                <p className="text-sm sm:text-base text-gray-700 leading-relaxed pl-11">
+                <p className="text-sm text-gray-700 leading-relaxed pl-11">
                   Physiological support is essential for bio-mechanical corrections to work effectively. The body adapts to bio-mechanical corrections faster when parameters like inflammation and swelling are addressed by medicines—which can be any pathy that suits the individual case. This is where a yoga physician helps the yoga therapist drive superior results.
                 </p>
               </div>
 
               {/* Pillar 3 */}
-              <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md border border-gray-200 transition-all duration-300 space-y-3">
+              <div className="bg-white p-7 rounded-3xl shadow-sm hover:shadow-md border border-gray-200 transition-all duration-300 space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-[#005550] text-white font-extrabold flex items-center justify-center text-sm shrink-0">
                     3
                   </div>
-                  <h3 className="font-poppins font-bold text-[#2C2D33] text-lg sm:text-xl">
+                  <h3 className="font-poppins font-bold text-[#2C2D33] text-lg">
                     Nutrition plan for ensuring overall recovery and sustained results
                   </h3>
                 </div>
-                <p className="text-sm sm:text-base text-gray-700 leading-relaxed pl-11">
+                <p className="text-sm text-gray-700 leading-relaxed pl-11">
                   Nutrition plays a vital role in the body regaining its natural ability to heal itself and sustaining the adaptive corrections accomplished by the above two steps. A certified nutritionist is connected with the yoga therapist on each case to ensure medical yoga therapy truly delivers an integrated approach and long-lasting recovery.
                 </p>
               </div>
@@ -299,8 +299,8 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            {/* Left Column: Title, Store Buttons & QR Codes */}
-            <div className="lg:col-span-6 space-y-8 text-left">
+            {/* Left Column (5 cols): Title, Store Buttons & QR Codes */}
+            <div className="lg:col-span-5 space-y-8 text-left">
               <h2 className="font-sansita font-bold text-3xl sm:text-4xl lg:text-[44px] text-[#005550] leading-tight tracking-tight whitespace-pre-line">
                 {settings.appPromoHeading || 'Download Our App\nto Book an Appoiment'}
               </h2>
@@ -338,12 +338,12 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Right Column: Therapist with Synergy MYT App (Enlarged Width & Height) */}
-            <div className="lg:col-span-6 flex justify-center lg:justify-end mt-6 lg:mt-0">
+            {/* Right Column (7 cols): Therapist with Synergy MYT App (Extra Large Image Width & Height) */}
+            <div className="lg:col-span-7 flex justify-center lg:justify-end mt-6 lg:mt-0">
               <img
                 src={getImageUrl(settings.appMockupImage || APP_MOCKUP)}
                 alt="Therapist holding Synergy MYT App"
-                className="max-w-xl sm:max-w-2xl lg:max-w-3xl w-full h-auto max-h-[720px] sm:max-h-[850px] lg:max-h-[950px] object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
+                className="max-w-2xl lg:max-w-4xl w-full h-auto max-h-[900px] sm:max-h-[1050px] lg:max-h-[1200px] object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
               />
             </div>
 
