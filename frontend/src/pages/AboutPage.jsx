@@ -224,11 +224,11 @@ export default function AboutPage() {
             <div className="w-24 h-1.5 bg-[#005550] rounded-full mt-2" />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             
-            {/* Left Column: Anatomical Poster */}
-            <div className="lg:col-span-5 space-y-8 lg:sticky lg:top-24">
-              <div className="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden h-[480px] sm:h-[540px] lg:h-[600px] w-full">
+            {/* Left Column: Anatomical Poster (Increased Width & Prominence) */}
+            <div className="lg:col-span-6 space-y-8 lg:sticky lg:top-24">
+              <div className="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden h-[520px] sm:h-[620px] lg:h-[720px] w-full">
                 <img
                   src={INTEGRATED_BG}
                   alt="Integrated Approach To Joint Care"
@@ -238,7 +238,7 @@ export default function AboutPage() {
             </div>
 
             {/* Right Column: 3 Detailed Pillars */}
-            <div className="lg:col-span-7 space-y-6">
+            <div className="lg:col-span-6 space-y-6">
               
               {/* Pillar 1 */}
               <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md border border-gray-200 transition-all duration-300 space-y-3">
@@ -295,12 +295,12 @@ export default function AboutPage() {
       {/* ──────────────────────────────────────────────
           6. FULL-WIDTH PROMOTIONAL APP BANNER (ABOVE FOOTER)
           ────────────────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-linear-to-b from-[#e8f6f6] to-[#d6efef] border-t border-teal-100">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-linear-to-b from-[#e8f6f6] to-[#d6efef] border-t border-teal-100 overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             {/* Left Column: Title, Store Buttons & QR Codes */}
-            <div className="lg:col-span-7 space-y-8 text-left">
+            <div className="lg:col-span-6 space-y-8 text-left">
               <h2 className="font-sansita font-bold text-3xl sm:text-4xl lg:text-[44px] text-[#005550] leading-tight tracking-tight whitespace-pre-line">
                 {settings.appPromoHeading || 'Download Our App\nto Book an Appoiment'}
               </h2>
@@ -338,12 +338,12 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Right Column: Therapist with Synergy MYT App */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-end mt-6 lg:mt-0">
+            {/* Right Column: Therapist with Synergy MYT App (Enlarged Width & Height) */}
+            <div className="lg:col-span-6 flex justify-center lg:justify-end mt-6 lg:mt-0">
               <img
                 src={getImageUrl(settings.appMockupImage || APP_MOCKUP)}
                 alt="Therapist holding Synergy MYT App"
-                className="max-w-lg lg:max-w-xl w-full h-auto max-h-[580px] sm:max-h-[680px] lg:max-h-[750px] object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
+                className="max-w-xl sm:max-w-2xl lg:max-w-3xl w-full h-auto max-h-[720px] sm:max-h-[850px] lg:max-h-[950px] object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
               />
             </div>
 

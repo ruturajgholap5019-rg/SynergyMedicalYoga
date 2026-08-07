@@ -63,6 +63,136 @@ const DEFAULT_SERVICE_SLIDES = [
     fallback: 'https://synergymedicalyoga.com/wp-content/uploads/2025/05/Website-Baners-04-992x1024.png',
     alt: 'Clinical Medical Yoga & Rehabilitation',
   },
+  {
+    src: 'https://synergymedicalyoga.com/wp-content/uploads/2026/07/Education_Titl_Img.webp',
+    fallback: '/images/others/Why-Lear-RBT-with-Synergy-Banner-4-items-1-1-scaled.webp',
+    alt: 'Synergy Rope & Belt Therapy Training & Healthcare Hub',
+  },
+];
+
+const SYNERGY_LOCATIONS = [
+  {
+    id: 'pune',
+    city: 'Pune',
+    isFlagship: true,
+    cx: 218,
+    cy: 302,
+    name: 'Synergy Medical Yoga Flagship Hub',
+    address: '1st Floor, Greens Centre, Above Reliance Fresh, Opposite Cosmos Bank, Near Shreedhar Nagar, Chinchwad, Pune, Maharashtra 411033',
+    phone: '+91 97303 21042',
+    hours: 'Mon - Sat: 8:00 AM - 7:30 PM',
+    status: 'Live Flagship Center',
+  },
+  {
+    id: 'mumbai',
+    city: 'Mumbai',
+    cx: 192,
+    cy: 288,
+    name: 'Synergy Medical Yoga Center - Mumbai',
+    address: 'Dadar West & Borivali Medical Yoga Care Hubs, Mumbai, Maharashtra 400028',
+    phone: '+91 97303 21042',
+    hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
+    status: 'Certified Partner Center',
+  },
+  {
+    id: 'delhi',
+    city: 'Delhi NCR',
+    cx: 230,
+    cy: 155,
+    name: 'Synergy Medical Yoga Center - Delhi NCR',
+    address: 'South Extension & Gurgaon Wellness Center, Delhi NCR 110049',
+    phone: '+91 97303 21042',
+    hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
+    status: 'Certified Partner Center',
+  },
+  {
+    id: 'bengaluru',
+    city: 'Bengaluru',
+    cx: 230,
+    cy: 378,
+    name: 'Synergy Medical Yoga Center - Bengaluru',
+    address: 'Indiranagar & HSR Layout Therapy Hub, Bengaluru, Karnataka 560038',
+    phone: '+91 97303 21042',
+    hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
+    status: 'Certified Partner Center',
+  },
+  {
+    id: 'hyderabad',
+    city: 'Hyderabad',
+    cx: 260,
+    cy: 320,
+    name: 'Synergy Medical Yoga Center - Hyderabad',
+    address: 'Banjara Hills Medical Yoga Care Hub, Hyderabad, Telangana 500034',
+    phone: '+91 97303 21042',
+    hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
+    status: 'Certified Partner Center',
+  },
+  {
+    id: 'ahmedabad',
+    city: 'Ahmedabad',
+    cx: 172,
+    cy: 225,
+    name: 'Synergy Medical Yoga Center - Ahmedabad',
+    address: 'Navrangpura Wellness & RBT Center, Ahmedabad, Gujarat 380009',
+    phone: '+91 97303 21042',
+    hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
+    status: 'Certified Partner Center',
+  },
+  {
+    id: 'surat',
+    city: 'Surat',
+    cx: 182,
+    cy: 258,
+    name: 'Synergy Medical Yoga Center - Surat',
+    address: 'Ring Road & Adajan Therapy Hub, Surat, Gujarat 395009',
+    phone: '+91 97303 21042',
+    hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
+    status: 'Certified Partner Center',
+  },
+  {
+    id: 'chennai',
+    city: 'Chennai',
+    cx: 268,
+    cy: 392,
+    name: 'Synergy Medical Yoga Center - Chennai',
+    address: 'Anna Nagar & Mylapore Therapy Center, Chennai, Tamil Nadu 600040',
+    phone: '+91 97303 21042',
+    hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
+    status: 'Certified Partner Center',
+  },
+  {
+    id: 'kolkata',
+    city: 'Kolkata',
+    cx: 370,
+    cy: 252,
+    name: 'Synergy Medical Yoga Center - Kolkata',
+    address: 'Salt Lake & Park Street Center, Kolkata, West Bengal 700064',
+    phone: '+91 97303 21042',
+    hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
+    status: 'Certified Partner Center',
+  },
+  {
+    id: 'jaipur',
+    city: 'Jaipur',
+    cx: 198,
+    cy: 180,
+    name: 'Synergy Medical Yoga Center - Jaipur',
+    address: 'Malviya Nagar & C-Scheme Therapy Hub, Jaipur, Rajasthan 302017',
+    phone: '+91 97303 21042',
+    hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
+    status: 'Certified Partner Center',
+  },
+  {
+    id: 'chandigarh',
+    city: 'Chandigarh',
+    cx: 228,
+    cy: 122,
+    name: 'Synergy Medical Yoga Center - Chandigarh',
+    address: 'Sector 17 & Mohali Care Center, Chandigarh 160017',
+    phone: '+91 97303 21042',
+    hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
+    status: 'Certified Partner Center',
+  },
 ];
 
 export default function ServicesPage({ setActivePage, currentUser }) {
@@ -72,6 +202,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
   const [loadingServices, setLoadingServices] = useState(false);
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
+  const [hoveredLoc, setHoveredLoc] = useState(SYNERGY_LOCATIONS[0]); // Default Pune
 
   // Carousel State
   const [serviceSlides, setServiceSlides] = useState(() => {
@@ -148,15 +279,6 @@ export default function ServicesPage({ setActivePage, currentUser }) {
     fetchServices();
     fetchCarousels();
   }, []);
-
-  // Carousel Autoplay Timer (5000ms) with Pause on Hover
-  useEffect(() => {
-    if (isSlidePaused || serviceSlides.length === 0) return;
-    const timer = setInterval(() => {
-      setServiceSlide((prev) => (prev + 1) % serviceSlides.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [isSlidePaused, serviceSlides]);
 
   const currentTherapy = THERAPY_ACCORDION.find((t) => t.id === openTab) || THERAPY_ACCORDION[0];
 
@@ -498,99 +620,151 @@ export default function ServicesPage({ setActivePage, currentUser }) {
 
 
       {/* ──────────────────────────────────────────────
-          6. MEDICAL YOGA CENTRES ACROSS INDIA SECTION (Exact Match to synergymedicalyoga.com)
+          6. MEDICAL YOGA CENTRES ACROSS INDIA SECTION (With Outer & Inner Layout India Map & Hover Address Cards)
           ────────────────────────────────────────────── */}
-      <section className="py-16 sm:py-20 bg-white border-t border-gray-100">
+      <section className="py-16 sm:py-24 bg-linear-to-b from-white via-teal-50/20 to-white border-t border-gray-100 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
             
-            {/* Left Column (50%): Vector India Map with Glowing Teal Pins */}
-            <div className="w-full lg:w-1/2 flex justify-center items-center relative py-2">
-              <div className="w-full max-w-xl relative drop-shadow-sm">
+            {/* Left Column (50%): Precision SVG India Map with Outer/Inner Layout & Interactive Dots */}
+            <div className="w-full lg:w-1/2 flex flex-col items-center relative py-2">
+              <div className="w-full max-w-xl relative bg-white p-4 sm:p-6 rounded-3xl shadow-xl border border-teal-100/80">
+                
+                {/* SVG India Map Container */}
                 <svg
                   viewBox="0 0 545 425"
-                  className="w-full h-auto"
+                  className="w-full h-auto drop-shadow-md select-none"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  {/* Map Background Base */}
-                  <g className="transition-all">
-                    {/* Non-Live States / Kashmir & Far North */}
-                    <path d="M 200,60 L 225,20 L 255,10 L 285,25 L 295,50 L 275,80 L 250,105 L 225,110 Z" fill="#e0e0e0" stroke="#ffffff" strokeWidth="1.5" />
-                    <path d="M 225,110 L 250,105 L 275,120 L 260,145 L 225,140 L 205,120 Z" fill="#e0e0e0" stroke="#ffffff" strokeWidth="1.5" />
+                  <defs>
+                    <filter id="map-shadow" x="-5%" y="-5%" width="110%" height="110%">
+                      <feDropShadow dx="2" dy="4" stdDeviation="4" floodColor="#005550" floodOpacity="0.12" />
+                    </filter>
+                    <linearGradient id="liveStateGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#b2dfdb" />
+                      <stop offset="100%" stopColor="#80cbc4" />
+                    </linearGradient>
+                    <linearGradient id="puneStateGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#4db6ac" />
+                      <stop offset="100%" stopColor="#00897b" />
+                    </linearGradient>
+                  </defs>
 
-                    {/* Live State: Punjab & Haryana & Delhi */}
-                    <path d="M 210,120 L 250,115 L 245,160 L 210,165 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+                  {/* Outer & Inner India Map Geographic Layout */}
+                  <g filter="url(#map-shadow)">
+                    {/* OUTER BOUNDARY CONTOUR PATH */}
+                    <path
+                      d="M 200,60 L 225,20 L 255,10 L 285,25 L 295,50 L 275,80 L 250,105 L 325,140 L 415,165 L 455,185 L 425,225 L 365,210 L 375,300 L 325,315 L 295,335 L 265,395 L 270,420 L 240,425 L 225,385 L 190,305 L 155,265 L 145,235 L 165,225 L 145,190 L 160,155 Z"
+                      fill="none"
+                      stroke="#005550"
+                      strokeWidth="3.5"
+                      strokeLinejoin="round"
+                    />
 
-                    {/* Live State: Rajasthan */}
-                    <path d="M 160,155 L 225,140 L 220,195 L 175,215 L 145,190 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* INNER LAYOUT STATE BOUNDARIES */}
+                    {/* Kashmir & Far North */}
+                    <path d="M 200,60 L 225,20 L 255,10 L 285,25 L 295,50 L 275,80 L 250,105 L 225,110 Z" fill="#e8f4f3" stroke="#b2dfdb" strokeWidth="1.2" />
+                    <path d="M 225,110 L 250,105 L 275,120 L 260,145 L 225,140 L 205,120 Z" fill="#e8f4f3" stroke="#b2dfdb" strokeWidth="1.2" />
 
-                    {/* Live State: Gujarat */}
-                    <path d="M 145,190 L 175,215 L 195,250 L 155,265 L 145,235 L 165,225 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* Punjab & Haryana & Delhi */}
+                    <path d="M 210,120 L 250,115 L 245,160 L 210,165 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
 
-                    {/* Live State: Maharashtra (Pune Flagship Hub) */}
-                    <path d="M 175,255 L 240,245 L 275,275 L 235,325 L 190,305 L 185,270 Z" fill="#66c2a4" stroke="#ffffff" strokeWidth="2" />
+                    {/* Rajasthan */}
+                    <path d="M 160,155 L 225,140 L 220,195 L 175,215 L 145,190 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
 
-                    {/* Non-Live State: Madhya Pradesh */}
-                    <path d="M 220,195 L 295,205 L 305,255 L 240,245 L 205,215 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* Gujarat */}
+                    <path d="M 145,190 L 175,215 L 195,250 L 155,265 L 145,235 L 165,225 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
 
-                    {/* Non-Live State: Uttar Pradesh & Bihar */}
-                    <path d="M 250,105 L 325,140 L 355,180 L 295,205 L 250,145 Z" fill="#e0e0e0" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* Maharashtra (Pune Flagship Hub) */}
+                    <path d="M 175,255 L 240,245 L 275,275 L 235,325 L 190,305 L 185,270 Z" fill="url(#puneStateGrad)" stroke="#ffffff" strokeWidth="2" />
 
-                    {/* Live State: Odisha */}
-                    <path d="M 305,255 L 360,250 L 375,300 L 325,315 L 275,275 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* Madhya Pradesh */}
+                    <path d="M 220,195 L 295,205 L 305,255 L 240,245 L 205,215 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
 
-                    {/* Live State: Karnataka & Telangana & Andhra */}
-                    <path d="M 190,305 L 235,325 L 275,275 L 295,335 L 265,395 L 225,385 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* Uttar Pradesh & Bihar */}
+                    <path d="M 250,105 L 325,140 L 355,180 L 295,205 L 250,145 Z" fill="#e8f4f3" stroke="#b2dfdb" strokeWidth="1.2" />
 
-                    {/* Live State: Tamil Nadu & Kerala */}
-                    <path d="M 225,385 L 265,395 L 270,420 L 240,425 Z" fill="#99d8c9" stroke="#ffffff" strokeWidth="1.5" />
+                    {/* Odisha & West Bengal */}
+                    <path d="M 305,255 L 360,250 L 375,300 L 325,315 L 275,275 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
+
+                    {/* Karnataka & Telangana & Andhra */}
+                    <path d="M 190,305 L 235,325 L 275,275 L 295,335 L 265,395 L 225,385 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
+
+                    {/* Tamil Nadu & Kerala */}
+                    <path d="M 225,385 L 265,395 L 270,420 L 240,425 Z" fill="url(#liveStateGrad)" stroke="#ffffff" strokeWidth="1.5" />
 
                     {/* Northeast */}
-                    <path d="M 355,180 L 415,165 L 455,185 L 425,225 L 365,210 Z" fill="#e0e0e0" stroke="#ffffff" strokeWidth="1.5" />
+                    <path d="M 355,180 L 415,165 L 455,185 L 425,225 L 365,210 Z" fill="#e8f4f3" stroke="#b2dfdb" strokeWidth="1.2" />
                   </g>
 
-                  {/* Location Pins (Matching Teal Pins from Screenshot) */}
-                  {/* 1. Pune Flagship Live Center */}
-                  <g className="cursor-pointer group">
-                    <circle cx="218" cy="302" r="14" fill="#007A73" fillOpacity="0.35" className="animate-ping" />
-                    <circle cx="218" cy="302" r="9" fill="#005550" stroke="#FFFFFF" strokeWidth="2" />
-                    <circle cx="218" cy="302" r="3.5" fill="#50E3C2" />
-                  </g>
+                  {/* INTERACTIVE LOCATION DOTS */}
+                  {SYNERGY_LOCATIONS.map((loc) => {
+                    const isSelected = hoveredLoc?.id === loc.id;
+                    return (
+                      <g
+                        key={loc.id}
+                        className="cursor-pointer transition-all duration-300"
+                        onMouseEnter={() => setHoveredLoc(loc)}
+                        onClick={() => setHoveredLoc(loc)}
+                      >
+                        {/* Outer Pulse Rings */}
+                        {loc.isFlagship && (
+                          <circle cx={loc.cx} cy={loc.cy} r="15" fill="#005550" fillOpacity="0.3" className="animate-ping" />
+                        )}
+                        {isSelected && (
+                          <circle cx={loc.cx} cy={loc.cy} r="13" fill="#005550" fillOpacity="0.4" />
+                        )}
 
-                  {/* 2. Mumbai */}
-                  <circle cx="192" cy="288" r="7.5" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
-                  {/* 3. Delhi / NCR */}
-                  <circle cx="230" cy="155" r="7.5" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
-                  {/* 4. Ahmedabad / Gujarat */}
-                  <circle cx="172" cy="225" r="7.5" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
-                  {/* 5. Surat */}
-                  <circle cx="182" cy="258" r="7" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
-                  {/* 6. Bangalore */}
-                  <circle cx="230" cy="378" r="7.5" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
-                  {/* 7. Hyderabad */}
-                  <circle cx="260" cy="320" r="7.5" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
-                  {/* 8. Chennai */}
-                  <circle cx="268" cy="392" r="7" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
-                  {/* 9. Odisha / Bhubaneswar */}
-                  <circle cx="360" cy="292" r="7" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
-                  {/* 10. Kolkata */}
-                  <circle cx="370" cy="252" r="7" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
-                  {/* 11. Jaipur */}
-                  <circle cx="198" cy="180" r="7" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
-                  {/* 12. Chandigarh */}
-                  <circle cx="228" cy="122" r="7" fill="#00A896" stroke="#FFFFFF" strokeWidth="1.5" />
+                        {/* Main Dot */}
+                        <circle
+                          cx={loc.cx}
+                          cy={loc.cy}
+                          r={loc.isFlagship ? "9" : "7.5"}
+                          fill={isSelected ? "#003d39" : loc.isFlagship ? "#005550" : "#00A896"}
+                          stroke="#FFFFFF"
+                          strokeWidth={isSelected ? "2.5" : "1.8"}
+                          className="hover:scale-125 transition-transform duration-300"
+                        />
+                        <circle
+                          cx={loc.cx}
+                          cy={loc.cy}
+                          r={loc.isFlagship ? "3.5" : "2.5"}
+                          fill="#50E3C2"
+                        />
+                      </g>
+                    );
+                  })}
                 </svg>
 
-                {/* Floating Pune Badge */}
-                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md px-4 py-1.5 rounded-2xl shadow-lg border border-teal-100 flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#005550] animate-pulse" />
-                  <span className="text-xs font-extrabold text-[#005550]">Pune Flagship Center (Live)</span>
-                </div>
+                {/* Interactive Tooltip Card on Hover */}
+                {hoveredLoc && (
+                  <div className="mt-4 p-4 bg-gradient-to-r from-[#005550] to-[#004743] text-white rounded-2xl shadow-lg border border-teal-600/40 animate-in fade-in zoom-in duration-200">
+                    <div className="flex items-center justify-between gap-2 mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-[#50E3C2] shrink-0" />
+                        <h4 className="font-poppins font-bold text-sm text-white">{hoveredLoc.name}</h4>
+                      </div>
+                      <span className="text-[10px] font-extrabold uppercase bg-[#50E3C2] text-[#003d39] px-2.5 py-0.5 rounded-full shrink-0">
+                        {hoveredLoc.city}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-teal-100/90 leading-relaxed font-normal mb-2 pl-6">
+                      {hoveredLoc.address}
+                    </p>
+
+                    <div className="flex items-center justify-between text-[11px] text-teal-200 pt-2 border-t border-teal-700/60 pl-6">
+                      <span>📞 {hoveredLoc.phone}</span>
+                      <span className="font-semibold text-[#50E3C2]">{hoveredLoc.status}</span>
+                    </div>
+                  </div>
+                )}
+
               </div>
             </div>
 
-            {/* Right Column (50%): Exact Typography Matching synergymedicalyoga.com */}
+            {/* Right Column (50%): Exact Typography & Actions */}
             <div className="w-full lg:w-1/2 space-y-6">
               <h2 className="font-poppins text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-[#005550] leading-[1.15] tracking-tight">
                 Medical yoga centres <br />
@@ -601,7 +775,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
               <div className="w-16 h-0.5 bg-[#005550]/40" />
 
               <p className="text-base sm:text-lg leading-relaxed text-[#005550]/80 font-medium max-w-xl">
-                Synergy Medical Yoga is expanding across India with trusted centers in major cities. From Pune to Mumbai, Bangalore, Delhi, and more, our Rope &amp; Belt Therapy is reaching people wherever they are. Each location is guided by certified therapists to ensure you receive expert care close to home
+                Synergy Medical Yoga is expanding across India with trusted centers in major cities. From Pune to Mumbai, Bangalore, Delhi, and more, our Rope &amp; Belt Therapy is reaching people wherever they are. Each location is guided by certified therapists to ensure you receive expert care close to home. Hover over any location dot on the map to see center details.
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-4">
@@ -609,7 +783,7 @@ export default function ServicesPage({ setActivePage, currentUser }) {
                   onClick={() => { setActivePage && setActivePage('find-centres'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                   className="bg-[#005550] hover:bg-[#003d39] text-white font-bold text-sm px-8 py-3.5 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 inline-flex items-center gap-2 cursor-pointer"
                 >
-                  <span>Explore Pune Centers</span>
+                  <span>Explore All Centers</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
                 <button

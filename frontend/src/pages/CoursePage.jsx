@@ -154,7 +154,7 @@ export default function CoursePage({ setActivePage }) {
   return (
     <div className="bg-white font-inter text-[#444444]">
       <section className="bg-[#005550] py-16 px-4 text-center text-white">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="font-sansita text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
             Education
           </h1>
@@ -426,7 +426,7 @@ export default function CoursePage({ setActivePage }) {
       </section>
 
       <section id="course-curriculum" className="py-16 bg-white scroll-mt-24">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           <div className="text-center space-y-2">
             <span className="text-xs font-bold text-[#005550] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-100">
               45-Hour Structured Syllabus
@@ -690,7 +690,7 @@ export default function CoursePage({ setActivePage }) {
 
       {/* ── BOTTOM CTA ── */}
       <section className="py-12 bg-gradient-to-br from-[#ebf7f7] to-[#d6f0f0]">
-        <div className="max-w-4xl mx-auto px-4 text-center space-y-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <h2 className="font-sansita text-3xl sm:text-4xl font-bold text-[#005550]">
             Ready to Become a Certified Rope &amp; Belt Therapist?
           </h2>
