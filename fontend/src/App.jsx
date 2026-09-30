@@ -239,6 +239,49 @@ export default function App() {
     loadSession();
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const paymentStatus = params.get('payment');
+    const sessionId = params.get('session_id');
+
+    const clearPaymentParams = () => {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('payment');
+      url.searchParams.delete('session_id');
+      url.searchParams.delete('order_id');
+      window.history.replaceState({}, '', url.pathname + url.search);
+    };
+
+    const handlePaymentReturn = async () => {
+      if (paymentStatus === 'success' && sessionId) {
+        try {
+          const result = await api.verifyCheckoutSession(sessionId);
+          if (result.data.paymentStatus === 'paid') {
+            setCart([]);
+            showToast('Payment successful! Your order has been confirmed.');
+          } else {
+            showToast('Payment is still processing. We will update your order shortly.');
+          }
+        } catch (error) {
+          console.error(error);
+          showToast('Payment received. Your order confirmation is being processed.');
+        } finally {
+          clearPaymentParams();
+        }
+        return;
+      }
+
+      if (paymentStatus === 'cancel') {
+        showToast('Payment cancelled. Your cart items are still saved.');
+        clearPaymentParams();
+      }
+    };
+
+    if (paymentStatus) {
+      handlePaymentReturn();
+    }
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-white font-sans selection:bg-[#065750] selection:text-white">
       

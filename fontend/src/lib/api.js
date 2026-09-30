@@ -58,4 +58,10 @@ export const api = {
     method: 'POST',
     body: JSON.stringify(payload),
   }),
+  createOrder: (payload) => request('/orders', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }),
+  verifyCheckoutSession: (sessionId) => request(`/orders/verify?session_id=${encodeURIComponent(sessionId)}`),
+  getOrders: () => request('/orders'),
 };

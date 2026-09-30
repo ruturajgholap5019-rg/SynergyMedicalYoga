@@ -1,49 +1,65 @@
 import React, { useState } from 'react';
-import { X, CheckCircle2, ShieldCheck, CreditCard, Truck, ArrowLeft } from 'lucide-react';
+import { X, CheckCircle2, ShieldCheck, CreditCard, Truck, ArrowLeft, Loader2 } from 'lucide-react';
 import { api } from '../lib/api';
 
 export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOrderComplete }) {
   if (!isOpen) return null;
 
-  const [step, setStep] = useState('form'); // 'form' | 'success' | 'redirect'
+  const [step, setStep] = useState('form'); // 'form' | 'redirect' | 'success'
   const [formData, setFormData] = useState({
     name: currentUser?.name || '',
-    email: '',
-    phone: '',
+    email: currentUser?.email || '',
+    phone: currentUser?.phone || '',
     address: '',
     city: 'Pune',
     pincode: '411033',
-    paymentMethod: 'card'
+    paymentMethod: 'card',
   });
   const [orderId, setOrderId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [checkoutUrl, setCheckoutUrl] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+  const shippingPayload = {
+    name: formData.name,
+    email: formData.email,
+    phone: formData.phone,
+    address: formData.address,
+    city: formData.city,
+    pincode: formData.pincode,
+    state: 'Maharashtra',
+    country: 'India',
+  };
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage('');
 
     try {
+      if (formData.paymentMethod === 'cod') {
+        const response = await api.createOrder({
+          shippingAddress: shippingPayload,
+          paymentMethod: 'cod',
+        });
+
+        setOrderId(response.data.order._id);
+        setStep('success');
+        return;
+      }
+
+      setStep('redirect');
       const response = await api.createCheckoutSession({
-        shippingAddress: {
-          address: formData.address,
-          city: formData.city,
-          pincode: formData.pincode,
-          state: 'Maharashtra',
-          country: 'India',
-        },
+        shippingAddress: shippingPayload,
       });
 
-      setCheckoutUrl(response.data.url);
       setOrderId(response.data.orderId);
-      setStep('redirect');
       window.location.href = response.data.url;
     } catch (error) {
       console.error(error);
       setStep('form');
-      alert(error.message || 'Unable to start checkout.');
+      setErrorMessage(error.message || 'Unable to start checkout. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -52,14 +68,14 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
   const handleFinish = () => {
     onOrderComplete();
     setStep('form');
+    setErrorMessage('');
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200 my-8">
-        
-        {/* Header */}
+
         <div className="bg-linear-to-r from-[#065750] to-[#043f3a] p-6 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
             <ShieldCheck className="w-6 h-6 text-amber-300" />
@@ -75,11 +91,16 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
 
         {step === 'form' ? (
           <form onSubmit={handleSubmitOrder} className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-8">
-            {/* Left Inputs */}
             <div className="md:col-span-7 space-y-4">
               <h3 className="font-bold text-slate-800 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
                 <Truck className="w-4 h-4 text-[#065750]" /> Shipping & Delivery Address
               </h3>
+
+              {errorMessage && (
+                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {errorMessage}
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
@@ -153,16 +174,14 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
                 </div>
               </div>
 
-              {/* Payment Method */}
               <div className="pt-2">
                 <label className="flex text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 items-center gap-2">
                   <CreditCard className="w-4 h-4 text-[#065750]" /> Payment Method
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {[
-                    { id: 'upi', label: 'UPI / GPay / PhonePe' },
-                    { id: 'card', label: 'Credit / Debit Card' },
-                    { id: 'cod', label: 'Cash on Delivery' }
+                    { id: 'card', label: 'Pay Online (Card / UPI via Stripe)' },
+                    { id: 'cod', label: 'Cash on Delivery' },
                   ].map((pm) => (
                     <button
                       key={pm.id}
@@ -181,7 +200,6 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
               </div>
             </div>
 
-            {/* Right Summary */}
             <div className="md:col-span-5 bg-slate-50 p-6 rounded-2xl border border-slate-200 flex flex-col justify-between">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm mb-4 pb-2 border-b border-slate-200">
@@ -217,14 +235,21 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
 
               <button
                 type="submit"
-                className="w-full mt-6 bg-[#065750] hover:bg-[#043f3a] text-white font-bold py-3.5 rounded-xl shadow-lg transition-all text-sm"
+                disabled={isSubmitting}
+                className="w-full mt-6 bg-[#065750] hover:bg-[#043f3a] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl shadow-lg transition-all text-sm inline-flex items-center justify-center gap-2"
               >
-                Confirm & Place Order
+                {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                {formData.paymentMethod === 'cod' ? 'Place COD Order' : 'Proceed to Secure Payment'}
               </button>
             </div>
           </form>
+        ) : step === 'redirect' ? (
+          <div className="p-12 text-center space-y-4">
+            <Loader2 className="w-12 h-12 text-[#065750] animate-spin mx-auto" />
+            <h2 className="text-xl font-extrabold text-slate-900">Redirecting to Stripe...</h2>
+            <p className="text-sm text-slate-600">Please wait while we open the secure payment page.</p>
+          </div>
         ) : (
-          /* Confirmation State */
           <div className="p-8 md:p-12 text-center space-y-6">
             <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto animate-bounce">
               <CheckCircle2 className="w-12 h-12" />
@@ -240,7 +265,9 @@ export default function CheckoutModal({ isOpen, onClose, cart, currentUser, onOr
             </div>
 
             <p className="text-xs text-slate-500 max-w-md mx-auto">
-              We have dispatched order details to <span className="font-bold text-slate-700">{formData.email}</span>. A representative from our Pune therapy care hub will also SMS you tracking updates.
+              {formData.paymentMethod === 'cod'
+                ? 'Your Cash on Delivery order is confirmed. Pay when your items arrive.'
+                : `We have dispatched order details to ${formData.email}.`}
             </p>
 
             <button
